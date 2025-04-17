@@ -77,7 +77,7 @@ async def run_stress_test(
                 progress = batch_start / total_queries
                 bar_length = 30
                 filled_length = int(bar_length * progress)
-                bar = '█' * filled_length + '░' * (bar_length - filled_length)
+                bar = '#' * filled_length + '-' * (bar_length - filled_length)
                 sys.stdout.write(f'\rProgress: [{bar}] {batch_start}/{total_queries} ({progress:.1%})')
                 sys.stdout.flush()
             else:
@@ -103,7 +103,7 @@ async def run_stress_test(
                 await asyncio.sleep(delay)
     
     if show_progress:
-        sys.stdout.write(f'\rProgress: [{"█" * bar_length}] {total_queries}/{total_queries} (100%)\n')
+        sys.stdout.write(f'\rProgress: [{"#" * bar_length}] {total_queries}/{total_queries} (100%)\n')
         sys.stdout.flush()
     
     return all_results
