@@ -19,7 +19,7 @@ import faiss
 online = True
 k = 32
 device="cuda" if torch.cuda.is_available() else "cpu"
-usr_dir = "/mnt/nfs/home/dpetresc"
+usr_dir = "/Users/mdevos"
 
 # query encoder for routing and retrieval
 class CustomizeSentenceTransformer(SentenceTransformer): # change the default pooling "MEAN" to "CLS"
@@ -30,6 +30,7 @@ class CustomizeSentenceTransformer(SentenceTransformer): # change the default po
         transformer_model = Transformer(model_name_or_path, cache_dir=cache_path)
         pooling_model = Pooling(transformer_model.get_word_embedding_dimension(), 'cls')
         return [transformer_model, pooling_model]
+
 embedding_function = CustomizeSentenceTransformer("ncbi/MedCPT-Query-Encoder", device=device)
 embedding_function.eval()
 
@@ -82,7 +83,7 @@ def select_relevant_sources(query_embed):
             x = self.dropout2(x)
             return self.fc3(x)
     
-    corpus_names = ["pubmed", "textbooks", "statpearls", "wikipedia"]
+    corpus_names = ["textbooks"]
 
     if online:
         inputs = []
@@ -110,7 +111,8 @@ def select_relevant_sources(query_embed):
         model.eval()
 
         with torch.no_grad():
-            outputs = model(input_tensor).squeeze()
+            outputs = model(input_tensor)
+            outputs = outputs.view(-1)
             probabilities = torch.sigmoid(outputs)
             predictions = (probabilities > 0.5).cpu().numpy()
 
@@ -122,6 +124,7 @@ def select_relevant_sources(query_embed):
 
 def retrieve_docs(query_embed, corpus_name, dataset_name, k):
     def idx2txt(indices):
+        print(indices)
 
         results = []
         for i in indices:
@@ -135,6 +138,7 @@ def retrieve_docs(query_embed, corpus_name, dataset_name, k):
                 with open(file_path, "r") as file:
                     # Cache raw lines as strings instead of fully parsed JSON
                     cache_jsonl[source] = file.read().strip().split("\n")
+                    print("Cache size: ", len(cache_jsonl[source]))
 
             # Parse the specific line at the requested index
             line = cache_jsonl[source][index]

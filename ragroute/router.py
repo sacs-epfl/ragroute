@@ -2,15 +2,34 @@
 
 import asyncio
 import logging
+import os
+
+import numpy as np
+
+import torch
 
 import zmq
 import zmq.asyncio
 
-from ragroute.config import SERVER_ROUTER_PORT, ROUTER_SERVER_PORT, MAX_QUEUE_SIZE
+from sentence_transformers.models import Transformer, Pooling
+from sentence_transformers import SentenceTransformer
+
+from ragroute.config import ONLINE, SERVER_ROUTER_PORT, ROUTER_SERVER_PORT, MAX_QUEUE_SIZE, USR_DIR
 from ragroute.queue_manager import QueryQueue
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("router")
+
+
+class CustomizeSentenceTransformer(SentenceTransformer): # change the default pooling "MEAN" to "CLS"
+    def _load_auto_model(self, model_name_or_path, *args, **kwargs):
+        cache_path = os.path.join(USR_DIR, ".cache/torch/sentence_transformers", model_name_or_path)
+        #transformer_model = Transformer(model_name_or_path)
+        print("Sentence-transformers cache ", cache_path)
+        transformer_model = Transformer(model_name_or_path, cache_dir=cache_path)
+        pooling_model = Pooling(transformer_model.get_word_embedding_dimension(), 'cls')
+        return [transformer_model, pooling_model]
+
 
 class Router:
     """Router that processes queries and determines which clients should handle them."""
@@ -20,6 +39,10 @@ class Router:
         self.running = False
         self.context = zmq.asyncio.Context()
         self.queue = QueryQueue(MAX_QUEUE_SIZE)
+
+        device="cuda" if torch.cuda.is_available() else "cpu"
+        self.embedding_function = CustomizeSentenceTransformer("ncbi/MedCPT-Query-Encoder", device=device)
+        self.embedding_function.eval()
         
     async def start(self):
         """Start the router and process queries."""
@@ -79,10 +102,23 @@ class Router:
         except asyncio.CancelledError:
             logger.info("Process task cancelled")
             raise
+
+    def encode_query(self, query):
+        if ONLINE:
+            with torch.no_grad():
+                query_embed = self.embedding_function.encode([query])
+        else:
+            retrieval_cache_dir = os.path.join(USR_DIR, "MedRAG/retrieval_cache/") # bioasq	medmcqa  medqa	mmlu  pubmedqa
+            emb_path = os.path.join(retrieval_cache_dir, dataset_name, "emb_queries", question_id+".npy")
+            query_embed = np.load(emb_path)
+
+        return query_embed
             
     async def _process_query(self, query_data):
         """Process a query and determine which clients should handle it."""
         logger.info(f"Router processing query: {query_data['id']}")
+
+        query_embed = self.encode_query(query_data["query"])
         
         # TODO here we should decide which clients should handle the query
         # For now, we just send the query to all clients
