@@ -186,21 +186,15 @@ class Router:
 
         query_embed = self.encode_query(query_data["query"])
         sources_corpora = self.select_relevant_sources(query_embed)
-        print("selected sources ", sources_corpora)
-        
-        # TODO here we should decide which clients should handle the query
-        # For now, we just send the query to all clients
-        # In a real implementation, this would involve more complex logic
-        client_ids = list(range(self.num_clients))
         
         response = {
             "query_id": query_data["id"],
-            "query": query_data["query"],
-            "client_ids": client_ids
+            "data_sources": sources_corpora,
+            "embedding": query_embed.tolist() if isinstance(query_embed, np.ndarray) else query_embed
         }
         
         await self.sender.send_json(response)
-        logger.info(f"Router sent routing decision to server for query: {query_data['id']}")
+        logger.info(f"Router sent routing decision {response['data_sources']} to server for query: {query_data['id']}")
         
     def stop(self):
         """Stop the router."""

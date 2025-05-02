@@ -19,7 +19,7 @@ import faiss
 online = True
 k = 32
 device="cuda" if torch.cuda.is_available() else "cpu"
-usr_dir = "/Users/martijndevos"
+usr_dir = "/Users/mdevos"
 
 # query encoder for routing and retrieval
 class CustomizeSentenceTransformer(SentenceTransformer): # change the default pooling "MEAN" to "CLS"
@@ -245,6 +245,7 @@ for dataset_name, questions in benchmark_data.items():
         question = data['question']
         options = data['options']
         print(question)
+        print(options)
 
         # encode query
         query_embed = encode_query(question, question_id, dataset_name)

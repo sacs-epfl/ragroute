@@ -3,6 +3,8 @@ HTTP server that receives queries and coordinates with the router and clients to
 """
 import asyncio
 import logging
+import json
+from typing import List
 import uuid
 from aiohttp import web
 
@@ -10,19 +12,22 @@ import zmq
 import zmq.asyncio
 
 from ragroute.config import (
-    SERVER_ROUTER_PORT, ROUTER_SERVER_PORT,
+    K, SERVER_ROUTER_PORT, ROUTER_SERVER_PORT,
     SERVER_CLIENT_BASE_PORT, CLIENT_SERVER_BASE_PORT,
     HTTP_HOST, HTTP_PORT
 )
+from ragroute.llm_message import generate_llm_message
+from ragroute.rerank import rerank
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("server")
 
-class SearchServer:
+class HTTPServer:
     """HTTP server that coordinates the federated search system."""
     
-    def __init__(self, num_clients):
-        self.num_clients = num_clients
+    def __init__(self, data_sources: List[str]):
+        self.data_sources: List[str] = data_sources
+        self.num_clients = len(data_sources)
         self.app = web.Application()
         self.app.add_routes([
             web.get('/query', self.handle_query),
@@ -81,12 +86,23 @@ class SearchServer:
         """Handle search requests."""
         if request.method == "GET":
             query = request.query.get("q", "")
+            choices = request.query.get("choices", "")
         else:  # POST
             data = await request.post()
             query = data.get("q", "")
+            choices = data.get("choices", "")
 
         if not query:
             return web.Response(text="Please provide a query", status=400)
+        
+        if not choices:
+            return web.Response(text="Please provide choices", status=400)
+        
+        # Load the choices which is a URLEncoded JSON string
+        try:
+            choices = json.loads(choices)
+        except json.JSONDecodeError:
+            return web.Response(text="Invalid choices format", status=400)
 
         query_id = str(uuid.uuid4())
         logger.info(f"Received search query: {query} (ID: {query_id})")
@@ -96,8 +112,9 @@ class SearchServer:
         self.active_queries[query_id] = {
             "future": future,
             "query": query,
+            "choices": choices,
             "client_results": {},
-            "pending_clients": set()
+            "pending_data_sources": set()
         }
         
         # Send query to router
@@ -122,32 +139,37 @@ class SearchServer:
             while self.running:
                 try:
                     # Wait for messages with a timeout to allow for clean shutdown
-                    routing_data = await asyncio.wait_for(self.router_receiver.recv_json(), timeout=0.5)
+                    routing_data = await asyncio.wait_for(self.router_receiver.recv_json(), timeout=5)
                     query_id = routing_data["query_id"]
-                    client_ids = routing_data["client_ids"]
+                    data_sources = routing_data["data_sources"]
+                    embedding = routing_data["embedding"]
+
+                    # Convert data_sources to a list of client IDs
+                    client_ids = [self.data_sources.index(ds) for ds in data_sources]
                     
-                    logger.info(f"Received routing for query {query_id}: {client_ids}")
+                    logger.info(f"Received routing for query {query_id}: {data_sources}")
                     
                     if query_id in self.active_queries:
                         # Update pending clients
-                        self.active_queries[query_id]["pending_clients"] = set(client_ids)
+                        self.active_queries[query_id]["pending_data_sources"] = set(client_ids)
                         
                         # Forward query to designated clients
                         query = self.active_queries[query_id]["query"]
                         for client_id in client_ids:
                             await self.client_senders[client_id].send_json({
                                 "id": query_id,
-                                "query": query
+                                "query": query,
+                                "embedding": embedding
                             })
                             
                         # If no clients were selected, complete the query immediately
-                        if not client_ids:
+                        if not data_sources:
                             self._complete_query(query_id)
                     else:
                         logger.warning(f"Received routing for unknown query: {query_id}")
                 except asyncio.TimeoutError:
                     continue
-                    
+
         except asyncio.CancelledError:
             logger.info("Router listener task cancelled")
             raise
@@ -161,18 +183,20 @@ class SearchServer:
                     result_data = await asyncio.wait_for(self.client_receivers[client_id].recv_json(), timeout=0.5)
                     query_id = result_data["query_id"]
                     
-                    logger.info(f"Received results from client {client_id} for query {query_id}")
+                    logger.info(f"Received results from data source {client_id} for query {query_id}")
                     
                     if query_id in self.active_queries:
                         # Store the results
-                        self.active_queries[query_id]["client_results"][client_id] = result_data["results"]
+                        self.active_queries[query_id]["client_results"][client_id] = (result_data["docs"], result_data["scores"])
                         
                         # Update pending clients
-                        if client_id in self.active_queries[query_id]["pending_clients"]:
-                            self.active_queries[query_id]["pending_clients"].remove(client_id)
+                        print(self.active_queries[query_id])
+                        print(client_id)
+                        if client_id in self.active_queries[query_id]["pending_data_sources"]:
+                            self.active_queries[query_id]["pending_data_sources"].remove(client_id)
                             
-                        # If all clients have responded, complete the query
-                        if not self.active_queries[query_id]["pending_clients"]:
+                        # We received responses from all clients, rerank and complete the query
+                        if not self.active_queries[query_id]["pending_data_sources"]:
                             self._complete_query(query_id)
                     else:
                         logger.warning(f"Received result for unknown query: {query_id}")
@@ -184,31 +208,31 @@ class SearchServer:
             raise
             
     def _complete_query(self, query_id):
-        """Complete a query by resolving its future."""
-        if query_id in self.active_queries:
-            query_data = self.active_queries[query_id]
+        if query_id not in self.active_queries:
+            return
+        
+        query_data = self.active_queries[query_id]
+        
+        # Combine results from all clients
+        response = {
+            "query_id": query_id,
+            "query": query_data["query"],
+            "answer": "dummy"
+        }
+
+        all_docs = []
+        all_scores = []
+        for client_id, results in query_data["client_results"].items():
+            all_docs.extend(results[0])
+            all_scores.extend(results[1])
+
+        filtered_docs, _ = rerank(all_docs, all_scores, K)
+        llm_message = generate_llm_message(query_data["query"], filtered_docs, query_data["choices"])
+
+        if not query_data["future"].done():
+            query_data["future"].set_result(response)
             
-            # Combine results from all clients
-            combined_results = {
-                "query_id": query_id,
-                "query": query_data["query"],
-                "results": []
-            }
-            
-            # Add results from each client
-            for client_id, results in query_data["client_results"].items():
-                client_section = {
-                    "client_id": client_id,
-                    "results": results
-                }
-                combined_results["results"].append(client_section)
-                
-            # Resolve the future
-            if not query_data["future"].done():
-                query_data["future"].set_result(combined_results)
-                
-            # Clean up
-            del self.active_queries[query_id]
+        del self.active_queries[query_id]
             
     async def stop(self):
         """Stop the server and clean up resources."""
@@ -265,18 +289,7 @@ class SearchServer:
         
         logger.info("Server stopped")
         
-async def run_server(num_clients):
-    """Run the server process."""
-    server = SearchServer(num_clients)
+async def run_server(data_sources: List[str]):
+    server = HTTPServer(data_sources)
     await server.start()
     return server
-
-
-if __name__ == "__main__":
-    import sys
-    if len(sys.argv) != 2:
-        print("Usage: python server.py <num_clients>")
-        sys.exit(1)
-        
-    num_clients = int(sys.argv[1])
-    asyncio.run(run_server(num_clients))

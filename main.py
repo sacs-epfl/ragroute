@@ -1,11 +1,11 @@
-"""Main entry point for the federated search system."""
-
 import argparse
 import asyncio
 import logging
 import signal
-import sys
 from multiprocessing import Process
+from typing import Dict, List
+
+from ragroute.config import DATA_SOURCES
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("main")
@@ -15,47 +15,49 @@ def start_router(num_clients):
     from ragroute.router import run_router
     asyncio.run(run_router(num_clients))
 
-def start_client(client_id):
-    from ragroute.client import run_client
-    asyncio.run(run_client(client_id))
+def start_data_source(index: int, data_source: str):
+    from ragroute.data_source import run_data_source
+    asyncio.run(run_data_source(index, data_source))
 
 
 class FederatedSearchSystem:
     """Main controller for the federated search system."""
     
-    def __init__(self, num_clients):
-        self.num_clients = num_clients
+    def __init__(self, dataset):
+        self.dataset = dataset
         self.processes = []
         self.server = None
         self.shutting_down = False
         self.main_task = None
+        self.data_sources: List[str] = DATA_SOURCES[dataset]
+        self.data_source_processes: Dict = {}
         
     async def start(self):
-        """Start all components of the system."""
-        logger.info(f"Starting RAGRoute with {self.num_clients} clients")
+        logger.info(f"Starting RAGRoute with dataset {self.dataset}")
         
         # Store reference to the main task for clean cancellation
         self.main_task = asyncio.current_task()
         
         # Start router process
-        router_process = Process(target=start_router, args=(self.num_clients,))
+        router_process = Process(target=start_router, args=(self.data_sources,))
         router_process.start()
         self.processes.append(router_process)
         logger.info("Router process started")
         
-        # Start client processes
-        for client_id in range(self.num_clients):
-            client_process = Process(target=start_client, args=(client_id,))
-            client_process.start()
-            self.processes.append(client_process)
-            logger.info(f"Client {client_id} process started")
+        # Start data source processes
+        for idx, data_source in enumerate(self.data_sources):
+            data_source_process = Process(target=start_data_source, args=(idx, data_source))
+            data_source_process.start()
+            self.processes.append(data_source_process)
+            self.data_source_processes[data_source] = data_source_process
+            logger.info(f"Data source {data_source} process started")
         
-        # Give the router and clients some time to initialize
+        # Give the router and data sources some time to initialize
         await asyncio.sleep(1)
         
         # Start the server
-        from ragroute.server import run_server
-        self.server = await run_server(self.num_clients)
+        from ragroute.http_server import run_server
+        self.server = await run_server(self.data_sources)
         logger.info("Server started")
         
         # Setup signal handler for graceful shutdown
@@ -129,10 +131,10 @@ class FederatedSearchSystem:
 
 def main():
     parser = argparse.ArgumentParser(description="RAGRoute")
-    parser.add_argument("--clients", type=int, default=3, help="Number of client processes (data sources)")
+    parser.add_argument("--dataset", type=str, default="medrag", choices=["medrag"], help="The dataset being evaluated (influences the data sources)")
     args = parser.parse_args()
     
-    controller = FederatedSearchSystem(args.clients)
+    controller = FederatedSearchSystem(args.dataset)
     try:
         asyncio.run(controller.start())
     except KeyboardInterrupt:

@@ -1,0 +1,147 @@
+"""
+Contains the implementation of a RAGRoute data source.
+"""
+
+import asyncio
+import json
+import logging
+import os
+
+import faiss
+
+import numpy as np
+import zmq
+import zmq.asyncio
+
+from ragroute.config import K, ONLINE, SERVER_CLIENT_BASE_PORT, CLIENT_SERVER_BASE_PORT, USR_DIR
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger("client")
+
+class DataSource:
+    
+    def __init__(self, client_id: int, name: str):
+        self.client_id: int = client_id
+        self.name: str = name
+        self.recv_port: int = SERVER_CLIENT_BASE_PORT + client_id
+        self.send_port: int = CLIENT_SERVER_BASE_PORT + client_id
+        self.running: bool = False
+        self.context = zmq.asyncio.Context()
+
+        self.faiss_indexes = {}
+        self.cache_jsonl = {}
+        
+    async def start(self):
+        """Start the client and listen for queries."""
+        logger.info(f"Starting client {self.client_id}")
+        self.running = True
+        
+        # Socket to receive queries from server
+        self.receiver = self.context.socket(zmq.PULL)
+        self.receiver.bind(f"tcp://*:{self.recv_port}")
+        
+        # Socket to send results back to server
+        self.sender = self.context.socket(zmq.PUSH)
+        self.sender.connect(f"tcp://localhost:{self.send_port}")
+        
+        try:
+            while self.running:
+                try:
+                    # Wait for queries with a timeout to allow for clean shutdown
+                    query_data = await asyncio.wait_for(self.receiver.recv_json(), timeout=0.5)
+                    logger.info(f"Data source {self.client_id} received query: {query_data['id']}")
+
+                    embedding = query_data["embedding"]
+                    embedding = np.array(embedding, dtype=np.float32).reshape(1, -1)
+                    docs, scores = self.retrieve_docs(embedding, K)
+                    
+                    # Prepare and send response
+                    response = {
+                        "query_id": query_data["id"],
+                        "client_id": self.client_id,
+                        "docs": docs,
+                        "scores": scores,
+                    }
+                    await self.sender.send_json(response)
+                    logger.info(f"Client {self.client_id} sent response for query: {query_data['id']}")
+                    
+                except asyncio.TimeoutError:
+                    continue
+                    
+        except asyncio.CancelledError:
+            logger.info(f"Client {self.client_id} shutdown requested")
+        finally:
+            self.stop()
+
+    def retrieve_docs(self, query_embed, k):
+        def idx2txt(indices):
+            print(indices)
+
+            results = []
+            for i in indices:
+                source = i["source"]
+                index = i["index"]
+
+                # added by me to go faster...
+                # Checks if the file's lines are already cached
+                if source not in self.cache_jsonl:
+                    file_path = os.path.join(USR_DIR, "MedRAG/corpus", self.name, "chunk", f"{source}.jsonl")
+                    with open(file_path, "r") as file:
+                        # Cache raw lines as strings instead of fully parsed JSON
+                        self.cache_jsonl[source] = file.read().strip().split("\n")
+                        print("Cache size: ", len(self.cache_jsonl[source]))
+
+                # Parse the specific line at the requested index
+                line = self.cache_jsonl[source][index]
+                results.append(json.loads(line))  # Parse only when needed
+            return results
+        
+        if ONLINE:
+            index_dir = os.path.join(USR_DIR, "MedRAG/corpus", self.name, "index", "ncbi/MedCPT-Article-Encoder")
+
+            if index_dir not in self.faiss_indexes:
+                index = faiss.read_index(os.path.join(index_dir, "faiss.index"))
+                metadatas = [json.loads(line) for line in open(os.path.join(index_dir, "metadatas.jsonl")).read().strip().split('\n')]
+                self.faiss_indexes[index_dir] = (index, metadatas)
+            else:
+                index, metadatas = self.faiss_indexes[index_dir]
+
+            res_ = index.search(query_embed, k=k)
+            scores = res_[0][0].tolist()
+
+            # from faiss idx to corresponding source and index
+            indices = [metadatas[i] for i in res_[1][0]]
+            # get the corresponding documents
+            docs = idx2txt(indices)
+        else:
+            # retrieve_docs_from_file to go faster
+            corpus_path = os.path.join(USR_DIR, "MedRAG/retrieval_cache", dataset_name, self.name)
+            
+            # Paths to the files
+            texts_file = os.path.join(corpus_path, f"top_32_{question_id}_texts.json")
+            scores_file = os.path.join(corpus_path, f"top_32_{question_id}_scores.txt")
+
+            # Read texts
+            with open(texts_file, "r") as f_texts:
+                texts = json.load(f_texts)
+            # Read scores
+            with open(scores_file, "r") as f_scores:
+                scores = [float(line.strip()) for line in f_scores]
+
+            # Retrieve only the top-k results
+            docs = texts[:k]
+            scores = scores[:k]
+
+        return docs, scores
+            
+    def stop(self):
+        """Stop the client."""
+        logger.info(f"Stopping client {self.client_id}")
+        self.running = False
+        self.receiver.close()
+        self.sender.close()
+        self.context.term()
+
+async def run_data_source(client_id: int, name: str):
+    data_source = DataSource(client_id, name)
+    await data_source.start()
