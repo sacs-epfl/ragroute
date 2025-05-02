@@ -19,7 +19,7 @@ import faiss
 online = True
 k = 32
 device="cuda" if torch.cuda.is_available() else "cpu"
-usr_dir = "/Users/mdevos"
+usr_dir = "/Users/martijndevos"
 
 # query encoder for routing and retrieval
 class CustomizeSentenceTransformer(SentenceTransformer): # change the default pooling "MEAN" to "CLS"
