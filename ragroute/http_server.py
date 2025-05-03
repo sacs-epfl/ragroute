@@ -8,6 +8,7 @@ from typing import List
 import uuid
 from aiohttp import web
 
+from ollama import ChatResponse, chat
 import zmq
 import zmq.asyncio
 
@@ -227,7 +228,14 @@ class HTTPServer:
             all_scores.extend(results[1])
 
         filtered_docs, _ = rerank(all_docs, all_scores, K)
-        llm_message = generate_llm_message(query_data["query"], filtered_docs, query_data["choices"])
+
+        try:
+            llm_message = generate_llm_message(query_data["query"], filtered_docs, query_data["choices"])
+            response_: ChatResponse = chat(model='qwen3:0.6b', messages=llm_message)
+            response["answer"] = response_['message']['content']
+        except Exception as e:
+            logger.error(f"Error generating LLM message: {e}", exc_info=True)
+            response["answer"] = f"Error generating response: {str(e)}"
 
         if not query_data["future"].done():
             query_data["future"].set_result(response)

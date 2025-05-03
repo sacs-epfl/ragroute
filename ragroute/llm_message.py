@@ -3,11 +3,12 @@ from transformers import AutoTokenizer
 
 from liquid import Template
 
+from ragroute.config import MODEL_NAME
+
 
 def generate_llm_message(question: str, context, options: str) -> List[Dict[str, str]]:
-    model_name = "meta-llama/Meta-Llama-3.1-8B-Instruct"
-    tokenizer = AutoTokenizer.from_pretrained(model_name, cache_dir=None)
-    context_length = 128000
+    tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME, cache_dir=None)
+    context_length = 32768
     max_tokens = 131072
 
     contexts = ["Document [{:d}] (Title: {:s}) {:s}".format(idx, context[idx]["title"], context[idx]["content"]) for idx in range(len(context))]

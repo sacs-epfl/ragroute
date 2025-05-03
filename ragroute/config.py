@@ -14,7 +14,7 @@ HTTP_PORT = 8000
 MAX_QUEUE_SIZE = 100
 
 # For loading the models and data
-USR_DIR = "/Users/mdevos"
+USR_DIR = "/Users/martijndevos"
 ONLINE = True  # Whether we compute everything from scratch or use the precomputed information
 
 # Dataset information
@@ -22,4 +22,4 @@ DATA_SOURCES = {
     "medrag": ["textbooks"]
 }
 K = 32
-MODEL_NAME = "meta-llama/Meta-Llama-3.1-8B-Instruct"
+MODEL_NAME = "Qwen/Qwen3-0.6B"
