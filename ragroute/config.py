@@ -22,4 +22,5 @@ DATA_SOURCES = {
     "medrag": ["textbooks"]
 }
 K = 32
-MODEL_NAME = "Qwen/Qwen3-0.6B"
+MODEL_NAME = "Qwen/Qwen3-8B"
+OLLAMA_MODEL_NAME = "qwen3:8b"
