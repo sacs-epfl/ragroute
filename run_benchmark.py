@@ -1,6 +1,7 @@
 import argparse
 import asyncio
 import json
+import os
 
 import aiohttp
 from tqdm import tqdm
@@ -11,12 +12,10 @@ from ragroute.benchmark import Benchmark
 async def fetch_answer(session, url, question_data, benchmark):
     async with session.get(url) as response:
         if response.status == 200:
-            json_response = await response.json()
-            is_correct = benchmark.check_mirage_answer(question_data, json_response["answer"])
-            return is_correct
+            return await response.json()
         else:
             print(f"Failed to fetch data: {response.status} - {await response.text()}")
-            return False
+            return None
 
 
 async def main():
@@ -24,6 +23,11 @@ async def main():
     parser.add_argument("--benchmark", type=str, default="MIRAGE", choices=["MIRAGE"], help="Benchmark name")
     parser.add_argument("--parallel", type=int, default=1, help="Number of parallel requests to send")
     args = parser.parse_args()
+
+    benchmark_file: str = os.path.join("data", "benchmark_%s.csv" % args.benchmark)
+
+    with open(benchmark_file, "w") as f:
+        f.write("benchmark,dataset,question_id,correct,data_sources,num_data_sources,selection_time,embedding_time,doc_select_time,generate_time,e2e_time\n")
 
     num_questions: int = 0
     num_correct: int = 0
@@ -51,11 +55,21 @@ async def main():
                 # Run the batch concurrently
                 results = await asyncio.gather(*tasks)
 
-                # Process results
-                num_questions += len(results)
-                num_correct += sum(results)
+                for result in results:
+                    # Process the question result
+                    is_correct = benchmark.check_mirage_answer(question_data, result["answer"])
+                    num_questions += 1
+                    num_correct += bool(is_correct)
 
-                print(f"--> Score: {num_correct}/{num_questions}")
+                    metadata = result["metadata"]
+                    data_sources = ":".join(metadata["data_sources"])
+
+                    with open(benchmark_file, "a") as f:
+                        f.write(f"{args.benchmark},{dataset_name},{question_id},{int(is_correct)},{data_sources},{len(metadata['data_sources'])},"
+                                f"{metadata['selection_time']},{metadata['embedding_time']},{metadata['doc_select_time']},"
+                                f"{metadata['generate_time']},{metadata['e2e_time']}\n")
+
+                    print(f"--> Score: {num_correct}/{num_questions}")
 
 
 if __name__ == "__main__":

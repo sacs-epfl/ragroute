@@ -119,6 +119,7 @@ class HTTPServer:
             "client_results": {},
             "pending_data_sources": set(),
             "metadata": {},
+            "query_start_time": time.time(),
         }
         
         # Send query to router
@@ -253,6 +254,7 @@ class HTTPServer:
             response["answer"] = f"Error generating response: {str(e)}"
 
         response["metadata"] = query_data["metadata"]
+        response["metadata"]["e2e_time"] = time.time() - query_data["query_start_time"]
         if not query_data["future"].done():
             query_data["future"].set_result(response)
             
