@@ -148,7 +148,7 @@ class HTTPServer:
                     # Convert data_sources to a list of client IDs
                     client_ids = [self.data_sources.index(ds) for ds in data_sources]
                     
-                    logger.info(f"Received routing for query {query_id}: {data_sources}")
+                    logger.debug(f"Received routing for query {query_id}: {data_sources}")
                     
                     if query_id in self.active_queries:
                         # Update pending clients
@@ -191,8 +191,6 @@ class HTTPServer:
                         self.active_queries[query_id]["client_results"][client_id] = (result_data["docs"], result_data["scores"])
                         
                         # Update pending clients
-                        print(self.active_queries[query_id])
-                        print(client_id)
                         if client_id in self.active_queries[query_id]["pending_data_sources"]:
                             self.active_queries[query_id]["pending_data_sources"].remove(client_id)
                             
