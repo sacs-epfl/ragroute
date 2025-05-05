@@ -27,11 +27,22 @@ async def main():
     benchmark_file: str = os.path.join("data", "benchmark_%s.csv" % args.benchmark)
     ds_durations_file: str = os.path.join("data", "ds_durations_%s.csv" % args.benchmark)
 
-    with open(benchmark_file, "w") as f:
-        f.write("benchmark,dataset,question_id,correct,data_sources,num_data_sources,selection_time,embedding_time,doc_select_time,generate_time,e2e_time\n")
+    if not os.path.exists(benchmark_file):
+        with open(benchmark_file, "w") as f:
+            f.write("benchmark,dataset,question_id,correct,data_sources,num_data_sources,selection_time,embedding_time,doc_select_time,generate_time,e2e_time\n")
 
-    with open(ds_durations_file, "w") as f:
-        f.write("benchmark,dataset,question_id,data_source,duration\n")
+    if not os.path.exists(ds_durations_file):
+        with open(ds_durations_file, "w") as f:
+            f.write("benchmark,dataset,question_id,data_source,duration\n")
+
+    # Load the benchmark file and create the set of all question_ids that are there
+    existing_question_ids = set()
+    with open(benchmark_file, "r") as f:
+        lines = f.readlines()
+        for line in lines[1:]:
+            parts = line.strip().split(",")
+            if len(parts) > 2:
+                existing_question_ids.add(parts[2])
 
     num_questions: int = 0
     num_correct: int = 0
@@ -46,6 +57,9 @@ async def main():
                 tasks = []
 
                 for question_id, question_data in batch:
+                    if question_id in existing_question_ids:
+                        print(f"Skipping {question_id} as it is already processed.")
+                        continue
                     question = question_data['question']
                     options = question_data['options']
 
@@ -61,7 +75,12 @@ async def main():
 
                 for result in results:
                     # Process the question result
-                    is_correct = benchmark.check_mirage_answer(question_data, result["answer"])
+                    if "answer" in result:
+                        is_correct = benchmark.check_mirage_answer(question_data, result["answer"])
+                    else:
+                        print(f"Error: No answer in result for question {question_id}")
+                        is_correct = False
+
                     num_questions += 1
                     num_correct += bool(is_correct)
 
