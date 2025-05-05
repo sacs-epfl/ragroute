@@ -11,9 +11,9 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("main")
 
 
-def start_router(num_clients):
+def start_router(data_sources: List[str]):
     from ragroute.router import run_router
-    asyncio.run(run_router(num_clients))
+    asyncio.run(run_router(data_sources))
 
 def start_data_source(index: int, dataset: str, data_source: str):
     from ragroute.data_source import run_data_source

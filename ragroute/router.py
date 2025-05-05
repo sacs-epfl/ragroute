@@ -6,6 +6,7 @@ import logging
 import os
 import pickle
 import time
+from typing import List
 
 import numpy as np
 
@@ -58,8 +59,8 @@ class CustomizeSentenceTransformer(SentenceTransformer): # change the default po
 class Router:
     """Router that processes queries and determines which clients should handle them."""
     
-    def __init__(self, num_clients):
-        self.num_clients = num_clients
+    def __init__(self, data_sources: List[str]):
+        self.data_sources = data_sources
         self.running = False
         self.context = zmq.asyncio.Context()
         self.queue = QueryQueue(MAX_QUEUE_SIZE)
@@ -70,7 +71,7 @@ class Router:
         
     async def start(self):
         """Start the router and process queries."""
-        logger.info("Starting router process")
+        logger.info("Starting router process with %d data sources", len(self.data_sources))
         self.running = True
         
         # Socket to receive queries from server
@@ -128,12 +129,10 @@ class Router:
             raise
 
     def select_relevant_sources(self, query_embed):
-        corpus_names = ["textbooks"]
-
         if ONLINE:
             inputs = []
             
-            for corpus in corpus_names:
+            for corpus in self.data_sources:
                 stats_file = os.path.join(USR_DIR, "MedRAG/routing/", f"{corpus}_stats.json")
                 with open(stats_file, "r") as f:
                     corpus_stats = json.load(f)
@@ -161,9 +160,9 @@ class Router:
                 probabilities = torch.sigmoid(outputs)
                 predictions = (probabilities > 0.5).cpu().numpy()
 
-            sources_corpora = [corpus for prediction, corpus in zip(predictions, corpus_names) if prediction]
+            sources_corpora = [corpus for prediction, corpus in zip(predictions, self.data_sources) if prediction]
         else:
-            sources_corpora = corpus_names
+            sources_corpora = self.data_sources
 
         return sources_corpora
 
@@ -209,9 +208,9 @@ class Router:
         self.sender.close()
         self.context.term()
 
-async def run_router(num_clients):
+async def run_router(data_sources: List[str]):
     """Run the router process."""
-    router = Router(num_clients)
+    router = Router(data_sources)
     await router.start()
 
 
