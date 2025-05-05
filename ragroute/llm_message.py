@@ -25,7 +25,7 @@ def generate_llm_message(question: str, context, options: str) -> List[Dict[str,
         Here are the potential choices:
         {{options}}
 
-        Please think step-by-step and generate your output in json:
+        Please think step-by-step and generate your output in json formatted as Dict{"step_by_step_thinking": Str(explanation), "answer_choice": Str{A/B/C/...}}:
         ''')
 
     prompt_medrag = medrag_prompt.render(context=context, question=question, options=options)
