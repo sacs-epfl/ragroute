@@ -2,13 +2,14 @@
 HTTP server that receives queries and coordinates with the router and clients to perform federated search.
 """
 import asyncio
+from asyncio import ensure_future
 import logging
 import json
 from typing import List
 import uuid
 from aiohttp import web
 
-from ollama import ChatResponse, chat
+from ollama import AsyncClient, ChatResponse
 import zmq
 import zmq.asyncio
 
@@ -165,7 +166,7 @@ class HTTPServer:
                             
                         # If no clients were selected, complete the query immediately
                         if not data_sources:
-                            self._complete_query(query_id)
+                            ensure_future(self._complete_query(query_id))
                     else:
                         logger.warning(f"Received routing for unknown query: {query_id}")
                 except asyncio.TimeoutError:
@@ -196,7 +197,7 @@ class HTTPServer:
                             
                         # We received responses from all clients, rerank and complete the query
                         if not self.active_queries[query_id]["pending_data_sources"]:
-                            self._complete_query(query_id)
+                            ensure_future(self._complete_query(query_id))
                     else:
                         logger.warning(f"Received result for unknown query: {query_id}")
                 except asyncio.TimeoutError:
@@ -206,7 +207,7 @@ class HTTPServer:
             logger.info(f"Client {client_id} listener task cancelled")
             raise
             
-    def _complete_query(self, query_id):
+    async def _complete_query(self, query_id):
         if query_id not in self.active_queries:
             return
         
@@ -229,7 +230,7 @@ class HTTPServer:
 
         try:
             llm_message = generate_llm_message(query_data["query"], filtered_docs, query_data["choices"])
-            response_: ChatResponse = chat(model=OLLAMA_MODEL_NAME, messages=llm_message, options={"num_predict": MAX_TOKENS})
+            response_: ChatResponse = await AsyncClient().chat(model=OLLAMA_MODEL_NAME, messages=llm_message, options={"num_predict": MAX_TOKENS})
             response["answer"] = response_['message']['content']
         except Exception as e:
             logger.error(f"Error generating LLM message: {e}", exc_info=True)
