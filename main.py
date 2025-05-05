@@ -15,9 +15,9 @@ def start_router(num_clients):
     from ragroute.router import run_router
     asyncio.run(run_router(num_clients))
 
-def start_data_source(index: int, data_source: str):
+def start_data_source(index: int, dataset: str, data_source: str):
     from ragroute.data_source import run_data_source
-    asyncio.run(run_data_source(index, data_source))
+    asyncio.run(run_data_source(index, dataset, data_source))
 
 
 class FederatedSearchSystem:
@@ -46,7 +46,7 @@ class FederatedSearchSystem:
         
         # Start data source processes
         for idx, data_source in enumerate(self.data_sources):
-            data_source_process = Process(target=start_data_source, args=(idx, data_source))
+            data_source_process = Process(target=start_data_source, args=(idx, self.dataset, data_source))
             data_source_process.start()
             self.processes.append(data_source_process)
             self.data_source_processes[data_source] = data_source_process

@@ -13,15 +13,22 @@ import numpy as np
 import zmq
 import zmq.asyncio
 
-from ragroute.config import K, ONLINE, SERVER_CLIENT_BASE_PORT, CLIENT_SERVER_BASE_PORT, USR_DIR
+from ragroute.config import K, MEDRAG_DIR, ONLINE, SERVER_CLIENT_BASE_PORT, CLIENT_SERVER_BASE_PORT, USR_DIR
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("client")
 
 class DataSource:
     
-    def __init__(self, client_id: int, name: str):
+    def __init__(self, client_id: int, dataset: str, name: str):
         self.client_id: int = client_id
+        self.dataset: str = dataset
+        
+        if dataset == "medrag":
+            self.dataset_dir = MEDRAG_DIR
+        else:
+            raise ValueError(f"Unknown dataset when starting data source {name}: {dataset}")
+
         self.name: str = name
         self.recv_port: int = SERVER_CLIENT_BASE_PORT + client_id
         self.send_port: int = CLIENT_SERVER_BASE_PORT + client_id
@@ -85,7 +92,7 @@ class DataSource:
                 # added by me to go faster...
                 # Checks if the file's lines are already cached
                 if source not in self.cache_jsonl:
-                    file_path = os.path.join(USR_DIR, "MedRAG/corpus", self.name, "chunk", f"{source}.jsonl")
+                    file_path = os.path.join(self.dataset_dir, self.name, "chunk", f"{source}.jsonl")
                     with open(file_path, "r") as file:
                         # Cache raw lines as strings instead of fully parsed JSON
                         self.cache_jsonl[source] = file.read().strip().split("\n")
@@ -97,7 +104,7 @@ class DataSource:
             return results
         
         if ONLINE:
-            index_dir = os.path.join(USR_DIR, "MedRAG/corpus", self.name, "index", "ncbi/MedCPT-Article-Encoder")
+            index_dir = os.path.join(self.dataset_dir, self.name, "index", "ncbi/MedCPT-Article-Encoder")
 
             if index_dir not in self.faiss_indexes:
                 index = faiss.read_index(os.path.join(index_dir, "faiss.index"))
@@ -142,6 +149,6 @@ class DataSource:
         self.sender.close()
         self.context.term()
 
-async def run_data_source(client_id: int, name: str):
-    data_source = DataSource(client_id, name)
+async def run_data_source(client_id: int, dataset: int, name: str):
+    data_source = DataSource(client_id, dataset, name)
     await data_source.start()
