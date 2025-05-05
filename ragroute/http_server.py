@@ -107,7 +107,7 @@ class HTTPServer:
             return web.Response(text="Invalid choices format", status=400)
 
         query_id = str(uuid.uuid4())
-        logger.info(f"Received search query: {query} (ID: {query_id})")
+        logger.debug(f"Received search query: {query} (ID: {query_id})")
         
         # Create a new future to track this query
         future = asyncio.Future()
