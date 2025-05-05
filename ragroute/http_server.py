@@ -184,7 +184,7 @@ class HTTPServer:
                     result_data = await asyncio.wait_for(self.client_receivers[client_id].recv_json(), timeout=0.5)
                     query_id = result_data["query_id"]
                     
-                    logger.info(f"Received results from data source {client_id} for query {query_id}")
+                    logger.debug(f"Received results from data source {client_id} for query {query_id}")
                     
                     if query_id in self.active_queries:
                         # Store the results

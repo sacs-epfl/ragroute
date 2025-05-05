@@ -106,7 +106,7 @@ class Router:
                 try:
                     # Wait for queries with a timeout to allow for clean shutdown
                     query_data = await asyncio.wait_for(self.receiver.recv_json(), timeout=0.5)
-                    logger.info(f"Router received query: {query_data['id']}")
+                    logger.debug(f"Router received query: {query_data['id']}")
                     await self.queue.enqueue(query_data)
                 except asyncio.TimeoutError:
                     continue
@@ -182,7 +182,7 @@ class Router:
             
     async def _process_query(self, query_data):
         """Process a query and determine which clients should handle it."""
-        logger.info(f"Router processing query: {query_data['id']}")
+        logger.debug(f"Router processing query: {query_data['id']}")
 
         query_embed = self.encode_query(query_data["query"])
         sources_corpora = self.select_relevant_sources(query_embed)

@@ -56,7 +56,7 @@ class DataSource:
                 try:
                     # Wait for queries with a timeout to allow for clean shutdown
                     query_data = await asyncio.wait_for(self.receiver.recv_json(), timeout=0.5)
-                    logger.info(f"Data source {self.client_id} received query: {query_data['id']}")
+                    logger.debug(f"Data source {self.client_id} received query: {query_data['id']}")
 
                     embedding = query_data["embedding"]
                     embedding = np.array(embedding, dtype=np.float32).reshape(1, -1)
@@ -70,7 +70,7 @@ class DataSource:
                         "scores": scores,
                     }
                     await self.sender.send_json(response)
-                    logger.info(f"Client {self.client_id} sent response for query: {query_data['id']}")
+                    logger.debug(f"Client {self.client_id} sent response for query: {query_data['id']}")
                     
                 except asyncio.TimeoutError:
                     continue
@@ -82,8 +82,6 @@ class DataSource:
 
     def retrieve_docs(self, query_embed, k):
         def idx2txt(indices):
-            print(indices)
-
             results = []
             for i in indices:
                 source = i["source"]
