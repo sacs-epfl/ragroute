@@ -35,6 +35,7 @@ class DataSource:
         self.running: bool = False
         self.context = zmq.asyncio.Context()
 
+        self.index_dir: str = os.path.join(self.dataset_dir, self.name, "index", "ncbi/MedCPT-Article-Encoder")
         self.faiss_indexes = {}
         self.cache_jsonl = {}
         
@@ -50,6 +51,13 @@ class DataSource:
         # Socket to send results back to server
         self.sender = self.context.socket(zmq.PUSH)
         self.sender.connect(f"tcp://localhost:{self.send_port}")
+
+        # Load the FAISS index and metadata
+        logger.info(f"Loading FAISS index for {self.name}")
+        index = faiss.read_index(os.path.join(self.index_dir, "faiss.index"))
+        metadatas = [json.loads(line) for line in open(os.path.join(self.index_dir, "metadatas.jsonl")).read().strip().split('\n')]
+        self.faiss_indexes[self.index_dir] = (index, metadatas)
+        logger.info(f"FAISS index for {self.name} loaded successfully")
         
         try:
             while self.running:
@@ -101,15 +109,7 @@ class DataSource:
             return results
         
         if ONLINE:
-            index_dir = os.path.join(self.dataset_dir, self.name, "index", "ncbi/MedCPT-Article-Encoder")
-
-            if index_dir not in self.faiss_indexes:
-                index = faiss.read_index(os.path.join(index_dir, "faiss.index"))
-                metadatas = [json.loads(line) for line in open(os.path.join(index_dir, "metadatas.jsonl")).read().strip().split('\n')]
-                self.faiss_indexes[index_dir] = (index, metadatas)
-            else:
-                index, metadatas = self.faiss_indexes[index_dir]
-
+            index, metadatas = self.faiss_indexes[self.index_dir]
             res_ = index.search(query_embed, k=k)
             scores = res_[0][0].tolist()
 
