@@ -6,6 +6,7 @@ import asyncio
 import json
 import logging
 import os
+import time
 
 import faiss
 
@@ -65,6 +66,7 @@ class DataSource:
                     # Wait for queries with a timeout to allow for clean shutdown
                     query_data = await asyncio.wait_for(self.receiver.recv_json(), timeout=0.5)
                     logger.debug(f"Data source {self.client_id} received query: {query_data['id']}")
+                    start_time = time.time()
 
                     embedding = query_data["embedding"]
                     embedding = np.array(embedding, dtype=np.float32).reshape(1, -1)
@@ -74,8 +76,10 @@ class DataSource:
                     response = {
                         "query_id": query_data["id"],
                         "client_id": self.client_id,
+                        "name": self.name,
                         "docs": docs,
                         "scores": scores,
+                        "duration": time.time() - start_time,
                     }
                     await self.sender.send_json(response)
                     logger.debug(f"Client {self.client_id} sent response for query: {query_data['id']}")

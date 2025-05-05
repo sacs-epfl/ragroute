@@ -25,9 +25,13 @@ async def main():
     args = parser.parse_args()
 
     benchmark_file: str = os.path.join("data", "benchmark_%s.csv" % args.benchmark)
+    ds_durations_file: str = os.path.join("data", "ds_durations_%s.csv" % args.benchmark)
 
     with open(benchmark_file, "w") as f:
         f.write("benchmark,dataset,question_id,correct,data_sources,num_data_sources,selection_time,embedding_time,doc_select_time,generate_time,e2e_time\n")
+
+    with open(ds_durations_file, "w") as f:
+        f.write("benchmark,dataset,question_id,data_source,duration\n")
 
     num_questions: int = 0
     num_correct: int = 0
@@ -68,6 +72,10 @@ async def main():
                         f.write(f"{args.benchmark},{dataset_name},{question_id},{int(is_correct)},{data_sources},{len(metadata['data_sources'])},"
                                 f"{metadata['selection_time']},{metadata['embedding_time']},{metadata['doc_select_time']},"
                                 f"{metadata['generate_time']},{metadata['e2e_time']}\n")
+                        
+                    with open(ds_durations_file, "a") as f:
+                        for data_source, duration in metadata["time_per_data_source"].items():
+                            f.write(f"{args.benchmark},{dataset_name},{question_id},{data_source},{duration}\n")
 
                     print(f"--> Score: {num_correct}/{num_questions}")
 
