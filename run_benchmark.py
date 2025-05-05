@@ -75,7 +75,7 @@ async def main():
 
                 for result in results:
                     # Process the question result
-                    if "answer" in result:
+                    if result and "answer" in result:
                         is_correct = benchmark.check_mirage_answer(question_data, result["answer"])
                     else:
                         print(f"Error: No answer in result for question {question_id}")
