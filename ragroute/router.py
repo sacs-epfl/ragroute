@@ -194,7 +194,7 @@ class Router:
         }
         
         await self.sender.send_json(response)
-        logger.info(f"Router sent routing decision {response['data_sources']} to server for query: {query_data['id']}")
+        logger.debug(f"Router sent routing decision {response['data_sources']} to server for query: {query_data['id']}")
         
     def stop(self):
         """Stop the router."""

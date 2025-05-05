@@ -94,7 +94,6 @@ class DataSource:
                     with open(file_path, "r") as file:
                         # Cache raw lines as strings instead of fully parsed JSON
                         self.cache_jsonl[source] = file.read().strip().split("\n")
-                        print("Cache size: ", len(self.cache_jsonl[source]))
 
                 # Parse the specific line at the requested index
                 line = self.cache_jsonl[source][index]
