@@ -29,4 +29,4 @@ K = 32
 CONTEXT_LENGTH = 128000
 MAX_TOKENS = 131072
 MODEL_NAME = "meta-llama/Meta-Llama-3.1-8B-Instruct"
-OLLAMA_MODEL_NAME = "llama3.1:8b"
+OLLAMA_MODEL_NAME = "llama3.1:8b-instruct-q4_K_M"
