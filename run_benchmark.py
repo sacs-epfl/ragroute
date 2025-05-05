@@ -74,13 +74,12 @@ async def main():
                 results = await asyncio.gather(*tasks)
 
                 for result in results:
-                    # Process the question result
-                    if result and "answer" in result:
-                        is_correct = benchmark.check_mirage_answer(question_data, result["answer"])
-                    else:
-                        print(f"Error: No answer in result for question {question_id}")
-                        is_correct = False
+                    if not result:
+                        print("Error: No result returned from the server.")
+                        continue
 
+                    # Process the question result
+                    is_correct = benchmark.check_mirage_answer(question_data, result["answer"])
                     num_questions += 1
                     num_correct += bool(is_correct)
 
