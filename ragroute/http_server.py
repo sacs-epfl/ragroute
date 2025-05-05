@@ -127,7 +127,7 @@ class HTTPServer:
         
         # Wait for all results
         try:
-            results = await asyncio.wait_for(future, timeout=10.0)
+            results = await asyncio.wait_for(future, timeout=30.0)
             return web.json_response(results)
         except asyncio.TimeoutError:
             logger.error(f"Query timed out: {query_id}")
