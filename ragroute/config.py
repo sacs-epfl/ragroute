@@ -26,5 +26,7 @@ DATA_SOURCES = {
     "medrag": ["pubmed", "statpearls", "textbooks", "wikipedia"]
 }
 K = 32
-MODEL_NAME = "Qwen/Qwen3-8B"
-OLLAMA_MODEL_NAME = "qwen3:8b"
+CONTEXT_LENGTH = 128000
+MAX_TOKENS = 131072
+MODEL_NAME = "meta-llama/Meta-Llama-3.1-8B-Instruct"
+OLLAMA_MODEL_NAME = "llama3.1:8b"

@@ -13,7 +13,7 @@ import zmq
 import zmq.asyncio
 
 from ragroute.config import (
-    K, OLLAMA_MODEL_NAME, SERVER_ROUTER_PORT, ROUTER_SERVER_PORT,
+    K, MAX_TOKENS, OLLAMA_MODEL_NAME, SERVER_ROUTER_PORT, ROUTER_SERVER_PORT,
     SERVER_CLIENT_BASE_PORT, CLIENT_SERVER_BASE_PORT,
     HTTP_HOST, HTTP_PORT
 )
@@ -231,7 +231,7 @@ class HTTPServer:
 
         try:
             llm_message = generate_llm_message(query_data["query"], filtered_docs, query_data["choices"])
-            response_: ChatResponse = chat(model=OLLAMA_MODEL_NAME, messages=llm_message)
+            response_: ChatResponse = chat(model=OLLAMA_MODEL_NAME, messages=llm_message, options={"num_predict": MAX_TOKENS})
             response["answer"] = response_['message']['content']
         except Exception as e:
             logger.error(f"Error generating LLM message: {e}", exc_info=True)

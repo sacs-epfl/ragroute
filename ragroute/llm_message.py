@@ -3,18 +3,16 @@ from transformers import AutoTokenizer
 
 from liquid import Template
 
-from ragroute.config import MODEL_NAME
+from ragroute.config import CONTEXT_LENGTH, MODEL_NAME
 
 
 def generate_llm_message(question: str, context, options: str) -> List[Dict[str, str]]:
     tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME, cache_dir=None)
-    context_length = 32768
-    max_tokens = 131072
 
     contexts = ["Document [{:d}] (Title: {:s}) {:s}".format(idx, context[idx]["title"], context[idx]["content"]) for idx in range(len(context))]
     if len(contexts) == 0:
         contexts = [""]
-    context = tokenizer.decode(tokenizer.encode("\n".join(contexts), add_special_tokens=False)[:context_length])
+    context = tokenizer.decode(tokenizer.encode("\n".join(contexts), add_special_tokens=False)[:CONTEXT_LENGTH])
 
     medrag_system_prompt = '''You are a helpful medical expert, and your task is to answer a multi-choice medical question using the relevant documents. Please first think step-by-step and then choose the answer from the provided options. Organize your output in a json formatted as Dict{"step_by_step_thinking": Str(explanation), "answer_choice": Str{A/B/C/...}}. Your responses will be used for research purposes only, so please have a definite answer.'''
     medrag_prompt = Template('''
