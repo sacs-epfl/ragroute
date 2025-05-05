@@ -5,6 +5,7 @@ import json
 import logging
 import os
 import pickle
+import time
 
 import numpy as np
 
@@ -181,13 +182,20 @@ class Router:
         """Process a query and determine which clients should handle it."""
         logger.debug(f"Router processing query: {query_data['id']}")
 
+        start_time = time.time()
         query_embed = self.encode_query(query_data["query"])
+        embed_time = time.time() - start_time
+
+        start_time = time.time()
         sources_corpora = self.select_relevant_sources(query_embed)
+        select_time = time.time() - start_time
         
         response = {
             "query_id": query_data["id"],
             "data_sources": sources_corpora,
-            "embedding": query_embed.tolist() if isinstance(query_embed, np.ndarray) else query_embed
+            "embedding": query_embed.tolist() if isinstance(query_embed, np.ndarray) else query_embed,
+            "embedding_time": embed_time,
+            "selection_time": select_time,
         }
         
         await self.sender.send_json(response)

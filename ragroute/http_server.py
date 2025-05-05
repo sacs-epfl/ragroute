@@ -5,6 +5,7 @@ import asyncio
 from asyncio import ensure_future
 import logging
 import json
+import time
 from typing import List
 import uuid
 from aiohttp import web
@@ -116,7 +117,8 @@ class HTTPServer:
             "query": query,
             "choices": choices,
             "client_results": {},
-            "pending_data_sources": set()
+            "pending_data_sources": set(),
+            "metadata": {},
         }
         
         # Send query to router
@@ -145,6 +147,8 @@ class HTTPServer:
                     query_id = routing_data["query_id"]
                     data_sources = routing_data["data_sources"]
                     embedding = routing_data["embedding"]
+                    embedding_time = routing_data["embedding_time"]
+                    selection_time = routing_data["selection_time"]
 
                     # Convert data_sources to a list of client IDs
                     client_ids = [self.data_sources.index(ds) for ds in data_sources]
@@ -154,6 +158,13 @@ class HTTPServer:
                     if query_id in self.active_queries:
                         # Update pending clients
                         self.active_queries[query_id]["pending_data_sources"] = set(client_ids)
+                        self.active_queries[query_id]["metadata"]["data_sources"] = data_sources
+                        self.active_queries[query_id]["metadata"]["embedding_time"] = embedding_time
+                        self.active_queries[query_id]["metadata"]["selection_time"] = selection_time
+
+                        # Start time for document selection
+                        start_time = time.time()
+                        self.active_queries[query_id]["doc_select_start_time"] = start_time
                         
                         # Forward query to designated clients
                         query = self.active_queries[query_id]["query"]
@@ -166,6 +177,7 @@ class HTTPServer:
                             
                         # If no clients were selected, complete the query immediately
                         if not data_sources:
+                            self.active_queries[query_id]["metadata"]["doc_select_time"] = 0
                             ensure_future(self._complete_query(query_id))
                     else:
                         logger.warning(f"Received routing for unknown query: {query_id}")
@@ -197,6 +209,7 @@ class HTTPServer:
                             
                         # We received responses from all clients, rerank and complete the query
                         if not self.active_queries[query_id]["pending_data_sources"]:
+                            self.active_queries[query_id]["metadata"]["doc_select_time"] = time.time() - self.active_queries[query_id]["doc_select_start_time"]
                             ensure_future(self._complete_query(query_id))
                     else:
                         logger.warning(f"Received result for unknown query: {query_id}")
@@ -229,13 +242,17 @@ class HTTPServer:
         filtered_docs, _ = rerank(all_docs, all_scores, K)
 
         try:
+            start_time = time.time()
             llm_message = generate_llm_message(query_data["query"], filtered_docs, query_data["choices"])
             response_: ChatResponse = await AsyncClient().chat(model=OLLAMA_MODEL_NAME, messages=llm_message, options={"num_predict": MAX_TOKENS})
+            generate_time = time.time() - start_time
+            self.active_queries[query_id]["metadata"]["generate_time"] = generate_time
             response["answer"] = response_['message']['content']
         except Exception as e:
             logger.error(f"Error generating LLM message: {e}", exc_info=True)
             response["answer"] = f"Error generating response: {str(e)}"
 
+        response["metadata"] = query_data["metadata"]
         if not query_data["future"].done():
             query_data["future"].set_result(response)
             
