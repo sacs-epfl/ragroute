@@ -23,6 +23,7 @@ async def main():
     parser.add_argument("--benchmark", type=str, default="MIRAGE", choices=["MIRAGE"], help="Benchmark name")
     parser.add_argument("--parallel", type=int, default=1, help="Number of parallel requests to send")
     parser.add_argument("--routing", type=str, required=True, choices=["ragroute", "all", "random", "none"], help="Routing method to use")
+    parser.add_argument("--questions", type=str, default=None, choices=['medqa', 'medmcqa', 'pubmedqa', 'bioasq', 'mmlu'], help="The questions to use for the benchmark")
     args = parser.parse_args()
 
     benchmark_file: str = os.path.join("data", "benchmark_%s_%s.csv" % (args.benchmark, args.routing))
@@ -51,7 +52,12 @@ async def main():
     # Load the benchmark
     benchmark = Benchmark(args.benchmark)
     async with aiohttp.ClientSession() as session:
-        for dataset_name, questions in benchmark.benchmark_data.items():
+        question_banks = list(benchmark.benchmark_data.keys())
+        if args.questions is not None:
+            question_banks = [args.questions]
+
+        for question_bank in question_banks:
+            questions = benchmark.benchmark_data[question_bank]
             question_items = list(questions.items())
             for i in tqdm(range(0, len(question_items), args.parallel)):
                 batch = question_items[i:i + args.parallel]
@@ -88,13 +94,13 @@ async def main():
                     data_sources = ":".join(metadata["data_sources"])
 
                     with open(benchmark_file, "a") as f:
-                        f.write(f"{args.benchmark},{dataset_name},{question_id},{int(is_correct)},{data_sources},{len(metadata['data_sources'])},"
+                        f.write(f"{args.benchmark},{question_bank},{question_id},{int(is_correct)},{data_sources},{len(metadata['data_sources'])},"
                                 f"{metadata['selection_time']},{metadata['embedding_time']},{metadata['doc_select_time']},"
                                 f"{metadata['generate_time']},{metadata['e2e_time']},{metadata['docs_tokens']}\n")
                         
                     with open(ds_stats_file, "a") as f:
                         for data_source, stats in metadata["data_sources_stats"].items():
-                            f.write(f"{args.benchmark},{dataset_name},{question_id},{data_source},{stats['duration']},{stats['message_size']}\n")
+                            f.write(f"{args.benchmark},{question_bank},{question_id},{data_source},{stats['duration']},{stats['message_size']}\n")
 
                     print(f"--> Score: {num_correct}/{num_questions}")
 
