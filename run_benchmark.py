@@ -26,15 +26,15 @@ async def main():
     args = parser.parse_args()
 
     benchmark_file: str = os.path.join("data", "benchmark_%s_%s.csv" % (args.benchmark, args.routing))
-    ds_durations_file: str = os.path.join("data", "ds_durations_%s_%s.csv" % (args.benchmark, args.routing))
+    ds_stats_file: str = os.path.join("data", "ds_stats_%s_%s.csv" % (args.benchmark, args.routing))
 
     if not os.path.exists(benchmark_file):
         with open(benchmark_file, "w") as f:
             f.write("benchmark,dataset,question_id,correct,data_sources,num_data_sources,selection_time,embedding_time,doc_select_time,generate_time,e2e_time\n")
 
-    if not os.path.exists(ds_durations_file):
-        with open(ds_durations_file, "w") as f:
-            f.write("benchmark,dataset,question_id,data_source,duration\n")
+    if not os.path.exists(ds_stats_file):
+        with open(ds_stats_file, "w") as f:
+            f.write("benchmark,dataset,question_id,data_source,duration,msg_size\n")
 
     # Load the benchmark file and create the set of all question_ids that are there
     existing_question_ids = set()
@@ -92,9 +92,9 @@ async def main():
                                 f"{metadata['selection_time']},{metadata['embedding_time']},{metadata['doc_select_time']},"
                                 f"{metadata['generate_time']},{metadata['e2e_time']}\n")
                         
-                    with open(ds_durations_file, "a") as f:
-                        for data_source, duration in metadata["time_per_data_source"].items():
-                            f.write(f"{args.benchmark},{dataset_name},{question_id},{data_source},{duration}\n")
+                    with open(ds_stats_file, "a") as f:
+                        for data_source, stats in metadata["data_sources_stats"].items():
+                            f.write(f"{args.benchmark},{dataset_name},{question_id},{data_source},{stats['duration']},{stats['message_size']}\n")
 
                     print(f"--> Score: {num_correct}/{num_questions}")
 

@@ -164,7 +164,7 @@ class HTTPServer:
                         self.active_queries[query_id]["metadata"]["data_sources"] = data_sources
                         self.active_queries[query_id]["metadata"]["embedding_time"] = embedding_time
                         self.active_queries[query_id]["metadata"]["selection_time"] = selection_time
-                        self.active_queries[query_id]["metadata"]["time_per_data_source"] = {}
+                        self.active_queries[query_id]["metadata"]["data_sources_stats"] = {}
 
                         # Start time for document selection
                         start_time = time.time()
@@ -198,7 +198,10 @@ class HTTPServer:
             while self.running:
                 try:
                     # Wait for messages with a timeout to allow for clean shutdown
-                    result_data = await asyncio.wait_for(self.client_receivers[client_id].recv_json(), timeout=1)
+                    raw_message = await asyncio.wait_for(self.client_receivers[client_id].recv(), timeout=1)
+                    message_size = len(raw_message)  # Get the size of the raw message in bytes
+                    result_data = json.loads(raw_message.decode('utf-8'))
+
                     query_id = result_data["query_id"]
                     ds_name: str = result_data["name"]
                     
@@ -207,7 +210,10 @@ class HTTPServer:
                     if query_id in self.active_queries:
                         # Store the results
                         self.active_queries[query_id]["client_results"][client_id] = (result_data["docs"], result_data["scores"])
-                        self.active_queries[query_id]["metadata"]["time_per_data_source"][ds_name] = result_data["duration"]
+                        self.active_queries[query_id]["metadata"]["data_sources_stats"][ds_name] = {
+                            "duration": result_data["duration"],
+                            "message_size": message_size
+                        }
                         
                         # Update pending clients
                         if client_id in self.active_queries[query_id]["pending_data_sources"]:
