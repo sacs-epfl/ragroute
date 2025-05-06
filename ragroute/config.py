@@ -22,7 +22,7 @@ DATA_SOURCES = {
 }
 K = 32  # Number of documents to retrieve from each data source
 
-SUPPORTED_MODELS = ["llama3.1-8B-instruct", "qwen3-8B"]
+SUPPORTED_MODELS = ["llama3.1-8B-instruct", "qwen3-8B", "qwen3-0.6B"]
 MODELS = {
     "llama3.1-8B-instruct": {
         "docs_context_length": 128000,
@@ -35,5 +35,11 @@ MODELS = {
         "max_tokens": 40960,
         "hf_name": "Qwen/Qwen3-8B",
         "ollama_name": "qwen3:8b",
+    },
+    "qwen3-0.6B": {
+        "docs_context_length": 38000,
+        "max_tokens": 40960,
+        "hf_name": "Qwen/Qwen3-0.6B",
+        "ollama_name": "qwen3:0.6b",
     }
 }
