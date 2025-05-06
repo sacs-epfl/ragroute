@@ -28,8 +28,9 @@ logger = logging.getLogger("server")
 class HTTPServer:
     """HTTP server that coordinates the federated search system."""
     
-    def __init__(self, data_sources: List[str]):
+    def __init__(self, data_sources: List[str], routing_strategy: str):
         self.data_sources: List[str] = data_sources
+        self.routing_strategy: str = routing_strategy
         self.num_clients = len(data_sources)
         self.app = web.Application()
         self.app.add_routes([
@@ -318,7 +319,7 @@ class HTTPServer:
         
         logger.info("Server stopped")
         
-async def run_server(data_sources: List[str]):
-    server = HTTPServer(data_sources)
+async def run_server(data_sources: List[str], routing_strategy: str) -> HTTPServer:
+    server = HTTPServer(data_sources, routing_strategy)
     await server.start()
     return server

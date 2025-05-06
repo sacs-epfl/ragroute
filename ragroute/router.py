@@ -27,6 +27,9 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("router")
 
 
+INPUT_DIMENSION = 1536  # Dimension of the input features for the neural network
+
+
 class CorpusRoutingNN(nn.Module):
     def __init__(self, input_dim):
         super(CorpusRoutingNN, self).__init__()
@@ -59,9 +62,10 @@ class CustomizeSentenceTransformer(SentenceTransformer): # change the default po
 class Router:
     """Router that processes queries and determines which clients should handle them."""
     
-    def __init__(self, data_sources: List[str]):
-        self.data_sources = data_sources
-        self.running = False
+    def __init__(self, data_sources: List[str], routing_strategy: str):
+        self.data_sources: List[str] = data_sources
+        self.routing_strategy: str = routing_strategy
+        self.running: bool = False
         self.context = zmq.asyncio.Context()
         self.queue = QueryQueue(MAX_QUEUE_SIZE)
 
@@ -85,6 +89,27 @@ class Router:
         # Start the worker tasks
         receive_task = asyncio.create_task(self._receive_queries())
         process_task = asyncio.create_task(self._process_queue())
+
+        # Load the model
+        model_path = os.path.join(USR_DIR, "MedRAG/routing/best_model.pth")
+        self.router = CorpusRoutingNN(INPUT_DIMENSION).to(self.device)
+        self.router.load_state_dict(torch.load(model_path, map_location=self.device))
+        self.router.eval()
+
+        # Load scalar
+        scaler_path = os.path.join(USR_DIR, "MedRAG/routing/preprocessed_data.pkl")
+        with open(scaler_path, "rb") as f:
+            _, _, _, self.scaler, _ = pickle.load(f)
+
+        # Load the centroids
+        self.centroids = {}
+        for corpus in self.data_sources:
+            stats_file = os.path.join(USR_DIR, "MedRAG/routing/", f"{corpus}_stats.json")
+            with open(stats_file, "r") as f:
+                corpus_stats = json.load(f)
+
+            centroid = np.array(corpus_stats["centroid"], dtype=np.float32)
+            self.centroids[corpus] = centroid
         
         try:
             await asyncio.gather(receive_task, process_task)
@@ -129,53 +154,38 @@ class Router:
             raise
 
     def select_relevant_sources(self, query_embed):
-        if ONLINE:
-            inputs = []
-            
-            for corpus in self.data_sources:
-                stats_file = os.path.join(USR_DIR, "MedRAG/routing/", f"{corpus}_stats.json")
-                with open(stats_file, "r") as f:
-                    corpus_stats = json.load(f)
-
-                centroid = np.array(corpus_stats["centroid"], dtype=np.float32)
-                features = np.concatenate([query_embed.flatten(), centroid])
-                inputs.append(features)
-            
-            # Load scaler
-            scaler_path = os.path.join(USR_DIR, "MedRAG/routing/preprocessed_data.pkl")
-            with open(scaler_path, "rb") as f:
-                _, _, _, scaler, _ = pickle.load(f)
-            inputs = scaler.transform(inputs)
-
-            input_tensor = torch.tensor(inputs, dtype=torch.float32).to(self.device)
-
-            model_path = os.path.join(USR_DIR, "MedRAG/routing/best_model.pth")
-            model = CorpusRoutingNN(input_tensor.shape[1]).to(self.device)
-            model.load_state_dict(torch.load(model_path, map_location=self.device))
-            model.eval()
-
-            with torch.no_grad():
-                outputs = model(input_tensor)
-                outputs = outputs.view(-1)
-                probabilities = torch.sigmoid(outputs)
-                predictions = (probabilities > 0.5).cpu().numpy()
-
-            sources_corpora = [corpus for prediction, corpus in zip(predictions, self.data_sources) if prediction]
+        if self.routing_strategy == "ragroute":
+            return self.select_relevant_sources_ragroute(query_embed)
+        elif self.routing_strategy == "all":
+            return self.data_sources
+        elif self.routing_strategy == "random":
+            raise NotImplementedError("Random routing strategy is not implemented yet.")
+        elif self.routing_strategy == "none":
+            return []
         else:
-            sources_corpora = self.data_sources
+            raise ValueError(f"Unknown routing strategy: {self.routing_strategy}")
 
+    def select_relevant_sources_ragroute(self, query_embed) -> List[str]:
+        inputs = []
+        for corpus in self.data_sources:
+            features = np.concatenate([query_embed.flatten(), self.centroids[corpus]])
+            inputs.append(features)
+        
+        inputs = self.scaler.transform(inputs)
+        input_tensor = torch.tensor(inputs, dtype=torch.float32).to(self.device)
+
+        with torch.no_grad():
+            outputs = self.router(input_tensor)
+            outputs = outputs.view(-1)
+            probabilities = torch.sigmoid(outputs)
+            predictions = (probabilities > 0.5).cpu().numpy()
+
+        sources_corpora = [corpus for prediction, corpus in zip(predictions, self.data_sources) if prediction]
         return sources_corpora
 
     def encode_query(self, query):
-        if ONLINE:
-            with torch.no_grad():
-                query_embed = self.embedding_function.encode([query])
-        else:
-            retrieval_cache_dir = os.path.join(USR_DIR, "MedRAG/retrieval_cache/") # bioasq	medmcqa  medqa	mmlu  pubmedqa
-            emb_path = os.path.join(retrieval_cache_dir, dataset_name, "emb_queries", question_id+".npy")
-            query_embed = np.load(emb_path)
-
-        return query_embed
+        with torch.no_grad():
+            return self.embedding_function.encode([query])
             
     async def _process_query(self, query_data):
         """Process a query and determine which clients should handle it."""
@@ -208,9 +218,9 @@ class Router:
         self.sender.close()
         self.context.term()
 
-async def run_router(data_sources: List[str]):
+async def run_router(data_sources: List[str], routing_strategy: str):
     """Run the router process."""
-    router = Router(data_sources)
+    router = Router(data_sources, routing_strategy)
     await router.start()
 
 

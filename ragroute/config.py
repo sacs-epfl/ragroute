@@ -17,7 +17,7 @@ HTTP_PORT = 8000
 MAX_QUEUE_SIZE = 100
 
 # For loading the models and data
-USR_DIR = "/Users/martijndevos"
+USR_DIR = "/Users/mdevos"
 MEDRAG_DIR = os.path.join(USR_DIR, "MedRAG", "corpus")
 ONLINE = True  # Whether we compute everything from scratch or use the precomputed information
 

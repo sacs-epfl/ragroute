@@ -11,9 +11,9 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("main")
 
 
-def start_router(data_sources: List[str]):
+def start_router(data_sources: List[str], routing_strategy: str):
     from ragroute.router import run_router
-    asyncio.run(run_router(data_sources))
+    asyncio.run(run_router(data_sources, routing_strategy))
 
 def start_data_source(index: int, dataset: str, data_source: str):
     from ragroute.data_source import run_data_source
@@ -23,13 +23,14 @@ def start_data_source(index: int, dataset: str, data_source: str):
 class FederatedSearchSystem:
     """Main controller for the federated search system."""
     
-    def __init__(self, dataset):
-        self.dataset = dataset
+    def __init__(self, args):
+        self.dataset: str = args.dataset
+        self.routing_strategy: str = args.routing
         self.processes = []
         self.server = None
         self.shutting_down = False
         self.main_task = None
-        self.data_sources: List[str] = DATA_SOURCES[dataset]
+        self.data_sources: List[str] = DATA_SOURCES[self.dataset]
         self.data_source_processes: Dict = {}
         
     async def start(self):
@@ -39,7 +40,7 @@ class FederatedSearchSystem:
         self.main_task = asyncio.current_task()
         
         # Start router process
-        router_process = Process(target=start_router, args=(self.data_sources,))
+        router_process = Process(target=start_router, args=(self.data_sources, self.routing_strategy))
         router_process.start()
         self.processes.append(router_process)
         logger.info("Router process started")
@@ -57,7 +58,7 @@ class FederatedSearchSystem:
         
         # Start the server
         from ragroute.http_server import run_server
-        self.server = await run_server(self.data_sources)
+        self.server = await run_server(self.data_sources, self.routing_strategy)
         logger.info("Server started")
         
         # Setup signal handler for graceful shutdown
@@ -132,9 +133,10 @@ class FederatedSearchSystem:
 def main():
     parser = argparse.ArgumentParser(description="RAGRoute")
     parser.add_argument("--dataset", type=str, default="medrag", choices=["medrag"], help="The dataset being evaluated (influences the data sources)")
+    parser.add_argument("--routing", type=str, default="ragroute", choices=["ragroute", "all", "random", "none"], help="The routing method to use - for random, we randomly pick n/2 of the n data sources")
     args = parser.parse_args()
     
-    controller = FederatedSearchSystem(args.dataset)
+    controller = FederatedSearchSystem(args)
     try:
         asyncio.run(controller.start())
     except KeyboardInterrupt:

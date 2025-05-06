@@ -9,7 +9,7 @@ from tqdm import tqdm
 from ragroute.benchmark import Benchmark
 
 
-async def fetch_answer(session, url, question_data, benchmark):
+async def fetch_answer(session, url):
     async with session.get(url) as response:
         if response.status == 200:
             return await response.json()
@@ -22,10 +22,11 @@ async def main():
     parser = argparse.ArgumentParser(description="Run a benchmark with RAGRoute.")
     parser.add_argument("--benchmark", type=str, default="MIRAGE", choices=["MIRAGE"], help="Benchmark name")
     parser.add_argument("--parallel", type=int, default=1, help="Number of parallel requests to send")
+    parser.add_argument("--routing", type=str, required=True, choices=["ragroute", "all", "random", "none"], help="Routing method to use")
     args = parser.parse_args()
 
-    benchmark_file: str = os.path.join("data", "benchmark_%s.csv" % args.benchmark)
-    ds_durations_file: str = os.path.join("data", "ds_durations_%s.csv" % args.benchmark)
+    benchmark_file: str = os.path.join("data", "benchmark_%s_%s.csv" % (args.benchmark, args.routing))
+    ds_durations_file: str = os.path.join("data", "ds_durations_%s_%s.csv" % (args.benchmark, args.routing))
 
     if not os.path.exists(benchmark_file):
         with open(benchmark_file, "w") as f:
@@ -67,7 +68,7 @@ async def main():
                     encoded_options = aiohttp.helpers.quote(json.dumps(options))
                     url = f"http://localhost:8000/query?q={encoded_question}&choices={encoded_options}"
 
-                    task = fetch_answer(session, url, question_data, benchmark)
+                    task = fetch_answer(session, url)
                     tasks.append(task)
 
                 # Run the batch concurrently
