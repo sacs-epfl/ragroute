@@ -252,6 +252,7 @@ class HTTPServer:
             all_scores.extend(results[1])
 
         filtered_docs, _ = rerank(all_docs, all_scores, K)
+        llm_message, docs_tokens = generate_llm_message(query_data["query"], filtered_docs, query_data["choices"])
 
         if self.disable_llm:
             self.active_queries[query_id]["metadata"]["generate_time"] = 0
@@ -259,7 +260,6 @@ class HTTPServer:
         else:
             try:
                 start_time = time.time()
-                llm_message = generate_llm_message(query_data["query"], filtered_docs, query_data["choices"])
                 response_: ChatResponse = await AsyncClient().chat(model=OLLAMA_MODEL_NAME, messages=llm_message, options={"num_predict": MAX_TOKENS})
                 generate_time = time.time() - start_time
                 self.active_queries[query_id]["metadata"]["generate_time"] = generate_time
@@ -270,6 +270,7 @@ class HTTPServer:
 
         response["metadata"] = query_data["metadata"]
         response["metadata"]["e2e_time"] = time.time() - query_data["query_start_time"]
+        response["metadata"]["docs_tokens"] = docs_tokens
         if not query_data["future"].done():
             query_data["future"].set_result(response)
 
