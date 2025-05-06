@@ -54,7 +54,7 @@ class Benchmark:
             ans = re.findall(r"^\s*(A|B|C|D):", sentence)
             if len(ans) > 0:
                 return ans[0].upper()
-            return "A"
+            return ""
 
         answer_list = ["A", "B", "C", "D"]
 
