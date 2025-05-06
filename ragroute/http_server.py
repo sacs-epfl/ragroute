@@ -15,9 +15,9 @@ import zmq
 import zmq.asyncio
 
 from ragroute.config import (
-    K, MAX_TOKENS, OLLAMA_MODEL_NAME, SERVER_ROUTER_PORT, ROUTER_SERVER_PORT,
+    K, SERVER_ROUTER_PORT, ROUTER_SERVER_PORT,
     SERVER_CLIENT_BASE_PORT, CLIENT_SERVER_BASE_PORT,
-    HTTP_HOST, HTTP_PORT
+    HTTP_HOST, HTTP_PORT, MODELS
 )
 from ragroute.llm_message import generate_llm_message
 from ragroute.rerank import rerank
@@ -28,9 +28,10 @@ logger = logging.getLogger("server")
 class HTTPServer:
     """HTTP server that coordinates the federated search system."""
     
-    def __init__(self, data_sources: List[str], routing_strategy: str, disable_llm: bool = False):
+    def __init__(self, data_sources: List[str], routing_strategy: str, model: str, disable_llm: bool = False):
         self.data_sources: List[str] = data_sources
         self.routing_strategy: str = routing_strategy
+        self.model_info = MODELS[model]
         self.disable_llm: bool = disable_llm
         self.num_clients = len(data_sources)
         self.app = web.Application()
@@ -260,7 +261,7 @@ class HTTPServer:
         else:
             try:
                 start_time = time.time()
-                response_: ChatResponse = await AsyncClient().chat(model=OLLAMA_MODEL_NAME, messages=llm_message, options={"num_predict": MAX_TOKENS})
+                response_: ChatResponse = await AsyncClient().chat(model=self.model_info["ollama_name"], messages=llm_message, options={"num_predict": self.model_info["max_tokens"]})
                 generate_time = time.time() - start_time
                 self.active_queries[query_id]["metadata"]["generate_time"] = generate_time
                 response["answer"] = response_['message']['content']
@@ -331,7 +332,7 @@ class HTTPServer:
         
         logger.info("Server stopped")
         
-async def run_server(data_sources: List[str], routing_strategy: str, disable_llm: bool = False) -> HTTPServer:
-    server = HTTPServer(data_sources, routing_strategy, disable_llm=disable_llm)
+async def run_server(data_sources: List[str], routing_strategy: str, model: str, disable_llm: bool = False) -> HTTPServer:
+    server = HTTPServer(data_sources, routing_strategy, model, disable_llm=disable_llm)
     await server.start()
     return server
