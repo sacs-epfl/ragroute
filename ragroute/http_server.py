@@ -31,6 +31,7 @@ class HTTPServer:
     def __init__(self, data_sources: List[str], routing_strategy: str, model: str, disable_llm: bool = False):
         self.data_sources: List[str] = data_sources
         self.routing_strategy: str = routing_strategy
+        self.model: str = model
         self.model_info = MODELS[model]
         self.disable_llm: bool = disable_llm
         self.num_clients = len(data_sources)
@@ -253,7 +254,7 @@ class HTTPServer:
             all_scores.extend(results[1])
 
         filtered_docs, _ = rerank(all_docs, all_scores, K)
-        llm_message, docs_tokens = generate_llm_message(query_data["query"], filtered_docs, query_data["choices"])
+        llm_message, docs_tokens = generate_llm_message(query_data["query"], filtered_docs, query_data["choices"], self.model)
 
         if self.disable_llm:
             self.active_queries[query_id]["metadata"]["generate_time"] = 0
@@ -272,6 +273,7 @@ class HTTPServer:
         response["metadata"] = query_data["metadata"]
         response["metadata"]["e2e_time"] = time.time() - query_data["query_start_time"]
         response["metadata"]["docs_tokens"] = docs_tokens
+        response["metadata"]["llm"] = self.model
         if not query_data["future"].done():
             query_data["future"].set_result(response)
 
