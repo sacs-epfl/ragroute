@@ -28,9 +28,10 @@ logger = logging.getLogger("server")
 class HTTPServer:
     """HTTP server that coordinates the federated search system."""
     
-    def __init__(self, data_sources: List[str], routing_strategy: str):
+    def __init__(self, data_sources: List[str], routing_strategy: str, disable_llm: bool = False):
         self.data_sources: List[str] = data_sources
         self.routing_strategy: str = routing_strategy
+        self.disable_llm: bool = disable_llm
         self.num_clients = len(data_sources)
         self.app = web.Application()
         self.app.add_routes([
@@ -246,22 +247,26 @@ class HTTPServer:
 
         filtered_docs, _ = rerank(all_docs, all_scores, K)
 
-        try:
-            start_time = time.time()
-            llm_message = generate_llm_message(query_data["query"], filtered_docs, query_data["choices"])
-            response_: ChatResponse = await AsyncClient().chat(model=OLLAMA_MODEL_NAME, messages=llm_message, options={"num_predict": MAX_TOKENS})
-            generate_time = time.time() - start_time
-            self.active_queries[query_id]["metadata"]["generate_time"] = generate_time
-            response["answer"] = response_['message']['content']
-        except Exception as e:
-            logger.error(f"Error generating LLM message: {e}", exc_info=True)
-            response["answer"] = f"Error generating response: {str(e)}"
+        if self.disable_llm:
+            self.active_queries[query_id]["metadata"]["generate_time"] = 0
+            response["answer"] = ""
+        else:
+            try:
+                start_time = time.time()
+                llm_message = generate_llm_message(query_data["query"], filtered_docs, query_data["choices"])
+                response_: ChatResponse = await AsyncClient().chat(model=OLLAMA_MODEL_NAME, messages=llm_message, options={"num_predict": MAX_TOKENS})
+                generate_time = time.time() - start_time
+                self.active_queries[query_id]["metadata"]["generate_time"] = generate_time
+                response["answer"] = response_['message']['content']
+            except Exception as e:
+                logger.error(f"Error generating LLM message: {e}", exc_info=True)
+                response["answer"] = f"Error generating response: {str(e)}"
 
         response["metadata"] = query_data["metadata"]
         response["metadata"]["e2e_time"] = time.time() - query_data["query_start_time"]
         if not query_data["future"].done():
             query_data["future"].set_result(response)
-            
+
         del self.active_queries[query_id]
             
     async def stop(self):
@@ -319,7 +324,7 @@ class HTTPServer:
         
         logger.info("Server stopped")
         
-async def run_server(data_sources: List[str], routing_strategy: str) -> HTTPServer:
-    server = HTTPServer(data_sources, routing_strategy)
+async def run_server(data_sources: List[str], routing_strategy: str, disable_llm: bool = False) -> HTTPServer:
+    server = HTTPServer(data_sources, routing_strategy, disable_llm=disable_llm)
     await server.start()
     return server

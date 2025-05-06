@@ -26,6 +26,7 @@ class FederatedSearchSystem:
     def __init__(self, args):
         self.dataset: str = args.dataset
         self.routing_strategy: str = args.routing
+        self.disable_llm: bool = args.disable_llm
         self.processes = []
         self.server = None
         self.shutting_down = False
@@ -58,7 +59,7 @@ class FederatedSearchSystem:
         
         # Start the server
         from ragroute.http_server import run_server
-        self.server = await run_server(self.data_sources, self.routing_strategy)
+        self.server = await run_server(self.data_sources, self.routing_strategy, self.disable_llm)
         logger.info("Server started")
         
         # Setup signal handler for graceful shutdown
@@ -134,6 +135,7 @@ def main():
     parser = argparse.ArgumentParser(description="RAGRoute")
     parser.add_argument("--dataset", type=str, default="medrag", choices=["medrag"], help="The dataset being evaluated (influences the data sources)")
     parser.add_argument("--routing", type=str, default="ragroute", choices=["ragroute", "all", "random", "none"], help="The routing method to use - for random, we randomly pick n/2 of the n data sources")
+    parser.add_argument("--disable-llm", action="store_true", help="Disable the LLM for testing purposes")
     args = parser.parse_args()
     
     controller = FederatedSearchSystem(args)
