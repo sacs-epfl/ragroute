@@ -20,7 +20,7 @@ import zmq.asyncio
 from sentence_transformers.models import Transformer, Pooling
 from sentence_transformers import SentenceTransformer
 
-from ragroute.config import ONLINE, SERVER_ROUTER_PORT, ROUTER_SERVER_PORT, MAX_QUEUE_SIZE, USR_DIR
+from ragroute.config import SERVER_ROUTER_PORT, ROUTER_SERVER_PORT, MAX_QUEUE_SIZE, USR_DIR
 from ragroute.queue_manager import QueryQueue
 
 logging.basicConfig(level=logging.INFO)

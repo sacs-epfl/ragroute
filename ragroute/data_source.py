@@ -14,7 +14,7 @@ import numpy as np
 import zmq
 import zmq.asyncio
 
-from ragroute.config import K, MEDRAG_DIR, ONLINE, SERVER_CLIENT_BASE_PORT, CLIENT_SERVER_BASE_PORT, USR_DIR
+from ragroute.config import K, MEDRAG_DIR, SERVER_CLIENT_BASE_PORT, CLIENT_SERVER_BASE_PORT
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("client")
@@ -112,38 +112,18 @@ class DataSource:
                 results.append(json.loads(line))  # Parse only when needed
             return results
         
-        if ONLINE:
-            index, metadatas = self.faiss_indexes[self.index_dir]
-            res_ = index.search(query_embed, k=k)
-            scores = res_[0][0].tolist()
+        index, metadatas = self.faiss_indexes[self.index_dir]
+        res_ = index.search(query_embed, k=k)
+        scores = res_[0][0].tolist()
 
-            # from faiss idx to corresponding source and index
-            indices = [metadatas[i] for i in res_[1][0]]
-            # get the corresponding documents
-            docs = idx2txt(indices)
-        else:
-            # retrieve_docs_from_file to go faster
-            corpus_path = os.path.join(USR_DIR, "MedRAG/retrieval_cache", dataset_name, self.name)
-            
-            # Paths to the files
-            texts_file = os.path.join(corpus_path, f"top_32_{question_id}_texts.json")
-            scores_file = os.path.join(corpus_path, f"top_32_{question_id}_scores.txt")
-
-            # Read texts
-            with open(texts_file, "r") as f_texts:
-                texts = json.load(f_texts)
-            # Read scores
-            with open(scores_file, "r") as f_scores:
-                scores = [float(line.strip()) for line in f_scores]
-
-            # Retrieve only the top-k results
-            docs = texts[:k]
-            scores = scores[:k]
+        # from faiss idx to corresponding source and index
+        indices = [metadatas[i] for i in res_[1][0]]
+        # get the corresponding documents
+        docs = idx2txt(indices)
 
         return docs, scores
             
     def stop(self):
-        """Stop the client."""
         logger.info(f"Stopping client {self.client_id}")
         self.running = False
         self.receiver.close()
