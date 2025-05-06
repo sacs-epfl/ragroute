@@ -185,7 +185,7 @@ class Router:
 
     def encode_query(self, query):
         with torch.no_grad():
-            return self.embedding_function.encode([query])
+            return self.embedding_function.encode([query], show_progress_bar=False)
             
     async def _process_query(self, query_data):
         """Process a query and determine which clients should handle it."""
