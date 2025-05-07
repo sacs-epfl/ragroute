@@ -44,8 +44,8 @@ async def main():
         lines = f.readlines()
         for line in lines[1:]:
             parts = line.strip().split(",")
-            if len(parts) > 2:
-                existing_question_ids.add(parts[2])
+            if len(parts) > 3:
+                existing_question_ids.add(parts[3])
 
     num_questions: int = 0
     num_correct: int = 0
