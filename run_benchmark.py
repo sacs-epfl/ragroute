@@ -28,6 +28,7 @@ async def main():
 
     benchmark_file: str = os.path.join("data", "benchmark_%s_%s.csv" % (args.benchmark, args.routing))
     ds_stats_file: str = os.path.join("data", "ds_stats_%s_%s.csv" % (args.benchmark, args.routing))
+    answer_file: str = os.path.join("data", "answers.jsonl")
 
     if not os.path.exists(benchmark_file):
         with open(benchmark_file, "w") as f:
@@ -89,6 +90,10 @@ async def main():
                     is_correct = benchmark.check_mirage_answer(question_data, result["answer"])
                     num_questions += 1
                     num_correct += bool(is_correct)
+
+                    # Record the answer
+                    with open(answer_file, "a") as f:
+                        f.write(json.dumps({"question_id": question_id, "answer": result["answer"]}) + "\n")
 
                     metadata = result["metadata"]
                     data_sources = ":".join(metadata["data_sources"])
