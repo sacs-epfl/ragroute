@@ -1,6 +1,3 @@
-"""Queue manager for the router process."""
-
-import asyncio
 from asyncio import Queue
 
 

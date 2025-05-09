@@ -1,29 +1,81 @@
 """Router process for the federated search system."""
 
 import asyncio
+import json
 import logging
+import os
+import pickle
+import time
+from typing import List
+
+import numpy as np
+
+import torch
+import torch.nn as nn
+import torch.nn.functional as F
 
 import zmq
 import zmq.asyncio
 
-from ragroute.config import SERVER_ROUTER_PORT, ROUTER_SERVER_PORT, MAX_QUEUE_SIZE
+from sentence_transformers.models import Transformer, Pooling
+from sentence_transformers import SentenceTransformer
+
+from ragroute.config import SERVER_ROUTER_PORT, ROUTER_SERVER_PORT, MAX_QUEUE_SIZE, USR_DIR
 from ragroute.queue_manager import QueryQueue
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("router")
 
+
+INPUT_DIMENSION = 1536  # Dimension of the input features for the neural network
+
+
+class CorpusRoutingNN(nn.Module):
+    def __init__(self, input_dim):
+        super(CorpusRoutingNN, self).__init__()
+        self.fc1 = nn.Linear(input_dim, 256)
+        self.ln1 = nn.LayerNorm(256)
+        self.dropout1 = nn.Dropout(0.4)
+
+        self.fc2 = nn.Linear(256, 128)
+        self.ln2 = nn.LayerNorm(128)
+        self.dropout2 = nn.Dropout(0.4)
+
+        self.fc3 = nn.Linear(128, 1)
+
+    def forward(self, x):
+        x = F.relu(self.ln1(self.fc1(x)))
+        x = self.dropout1(x)
+        x = F.relu(self.ln2(self.fc2(x)))
+        x = self.dropout2(x)
+        return self.fc3(x)
+
+
+class CustomizeSentenceTransformer(SentenceTransformer): # change the default pooling "MEAN" to "CLS"
+    def _load_auto_model(self, model_name_or_path, *args, **kwargs):
+        cache_path = os.path.join(USR_DIR, ".cache/torch/sentence_transformers", model_name_or_path)
+        transformer_model = Transformer(model_name_or_path, cache_dir=cache_path)
+        pooling_model = Pooling(transformer_model.get_word_embedding_dimension(), 'cls')
+        return [transformer_model, pooling_model]
+
+
 class Router:
     """Router that processes queries and determines which clients should handle them."""
     
-    def __init__(self, num_clients):
-        self.num_clients = num_clients
-        self.running = False
+    def __init__(self, data_sources: List[str], routing_strategy: str):
+        self.data_sources: List[str] = data_sources
+        self.routing_strategy: str = routing_strategy
+        self.running: bool = False
         self.context = zmq.asyncio.Context()
         self.queue = QueryQueue(MAX_QUEUE_SIZE)
+
+        self.device="cuda" if torch.cuda.is_available() else "cpu"
+        self.embedding_function = CustomizeSentenceTransformer("ncbi/MedCPT-Query-Encoder", device=self.device)
+        self.embedding_function.eval()
         
     async def start(self):
         """Start the router and process queries."""
-        logger.info("Starting router process")
+        logger.info("Starting router process with %d data sources", len(self.data_sources))
         self.running = True
         
         # Socket to receive queries from server
@@ -37,6 +89,27 @@ class Router:
         # Start the worker tasks
         receive_task = asyncio.create_task(self._receive_queries())
         process_task = asyncio.create_task(self._process_queue())
+
+        # Load the model
+        model_path = os.path.join(USR_DIR, "MedRAG/routing/best_model.pth")
+        self.router = CorpusRoutingNN(INPUT_DIMENSION).to(self.device)
+        self.router.load_state_dict(torch.load(model_path, map_location=self.device))
+        self.router.eval()
+
+        # Load scalar
+        scaler_path = os.path.join(USR_DIR, "MedRAG/routing/preprocessed_data.pkl")
+        with open(scaler_path, "rb") as f:
+            _, _, _, self.scaler, _ = pickle.load(f)
+
+        # Load the centroids
+        self.centroids = {}
+        for corpus in self.data_sources:
+            stats_file = os.path.join(USR_DIR, "MedRAG/routing/", f"{corpus}_stats.json")
+            with open(stats_file, "r") as f:
+                corpus_stats = json.load(f)
+
+            centroid = np.array(corpus_stats["centroid"], dtype=np.float32)
+            self.centroids[corpus] = centroid
         
         try:
             await asyncio.gather(receive_task, process_task)
@@ -58,7 +131,7 @@ class Router:
                 try:
                     # Wait for queries with a timeout to allow for clean shutdown
                     query_data = await asyncio.wait_for(self.receiver.recv_json(), timeout=0.5)
-                    logger.info(f"Router received query: {query_data['id']}")
+                    logger.debug(f"Router received query: {query_data['id']}")
                     await self.queue.enqueue(query_data)
                 except asyncio.TimeoutError:
                     continue
@@ -79,24 +152,63 @@ class Router:
         except asyncio.CancelledError:
             logger.info("Process task cancelled")
             raise
+
+    def select_relevant_sources(self, query_embed):
+        if self.routing_strategy == "ragroute":
+            return self.select_relevant_sources_ragroute(query_embed)
+        elif self.routing_strategy == "all":
+            return self.data_sources
+        elif self.routing_strategy == "random":
+            raise NotImplementedError("Random routing strategy is not implemented yet.")
+        elif self.routing_strategy == "none":
+            return []
+        else:
+            raise ValueError(f"Unknown routing strategy: {self.routing_strategy}")
+
+    def select_relevant_sources_ragroute(self, query_embed) -> List[str]:
+        inputs = []
+        for corpus in self.data_sources:
+            features = np.concatenate([query_embed.flatten(), self.centroids[corpus]])
+            inputs.append(features)
+        
+        inputs = self.scaler.transform(inputs)
+        input_tensor = torch.tensor(inputs, dtype=torch.float32).to(self.device)
+
+        with torch.no_grad():
+            outputs = self.router(input_tensor)
+            outputs = outputs.view(-1)
+            probabilities = torch.sigmoid(outputs)
+            predictions = (probabilities > 0.5).cpu().numpy()
+
+        sources_corpora = [corpus for prediction, corpus in zip(predictions, self.data_sources) if prediction]
+        return sources_corpora
+
+    def encode_query(self, query):
+        with torch.no_grad():
+            return self.embedding_function.encode([query], show_progress_bar=False)
             
     async def _process_query(self, query_data):
         """Process a query and determine which clients should handle it."""
-        logger.info(f"Router processing query: {query_data['id']}")
-        
-        # TODO here we should decide which clients should handle the query
-        # For now, we just send the query to all clients
-        # In a real implementation, this would involve more complex logic
-        client_ids = list(range(self.num_clients))
+        logger.debug(f"Router processing query: {query_data['id']}")
+
+        start_time = time.time()
+        query_embed = self.encode_query(query_data["query"])
+        embed_time = time.time() - start_time
+
+        start_time = time.time()
+        sources_corpora = self.select_relevant_sources(query_embed)
+        select_time = time.time() - start_time
         
         response = {
             "query_id": query_data["id"],
-            "query": query_data["query"],
-            "client_ids": client_ids
+            "data_sources": sources_corpora,
+            "embedding": query_embed.tolist() if isinstance(query_embed, np.ndarray) else query_embed,
+            "embedding_time": embed_time,
+            "selection_time": select_time,
         }
         
         await self.sender.send_json(response)
-        logger.info(f"Router sent routing decision to server for query: {query_data['id']}")
+        logger.debug(f"Router sent routing decision {response['data_sources']} to server for query: {query_data['id']}")
         
     def stop(self):
         """Stop the router."""
@@ -106,9 +218,9 @@ class Router:
         self.sender.close()
         self.context.term()
 
-async def run_router(num_clients):
+async def run_router(data_sources: List[str], routing_strategy: str):
     """Run the router process."""
-    router = Router(num_clients)
+    router = Router(data_sources, routing_strategy)
     await router.start()
 
 

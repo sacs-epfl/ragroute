@@ -1,0 +1,7 @@
+torch
+tqdm
+ollama
+transformers
+python-liquid
+sentence-transformers
+faiss-cpu
