@@ -124,7 +124,7 @@ class E5Model(CustomDEModel):
             batch_size=128,   #  * self.gpu_count,
             shuffle=False,
             drop_last=False,
-            num_workers=4,
+            num_workers=0,
             collate_fn=data_collator,
             pin_memory=True)
 
