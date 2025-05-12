@@ -3,15 +3,24 @@ import os
 import re
 from typing import Dict
 
-from ragroute.config import USR_DIR
-
 
 class Benchmark:
 
-    def __init__(self, benchmark_name: str):
-        benchmark_file = os.path.join(USR_DIR, benchmark_name, "benchmark.json")
-        with open(benchmark_file, 'r') as f:
-            self.benchmark_data = json.load(f)
+    def __init__(self, benchmark_path: str, benchmark_name: str):
+        self.benchmark_data = {}
+        if benchmark_name == "MIRAGE":
+            benchmark_file = os.path.join(benchmark_path, "%s.json" % benchmark_name)
+            with open(benchmark_file, 'r') as f:
+                self.benchmark_data = json.load(f)
+        elif benchmark_name == "FeB4RAG":
+            self.benchmark_data = {"FeB4RAG": {}}
+            benchmark_file = os.path.join(benchmark_path, "%s.jsonl" % benchmark_name)
+            with open(benchmark_file, "r") as f:
+                for line in f:
+                    obj = json.loads(line)
+                    self.benchmark_data["FeB4RAG"][str(obj["_id"])] = {"question": obj["text"], "options": []}
+        else:
+            raise ValueError("Unsupported benchmark name: %s" % benchmark_name)
 
     def check_mirage_answer(self, data_question: Dict, llm_output: str) -> bool:
         def locate_answer(sentence: str):

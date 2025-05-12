@@ -18,12 +18,12 @@ from ragroute.models.feb4rag.model_zoo import CustomModel, BeirModels
 # USE online to compute everything from scratch for the system part
 k = 32
 device="cuda" if torch.cuda.is_available() else "cpu"
-usr_dir = "/Users/mdevos"
-
+usr_dir = "/mnt/nfs/home/mdevos"
+embeddings_usr_dir = "/mnt/nfs/home/dpetresc"
 
 # questions file
 queries = {}
-with open(os.path.join(usr_dir, "FeB4RAG/requests.jsonl"), "r") as f:
+with open(os.path.join(usr_dir, "FeB4RAG/dataset/queries/requests.jsonl"), "r") as f:
     for line in f:
         obj = json.loads(line)
         queries[str(obj["_id"])] = obj["text"]
@@ -117,7 +117,7 @@ def select_relevant_sources(queries_embed):
     for i, corpus in enumerate(corpus_names):
         padded_q = np.pad(queries_embed[i], (0, max_encoding_len - len(queries_embed[i])))
 
-        with open(os.path.join(usr_dir, "FeB4RAG/dataset_creation/2_search/embeddings", corpus+"_"+CORPUS_MODEL_MAP[corpus][0]+"_stats.json")) as f:
+        with open(os.path.join(embeddings_usr_dir, "FeB4RAG/dataset_creation/2_search/embeddings", corpus+"_"+CORPUS_MODEL_MAP[corpus][0]+"_stats.json")) as f:
                 stat = json.load(f)
         centroid = np.array(stat["centroid"])
         centroid_p = np.pad(centroid, (0, max_encoding_len - len(centroid)))
@@ -206,7 +206,7 @@ for query_id, query in queries.items():
 
     # SELECTION OF SOURCES / ROUTING
     sources_corpora = select_relevant_sources(queries_embed)
-    print("selected sources ", sources_corpora)
+    print("selected sources: %s (%d)" % (sources_corpora, len(sources_corpora)))
 
     all_docs = []
     all_scores = []
@@ -222,4 +222,4 @@ for query_id, query in queries.items():
     filtered_docs, filtered_scores = rerank(all_docs, all_scores, k)
 
     # GENERATIONs
-    ans = generate_answer(query, filtered_docs)
+    #ans = generate_answer(query, filtered_docs)

@@ -20,10 +20,11 @@ async def fetch_answer(session, url):
 
 async def main():
     parser = argparse.ArgumentParser(description="Run a benchmark with RAGRoute.")
-    parser.add_argument("--benchmark", type=str, default="MIRAGE", choices=["MIRAGE"], help="Benchmark name")
+    parser.add_argument("--benchmark", type=str, default="FeB4RAG", choices=["MIRAGE", "FeB4RAG"], help="Benchmark name")
+    parser.add_argument("--benchmark-path", type=str, default="data/benchmark", help="Path to the benchmark data")
     parser.add_argument("--parallel", type=int, default=1, help="Number of parallel requests to send")
     parser.add_argument("--routing", type=str, required=True, choices=["ragroute", "all", "random", "none"], help="Routing method to use")
-    parser.add_argument("--questions", type=str, default=None, choices=['medqa', 'medmcqa', 'pubmedqa', 'bioasq', 'mmlu'], help="The questions to use for the benchmark")
+    parser.add_argument("--questions", type=str, default=None, choices=['medqa', 'medmcqa', 'pubmedqa', 'bioasq', 'mmlu'], help="The questions to use for the benchmark")  # TODO add questions from FeB4RAG
     args = parser.parse_args()
 
     benchmark_file: str = os.path.join("data", "benchmark_%s_%s.csv" % (args.benchmark, args.routing))
@@ -51,7 +52,7 @@ async def main():
     num_correct: int = 0
     
     # Load the benchmark
-    benchmark = Benchmark(args.benchmark)
+    benchmark = Benchmark(args.benchmark_path, args.benchmark)
     async with aiohttp.ClientSession() as session:
         question_banks = list(benchmark.benchmark_data.keys())
         if args.questions is not None:
