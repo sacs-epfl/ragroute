@@ -13,7 +13,7 @@ HTTP_PORT = 8000
 MAX_QUEUE_SIZE = 100
 
 # For loading the models and data
-USR_DIR = "/Users/martijndevos"
+USR_DIR = "/mnt/nfs/home/dpetresc"
 MEDRAG_DIR = os.path.join(USR_DIR, "MedRAG", "corpus")
 FEB4RAG_DIR = os.path.join(USR_DIR, "FeB4RAG")
 
