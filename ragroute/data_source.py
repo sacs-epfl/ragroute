@@ -14,7 +14,7 @@ import numpy as np
 import zmq
 import zmq.asyncio
 
-from ragroute.config import K, MEDRAG_DIR, SERVER_CLIENT_BASE_PORT, CLIENT_SERVER_BASE_PORT
+from ragroute.config import FEB4RAG_DIR, K, MEDRAG_DIR, SERVER_CLIENT_BASE_PORT, CLIENT_SERVER_BASE_PORT
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("client")
@@ -27,6 +27,8 @@ class DataSource:
         
         if dataset == "medrag":
             self.dataset_dir = MEDRAG_DIR
+        elif dataset == "feb4rag":
+            self.dataset_dir = FEB4RAG_DIR
         else:
             raise ValueError(f"Unknown dataset when starting data source {name}: {dataset}")
 

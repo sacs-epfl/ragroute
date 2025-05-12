@@ -15,10 +15,35 @@ MAX_QUEUE_SIZE = 100
 # For loading the models and data
 USR_DIR = "/Users/martijndevos"
 MEDRAG_DIR = os.path.join(USR_DIR, "MedRAG", "corpus")
+FEB4RAG_DIR = os.path.join(USR_DIR, "FeB4RAG")
 
 # Dataset information
 DATA_SOURCES = {
-    "medrag": ["pubmed", "statpearls", "textbooks", "wikipedia"]
+    "medrag": ["pubmed", "statpearls", "textbooks", "wikipedia"],
+    "feb4rag": ["msmarco"],  # TODO order and extend
+}
+EMBEDDING_MODELS_PER_DATA_SOURCE = {
+    "medrag": {
+        "pubmed": ("ncbi/MedCPT-Query-Encoder", None),
+        "statpearls": ("ncbi/MedCPT-Query-Encoder", None),
+        "textbooks": ("ncbi/MedCPT-Query-Encoder", None),
+        "wikipedia": ("ncbi/MedCPT-Query-Encoder", None),
+    },
+    "feb4rag": {
+        "msmarco": ("e5-large", "custom"),
+        "trec-covid": ("SGPT-5.8B-weightedmean-msmarco-specb-bitfit", "custom"),
+        "nfcorpus": ("UAE-Large-V1", "custom"),
+        "scidocs": ("all-mpnet-base-v2", "beir"),
+        "nq": ("multilingual-e5-large", "custom"),
+        "hotpotqa": ("ember-v1", "beir"),
+        "fiqa": ("all-mpnet-base-v2", "beir"),
+        "arguana": ("UAE-Large-V1", "custom"),
+        "webis-touche2020": ("e5-base", "custom"),
+        "dbpedia-entity": ("UAE-Large-V1", "custom"),
+        "fever": ("UAE-Large-V1", "custom"),
+        "climate-fever": ("UAE-Large-V1", "custom"),
+        "scifact": ("gte-base", "beir"),
+    }
 }
 K = 32  # Number of documents to retrieve from each data source
 

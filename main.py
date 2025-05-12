@@ -11,9 +11,9 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("main")
 
 
-def start_router(data_sources: List[str], routing_strategy: str):
+def start_router(dataset: str, data_sources: List[str], routing_strategy: str):
     from ragroute.router import run_router
-    asyncio.run(run_router(data_sources, routing_strategy))
+    asyncio.run(run_router(dataset, data_sources, routing_strategy))
 
 def start_data_source(index: int, dataset: str, data_source: str):
     from ragroute.data_source import run_data_source
@@ -42,7 +42,7 @@ class FederatedSearchSystem:
         self.main_task = asyncio.current_task()
         
         # Start router process
-        router_process = Process(target=start_router, args=(self.data_sources, self.routing_strategy))
+        router_process = Process(target=start_router, args=(self.dataset, self.data_sources, self.routing_strategy))
         router_process.start()
         self.processes.append(router_process)
         logger.info("Router process started")
@@ -134,7 +134,7 @@ class FederatedSearchSystem:
 
 def main():
     parser = argparse.ArgumentParser(description="RAGRoute")
-    parser.add_argument("--dataset", type=str, default="medrag", choices=["medrag"], help="The dataset being evaluated (influences the data sources)")
+    parser.add_argument("--dataset", type=str, default="feb4rag", choices=["medrag", "feb4rag"], help="The dataset being evaluated (influences the data sources)")
     parser.add_argument("--routing", type=str, default="ragroute", choices=["ragroute", "all", "random", "none"], help="The routing method to use - for random, we randomly pick n/2 of the n data sources")
     parser.add_argument("--disable-llm", action="store_true", help="Disable the LLM for testing purposes")
     parser.add_argument("--model", type=str, default=SUPPORTED_MODELS[0], choices=SUPPORTED_MODELS, help="The model to use for the LLM")

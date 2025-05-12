@@ -6,7 +6,7 @@ import logging
 import os
 import pickle
 import time
-from typing import List
+from typing import List, Set
 
 import numpy as np
 
@@ -17,10 +17,8 @@ import torch.nn.functional as F
 import zmq
 import zmq.asyncio
 
-from sentence_transformers.models import Transformer, Pooling
-from sentence_transformers import SentenceTransformer
-
-from ragroute.config import SERVER_ROUTER_PORT, ROUTER_SERVER_PORT, MAX_QUEUE_SIZE, USR_DIR
+from ragroute.config import EMBEDDING_MODELS_PER_DATA_SOURCE, FEB4RAG_DIR, SERVER_ROUTER_PORT, ROUTER_SERVER_PORT, MAX_QUEUE_SIZE, USR_DIR
+from ragroute.models.medrag.custom_sentence_transformer import CustomizeSentenceTransformer
 from ragroute.queue_manager import QueryQueue
 
 logging.basicConfig(level=logging.INFO)
@@ -51,18 +49,11 @@ class CorpusRoutingNN(nn.Module):
         return self.fc3(x)
 
 
-class CustomizeSentenceTransformer(SentenceTransformer): # change the default pooling "MEAN" to "CLS"
-    def _load_auto_model(self, model_name_or_path, *args, **kwargs):
-        cache_path = os.path.join(USR_DIR, ".cache/torch/sentence_transformers", model_name_or_path)
-        transformer_model = Transformer(model_name_or_path, cache_dir=cache_path)
-        pooling_model = Pooling(transformer_model.get_word_embedding_dimension(), 'cls')
-        return [transformer_model, pooling_model]
-
-
 class Router:
     """Router that processes queries and determines which clients should handle them."""
     
-    def __init__(self, data_sources: List[str], routing_strategy: str):
+    def __init__(self, dataset: str, data_sources: List[str], routing_strategy: str):
+        self.dataset: str = dataset
         self.data_sources: List[str] = data_sources
         self.routing_strategy: str = routing_strategy
         self.running: bool = False
@@ -70,8 +61,25 @@ class Router:
         self.queue = QueryQueue(MAX_QUEUE_SIZE)
 
         self.device="cuda" if torch.cuda.is_available() else "cpu"
-        self.embedding_function = CustomizeSentenceTransformer("ncbi/MedCPT-Query-Encoder", device=self.device)
-        self.embedding_function.eval()
+
+        embedding_models_info: Set[str] = set()
+        for data_source in self.data_sources:
+            embedding_models_info.add(EMBEDDING_MODELS_PER_DATA_SOURCE[dataset][data_source])
+
+        logger.info(f"Loading embedding models: {embedding_models_info}")
+        self.embedding_models = {}
+        if dataset == "medrag":
+            for embedding_model_info in embedding_models_info:
+                model = CustomizeSentenceTransformer(embedding_model_info[0], device=self.device)
+                model.eval()
+                self.embedding_models[embedding_model_info] = model
+        elif dataset == "feb4rag":
+            from ragroute.models.feb4rag.model_zoo import CustomModel, BeirModels
+            for model_name, model_type in embedding_models_info:
+                model_loader = BeirModels(os.path.join(FEB4RAG_DIR, "dataset_creation/2_search/models"), specific_model=model_name) if model_type == "beir" else \
+                        CustomModel(model_dir=os.path.join(FEB4RAG_DIR, "FeB4RAG/dataset_creation/2_search/models"), specific_model=model_name)
+                model = model_loader.load_model(model_name, model_name_or_path=None, cuda=torch.cuda.is_available())
+                self.embedding_models[model_name] = model
         
     async def start(self):
         """Start the router and process queries."""
@@ -218,9 +226,9 @@ class Router:
         self.sender.close()
         self.context.term()
 
-async def run_router(data_sources: List[str], routing_strategy: str):
+async def run_router(dataset: str, data_sources: List[str], routing_strategy: str):
     """Run the router process."""
-    router = Router(data_sources, routing_strategy)
+    router = Router(dataset, data_sources, routing_strategy)
     await router.start()
 
 
