@@ -60,7 +60,7 @@ class FederatedSearchSystem:
         
         # Start the server
         from ragroute.http_server import run_server
-        self.server = await run_server(self.data_sources, self.routing_strategy, self.model, self.disable_llm)
+        self.server = await run_server(self.dataset, self.data_sources, self.routing_strategy, self.model, self.disable_llm)
         logger.info("Server started")
         
         # Setup signal handler for graceful shutdown

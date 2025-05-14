@@ -14,7 +14,7 @@ import numpy as np
 import zmq
 import zmq.asyncio
 
-from ragroute.config import FEB4RAG_DIR, K, MEDRAG_DIR, SERVER_CLIENT_BASE_PORT, CLIENT_SERVER_BASE_PORT
+from ragroute.config import EMBEDDING_MODELS_PER_DATA_SOURCE, FEB4RAG_DIR, K, MEDRAG_DIR, SERVER_CLIENT_BASE_PORT, CLIENT_SERVER_BASE_PORT
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("client")
@@ -38,8 +38,16 @@ class DataSource:
         self.running: bool = False
         self.context = zmq.asyncio.Context()
 
-        self.index_dir: str = os.path.join(self.dataset_dir, self.name, "index", "ncbi/MedCPT-Article-Encoder")
-        self.faiss_indexes = {}
+        if dataset == "medrag":
+            self.index_dir: str = os.path.join(self.dataset_dir, self.name, "index", "ncbi/MedCPT-Article-Encoder")
+            self.index_path: str = os.path.join(self.index_dir, "faiss.index")
+            self.doc_ids_path: str = os.path.join(self.index_dir, "metadatas.jsonl")
+        elif dataset == "feb4rag":
+            self.index_dir: str = os.path.join(self.dataset_dir, "dataset_creation", "2_search", "embeddings", name)
+            model_name: str = EMBEDDING_MODELS_PER_DATA_SOURCE[dataset][name][0]
+            self.index_path: str = os.path.join(self.index_dir, f"{name}_{model_name}.faiss")
+            self.doc_ids_path: str = os.path.join(self.index_dir, f"{name}_{model_name}.docids.json")
+        self.faiss_indexes = None
         self.cache_jsonl = {}
         
     async def start(self):
@@ -57,9 +65,13 @@ class DataSource:
 
         # Load the FAISS index and metadata
         logger.info(f"Loading FAISS index for {self.name}")
-        index = faiss.read_index(os.path.join(self.index_dir, "faiss.index"))
-        metadatas = [json.loads(line) for line in open(os.path.join(self.index_dir, "metadatas.jsonl")).read().strip().split('\n')]
-        self.faiss_indexes[self.index_dir] = (index, metadatas)
+        index = faiss.read_index(self.index_path)
+        if self.dataset == "medrag":
+            metadatas = [json.loads(line) for line in open(self.doc_ids_path).read().strip().split('\n')]
+        elif self.dataset == "feb4rag":
+            with open(self.doc_ids_path, "r") as f:
+                metadatas = json.load(f)
+        self.faiss_indexes = index, metadatas
         logger.info(f"FAISS index for {self.name} loaded successfully")
         
         try:
@@ -72,13 +84,17 @@ class DataSource:
 
                     embedding = query_data["embedding"]
                     embedding = np.array(embedding, dtype=np.float32).reshape(1, -1)
-                    docs, scores = self.retrieve_docs(embedding, K)
+                    if self.dataset == "medrag":
+                        ids, docs, scores = self.retrieve_docs_medrag(embedding, K)
+                    elif self.dataset == "feb4rag":
+                        ids, docs, scores = self.retrieve_docs_fed4rag(embedding, K)
                     
                     # Prepare and send response
                     response = {
                         "query_id": query_data["id"],
                         "client_id": self.client_id,
                         "name": self.name,
+                        "indices": ids,
                         "docs": docs,
                         "scores": scores,
                         "duration": time.time() - start_time,
@@ -88,13 +104,35 @@ class DataSource:
                     
                 except asyncio.TimeoutError:
                     continue
-                    
+                except Exception as e:
+                    logger.error(f"Error when fetching documents from data source {self.name} (query data: {query_data}): {e}")
+
         except asyncio.CancelledError:
             logger.info(f"Client {self.client_id} shutdown requested")
-        finally:
-            self.stop()
 
-    def retrieve_docs(self, query_embed, k):
+    def retrieve_docs_fed4rag(self, query_embed, k):
+        def idx2txt(ids):
+            if self.name not in self.cache_jsonl:
+                corpus_path = os.path.join(self.dataset_dir, "dataset_creation/original_dataset", self.name, self.name, "corpus.jsonl")
+                corpus = {}
+                with open(corpus_path, "r") as file:
+                    for line in file:
+                        entry = json.loads(line)
+                        corpus[entry["_id"]] = entry
+                self.cache_jsonl[self.name] = corpus
+
+            corpus_data = self.cache_jsonl[self.name]
+            return [corpus_data.get(doc_id, None) for doc_id in ids]
+        
+        index, docids = self.faiss_indexes
+        res_ = index.search(query_embed, k)
+        ids = [docids[i] for i in res_[1][0]]
+
+        docs = idx2txt(ids)
+
+        return ids, docs, []  # We don't have scores for FeB4RAG, so return empty list
+
+    def retrieve_docs_medrag(self, query_embed, k):
         def idx2txt(indices):
             results = []
             for i in indices:
@@ -114,7 +152,7 @@ class DataSource:
                 results.append(json.loads(line))  # Parse only when needed
             return results
         
-        index, metadatas = self.faiss_indexes[self.index_dir]
+        index, metadatas = self.faiss_indexes
         res_ = index.search(query_embed, k=k)
         scores = res_[0][0].tolist()
 
@@ -123,7 +161,7 @@ class DataSource:
         # get the corresponding documents
         docs = idx2txt(indices)
 
-        return docs, scores
+        return indices, docs, scores
             
     def stop(self):
         logger.info(f"Stopping client {self.client_id}")

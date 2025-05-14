@@ -6,7 +6,7 @@ import logging
 import os
 import pickle
 import time
-from typing import List, Set
+from typing import Dict, List, Set
 
 import numpy as np
 
@@ -17,7 +17,7 @@ import torch.nn.functional as F
 import zmq
 import zmq.asyncio
 
-from ragroute.config import EMBEDDING_MODELS_PER_DATA_SOURCE, FEB4RAG_DIR, SERVER_ROUTER_PORT, ROUTER_SERVER_PORT, MAX_QUEUE_SIZE, USR_DIR
+from ragroute.config import EMBEDDING_MAX_LENGTH, EMBEDDING_MODELS_PER_DATA_SOURCE, FEB4RAG_SOURCE_TO_ID, MODELS_FEB4RAG_DIR, MODELS_USR_DIR, SERVER_ROUTER_PORT, ROUTER_SERVER_PORT, MAX_QUEUE_SIZE, USR_DIR
 from ragroute.models.medrag.custom_sentence_transformer import CustomizeSentenceTransformer
 from ragroute.queue_manager import QueryQueue
 
@@ -25,7 +25,9 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("router")
 
 
-INPUT_DIMENSION = 1536  # Dimension of the input features for the neural network
+# Dimension of the input features for the neural network
+MEDRAG_INPUT_DIMENSION = 1536 
+FEDRAG_INPUT_DIMENSION = 8205
 
 
 class CorpusRoutingNN(nn.Module):
@@ -69,15 +71,15 @@ class Router:
         logger.info(f"Loading embedding models: {embedding_models_info}")
         self.embedding_models = {}
         if dataset == "medrag":
-            for embedding_model_info in embedding_models_info:
-                model = CustomizeSentenceTransformer(embedding_model_info[0], device=self.device)
+            for model_name, _ in embedding_models_info:
+                model = CustomizeSentenceTransformer(model_name, device=self.device)
                 model.eval()
-                self.embedding_models[embedding_model_info] = model
+                self.embedding_models[model_name] = model
         elif dataset == "feb4rag":
             from ragroute.models.feb4rag.model_zoo import CustomModel, BeirModels
             for model_name, model_type in embedding_models_info:
-                model_loader = BeirModels(os.path.join(FEB4RAG_DIR, "dataset_creation/2_search/models"), specific_model=model_name) if model_type == "beir" else \
-                        CustomModel(model_dir=os.path.join(FEB4RAG_DIR, "FeB4RAG/dataset_creation/2_search/models"), specific_model=model_name)
+                model_loader = BeirModels(os.path.join(MODELS_FEB4RAG_DIR, "dataset_creation/2_search/models"), specific_model=model_name) if model_type == "beir" else \
+                        CustomModel(model_dir=os.path.join(MODELS_FEB4RAG_DIR, "dataset_creation/2_search/models"), specific_model=model_name)
                 model = model_loader.load_model(model_name, model_name_or_path=None, cuda=torch.cuda.is_available())
                 self.embedding_models[model_name] = model
         
@@ -98,25 +100,37 @@ class Router:
         receive_task = asyncio.create_task(self._receive_queries())
         process_task = asyncio.create_task(self._process_queue())
 
-        # Load the model
-        model_path = os.path.join(USR_DIR, "MedRAG/routing/best_model.pth")
-        self.router = CorpusRoutingNN(INPUT_DIMENSION).to(self.device)
+        # Load the router model
+        if self.dataset == "medrag":
+            model_path = os.path.join(MODELS_USR_DIR, "MedRAG/routing/best_model.pth")
+            input_dim = MEDRAG_INPUT_DIMENSION
+        elif self.dataset == "feb4rag":
+            model_path = os.path.join(MODELS_USR_DIR, "FeB4RAG/dataset_creation/2_search/router_best_model.pt")
+            input_dim = FEDRAG_INPUT_DIMENSION
+
+        self.router = CorpusRoutingNN(input_dim).to(self.device)
         self.router.load_state_dict(torch.load(model_path, map_location=self.device))
         self.router.eval()
 
         # Load scalar
-        scaler_path = os.path.join(USR_DIR, "MedRAG/routing/preprocessed_data.pkl")
-        with open(scaler_path, "rb") as f:
-            _, _, _, self.scaler, _ = pickle.load(f)
+        if self.dataset == "medrag":
+            scaler_path = os.path.join(MODELS_USR_DIR, "MedRAG/routing/preprocessed_data.pkl")
+            with open(scaler_path, "rb") as f:
+                _, _, _, self.scaler, _ = pickle.load(f)
 
         # Load the centroids
         self.centroids = {}
         for corpus in self.data_sources:
-            stats_file = os.path.join(USR_DIR, "MedRAG/routing/", f"{corpus}_stats.json")
+            if self.dataset == "medrag":
+                stats_file = os.path.join(USR_DIR, "MedRAG/routing/", f"{corpus}_stats.json")
+            elif self.dataset == "feb4rag":
+                stats_file = os.path.join(USR_DIR, "FeB4RAG/dataset_creation/2_search/embeddings", corpus+"_"+EMBEDDING_MODELS_PER_DATA_SOURCE[self.dataset][corpus][0]+"_stats.json")
+            
             with open(stats_file, "r") as f:
                 corpus_stats = json.load(f)
 
             centroid = np.array(corpus_stats["centroid"], dtype=np.float32)
+            centroid = np.pad(centroid, (0, EMBEDDING_MAX_LENGTH[self.dataset] - len(centroid)))  # Pad to max length
             self.centroids[corpus] = centroid
         
         try:
@@ -161,9 +175,9 @@ class Router:
             logger.info("Process task cancelled")
             raise
 
-    def select_relevant_sources(self, query_embed):
+    def select_relevant_sources(self, query_embeddings: Dict[str, torch.Tensor]) -> List[str]:
         if self.routing_strategy == "ragroute":
-            return self.select_relevant_sources_ragroute(query_embed)
+            return self.select_relevant_sources_ragroute(query_embeddings)
         elif self.routing_strategy == "all":
             return self.data_sources
         elif self.routing_strategy == "random":
@@ -173,13 +187,28 @@ class Router:
         else:
             raise ValueError(f"Unknown routing strategy: {self.routing_strategy}")
 
-    def select_relevant_sources_ragroute(self, query_embed) -> List[str]:
+    def select_relevant_sources_ragroute(self, query_embeddings: Dict[str, torch.Tensor]) -> List[str]:
         inputs = []
+
+        # First, we pad the query embeddings to the maximum length
+        padded_query_embeddings = {}
+        for model_name in query_embeddings.keys():
+            query_embed = query_embeddings[model_name]
+            padded_q = np.pad(query_embed, (0, EMBEDDING_MAX_LENGTH[self.dataset] - len(query_embed)))
+            padded_query_embeddings[model_name] = padded_q
+
         for corpus in self.data_sources:
-            features = np.concatenate([query_embed.flatten(), self.centroids[corpus]])
+            model_for_corpus: str = EMBEDDING_MODELS_PER_DATA_SOURCE[self.dataset][corpus][0]
+            features = np.concatenate([padded_query_embeddings[model_for_corpus], self.centroids[corpus]])
+            if self.dataset == "feb4rag":
+                # We need to append the one-hot vector for the corpus when using the feb4rag dataset
+                source_id = FEB4RAG_SOURCE_TO_ID[corpus]
+                source_id_vec = np.eye(len(FEB4RAG_SOURCE_TO_ID))[source_id]
+                features = np.concatenate([features, source_id_vec])
             inputs.append(features)
         
-        inputs = self.scaler.transform(inputs)
+        if self.dataset == "medrag":
+            inputs = self.scaler.transform(inputs)
         input_tensor = torch.tensor(inputs, dtype=torch.float32).to(self.device)
 
         with torch.no_grad():
@@ -193,30 +222,41 @@ class Router:
 
     def encode_query(self, query):
         with torch.no_grad():
-            return self.embedding_function.encode([query], show_progress_bar=False)
-            
+            embeddings: Dict[str, torch.Tensor] = {}
+            for model_name, model in self.embedding_models.items():
+                if self.dataset == "medrag":
+                    embeddings[model_name] = model.encode([query], show_progress_bar=False)[0]
+                elif self.dataset == "feb4rag":
+                    emb = model.encode_queries([query], batch_size=1, convert_to_tensor=False)[0]
+                    embeddings[model_name] = emb
+        return embeddings
+
     async def _process_query(self, query_data):
         """Process a query and determine which clients should handle it."""
         logger.debug(f"Router processing query: {query_data['id']}")
 
         start_time = time.time()
-        query_embed = self.encode_query(query_data["query"])
+        query_embeddings: Dict[str, torch.Tensor] = self.encode_query(query_data["query"])
         embed_time = time.time() - start_time
 
         start_time = time.time()
-        sources_corpora = self.select_relevant_sources(query_embed)
+        sources_corpora = self.select_relevant_sources(query_embeddings)
         select_time = time.time() - start_time
+
+        serialized_embeddings = {}
+        for model_name, embedding in query_embeddings.items():
+            serialized_embeddings[model_name] = embedding.tolist() if isinstance(embedding, np.ndarray) else embedding
         
         response = {
             "query_id": query_data["id"],
             "data_sources": sources_corpora,
-            "embedding": query_embed.tolist() if isinstance(query_embed, np.ndarray) else query_embed,
+            "embeddings": serialized_embeddings,
             "embedding_time": embed_time,
             "selection_time": select_time,
         }
         
         await self.sender.send_json(response)
-        logger.debug(f"Router sent routing decision {response['data_sources']} to server for query: {query_data['id']}")
+        logger.info(f"Router sent routing decision {response['data_sources']} to server for query: {query_data['id']}")
         
     def stop(self):
         """Stop the router."""

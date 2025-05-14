@@ -12,15 +12,20 @@ HTTP_PORT = 8000
 # Router queue settings
 MAX_QUEUE_SIZE = 100
 
-# For loading the models and data
+# For loading the models
+MODELS_USR_DIR = "/mnt/nfs/home/mdevos"
+MODELS_MEDRAG_DIR = os.path.join(MODELS_USR_DIR, "MedRAG", "corpus")
+MODELS_FEB4RAG_DIR = os.path.join(MODELS_USR_DIR, "FeB4RAG")
+
+# For loading the data
 USR_DIR = "/mnt/nfs/home/dpetresc"
 MEDRAG_DIR = os.path.join(USR_DIR, "MedRAG", "corpus")
 FEB4RAG_DIR = os.path.join(USR_DIR, "FeB4RAG")
 
 # Dataset information
 DATA_SOURCES = {
-    "medrag": ["pubmed", "statpearls", "textbooks", "wikipedia"],
-    "feb4rag": ["msmarco"],  # TODO order and extend
+    "medrag": ["statpearls", "textbooks"], #["pubmed", "statpearls", "textbooks", "wikipedia"],
+    "feb4rag": ["msmarco", "trec-covid", "nfcorpus", "scidocs", "nq", "hotpotqa", "fiqa", "arguana", "webis-touche2020", "dbpedia-entity", "fever", "climate-fever", "scifact"],
 }
 EMBEDDING_MODELS_PER_DATA_SOURCE = {
     "medrag": {
@@ -45,7 +50,54 @@ EMBEDDING_MODELS_PER_DATA_SOURCE = {
         "scifact": ("gte-base", "beir"),
     }
 }
+FEB4RAG_SOURCE_TO_ID = {
+  "arguana": 0,
+  "climate-fever": 1,
+  "dbpedia-entity": 2,
+  "fever": 3,
+  "fiqa": 4,
+  "hotpotqa": 5,
+  "msmarco": 6,
+  "nfcorpus": 7,
+  "nq": 8,
+  "scidocs": 9,
+  "scifact": 10,
+  "trec-covid": 11,
+  "webis-touche2020": 12
+}
+EMBEDDING_MAX_LENGTH = {
+    "medrag": 768,
+    "feb4rag": 4096,
+}
 K = 32  # Number of documents to retrieve from each data source
+
+SYSTEM_PROMPTS = {
+    "medrag": """You are a helpful medical expert, and your task is to answer a multi-choice medical question using the relevant documents.
+Please first think step-by-step and then choose the answer from the provided options.
+Organize your output in a json formatted as Dict{"step_by_step_thinking": Str(explanation), "answer_choice": Str{A/B/C/...}}.
+Your responses will be used for research purposes only, so please have a definite answer.""",
+    "feb4rag": """You are a helpful assistant helping to answer user requests based on the provided search result.
+Your responses should directly address the user's request and must be based on the information obtained from the provided search results.
+You are forbidden to create new information that is not supported by these results.
+You must attribute your response to the source from the search results by including citations, for example, [1]."""
+}
+USER_PROMPT_TEMPLATES = {
+    "medrag": """Here are the relevant documents:
+{{context}}
+
+Here is the question:
+{{question}}
+
+Here are the potential choices:
+{{options}}
+
+Please think step-by-step and generate your output in json formatted as Dict{"step_by_step_thinking": Str(explanation), "answer_choice": Str{A/B/C/...}}:""",
+    "feb4rag": """Here are the search results:
+{{context}}
+
+Here is the question:
+{{question}}"""
+}
 
 SUPPORTED_MODELS = ["llama3.1-8B-instruct", "qwen3-8B", "qwen3-0.6B"]
 MODELS = {

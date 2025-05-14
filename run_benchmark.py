@@ -74,7 +74,7 @@ async def main():
 
                     encoded_question = aiohttp.helpers.quote(question)
                     encoded_options = aiohttp.helpers.quote(json.dumps(options))
-                    url = f"http://localhost:8000/query?q={encoded_question}&choices={encoded_options}"
+                    url = f"http://localhost:8000/query?q={encoded_question}&choices={encoded_options}&qid={question_id}"
 
                     task = fetch_answer(session, url)
                     tasks.append(task)
@@ -88,9 +88,9 @@ async def main():
                         continue
 
                     # Process the question result
-                    is_correct = benchmark.check_mirage_answer(question_data, result["answer"])
+                    is_correct = benchmark.check_mirage_answer(question_data, result["answer"]) if args.benchmark == "MIRAGE" else True
                     num_questions += 1
-                    num_correct += bool(is_correct)
+                    num_correct += int(is_correct)
 
                     # Record the answer
                     with open(answer_file, "a") as f:
@@ -108,7 +108,8 @@ async def main():
                         for data_source, stats in metadata["data_sources_stats"].items():
                             f.write(f"{args.benchmark},{question_bank},{question_id},{data_source},{stats['duration']},{stats['message_size']}\n")
 
-                    print(f"--> Score: {num_correct}/{num_questions}")
+                    if args.benchmark == "MIRAGE":
+                        print(f"--> Score: {num_correct}/{num_questions}")
 
 
 if __name__ == "__main__":
