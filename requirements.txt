@@ -5,3 +5,4 @@ transformers
 python-liquid
 sentence-transformers
 faiss-cpu
+beir

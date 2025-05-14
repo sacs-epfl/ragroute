@@ -3,8 +3,10 @@ HTTP server that receives queries and coordinates with the router and clients to
 """
 import asyncio
 from asyncio import ensure_future
+from collections import defaultdict
 import logging
 import json
+import os
 import time
 from typing import List
 import uuid
@@ -15,12 +17,12 @@ import zmq
 import zmq.asyncio
 
 from ragroute.config import (
-    K, SERVER_ROUTER_PORT, ROUTER_SERVER_PORT,
+    EMBEDDING_MODELS_PER_DATA_SOURCE, FEB4RAG_DIR, K, SERVER_ROUTER_PORT, ROUTER_SERVER_PORT,
     SERVER_CLIENT_BASE_PORT, CLIENT_SERVER_BASE_PORT,
     HTTP_HOST, HTTP_PORT, MODELS
 )
 from ragroute.llm_message import generate_llm_message
-from ragroute.rerank import rerank
+from ragroute.rerank import rerank_feb4rag, rerank_medrag
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("server")
@@ -28,7 +30,8 @@ logger = logging.getLogger("server")
 class HTTPServer:
     """HTTP server that coordinates the federated search system."""
     
-    def __init__(self, data_sources: List[str], routing_strategy: str, model: str, disable_llm: bool = False):
+    def __init__(self, dataset: str, data_sources: List[str], routing_strategy: str, model: str, disable_llm: bool = False):
+        self.dataset: str = dataset
         self.data_sources: List[str] = data_sources
         self.routing_strategy: str = routing_strategy
         self.model: str = model
@@ -81,6 +84,15 @@ class HTTPServer:
         for client_id in range(self.num_clients):
             task = asyncio.create_task(self._listen_client(client_id))
             self.client_listener_tasks.append(task)
+        
+        # Load the relevance data for the FeB4RAG dataset (needed for reranking)
+        self.relevance_data = {}
+        if self.dataset == "feb4rag":
+            self.relevance_data = defaultdict(list)
+            with open(os.path.join(FEB4RAG_DIR, "dataset/qrels/BEIR-QRELS-RM.txt"), "r") as f:
+                for line in f:
+                    qid, _, docid, rel = line.strip().split()
+                    self.relevance_data[qid].append((docid, rel))
 
         # Start the HTTP server
         runner = web.AppRunner(self.app)
@@ -94,16 +106,21 @@ class HTTPServer:
         if request.method == "GET":
             query = request.query.get("q", "")
             choices = request.query.get("choices", "")
+            question_id = request.query.get("qid", "")
         else:  # POST
             data = await request.post()
             query = data.get("q", "")
             choices = data.get("choices", "")
+            question_id = data.get("qid", "")
 
         if not query:
             return web.Response(text="Please provide a query", status=400)
         
         if not choices:
             return web.Response(text="Please provide choices", status=400)
+        
+        if self.dataset == "feb4rag" and not question_id:
+            return web.Response(text="For FeB4RAG, please provide a question ID (qid)", status=400)
         
         # Load the choices which is a URLEncoded JSON string
         try:
@@ -120,6 +137,7 @@ class HTTPServer:
             "future": future,
             "query": query,
             "choices": choices,
+            "question_id": question_id,
             "client_results": {},
             "pending_data_sources": set(),
             "metadata": {},
@@ -151,7 +169,7 @@ class HTTPServer:
                     routing_data = await asyncio.wait_for(self.router_receiver.recv_json(), timeout=5)
                     query_id = routing_data["query_id"]
                     data_sources = routing_data["data_sources"]
-                    embedding = routing_data["embedding"]
+                    embeddings = routing_data["embeddings"]
                     embedding_time = routing_data["embedding_time"]
                     selection_time = routing_data["selection_time"]
 
@@ -175,10 +193,14 @@ class HTTPServer:
                         # Forward query to designated clients
                         query = self.active_queries[query_id]["query"]
                         for client_id in client_ids:
+                            data_source_name: str = self.data_sources[client_id]
+                            model_for_data_source = EMBEDDING_MODELS_PER_DATA_SOURCE[self.dataset][data_source_name][0]
+
+                            # TODO this should be done in parallel
                             await self.client_senders[client_id].send_json({
                                 "id": query_id,
                                 "query": query,
-                                "embedding": embedding
+                                "embedding": embeddings[model_for_data_source]
                             })
                             
                         # If no clients were selected, complete the query immediately
@@ -189,6 +211,9 @@ class HTTPServer:
                         logger.warning(f"Received routing for unknown query: {query_id}")
                 except asyncio.TimeoutError:
                     continue
+                except Exception as e:
+                    logger.exception("Unhandled exception in _listen_router")
+                    raise  # Re-raise to ensure it's not silently swallowed
 
         except asyncio.CancelledError:
             logger.info("Router listener task cancelled")
@@ -211,7 +236,7 @@ class HTTPServer:
                     
                     if query_id in self.active_queries:
                         # Store the results
-                        self.active_queries[query_id]["client_results"][client_id] = (result_data["docs"], result_data["scores"])
+                        self.active_queries[query_id]["client_results"][client_id] = (result_data["indices"], result_data["docs"], result_data["scores"])
                         self.active_queries[query_id]["metadata"]["data_sources_stats"][ds_name] = {
                             "duration": result_data["duration"],
                             "message_size": message_size
@@ -247,14 +272,19 @@ class HTTPServer:
             "answer": "dummy"
         }
 
+        all_indices = []
         all_docs = []
         all_scores = []
         for client_id, results in query_data["client_results"].items():
-            all_docs.extend(results[0])
-            all_scores.extend(results[1])
+            all_indices.extend(results[0])
+            all_docs.extend(results[1])
+            all_scores.extend(results[2])
 
-        filtered_docs, _ = rerank(all_docs, all_scores, K)
-        llm_message, docs_tokens = generate_llm_message(query_data["query"], filtered_docs, query_data["choices"], self.model)
+        if self.dataset == "medrag":
+            filtered_docs, _ = rerank_medrag(all_docs, all_scores, K)
+        elif self.dataset == "feb4rag":
+            filtered_docs, _ = rerank_feb4rag(all_indices, all_docs, query_data["question_id"], K, self.relevance_data)
+        llm_message, docs_tokens = generate_llm_message(self.dataset, query_data["query"], filtered_docs, query_data["choices"], self.model)
 
         if self.disable_llm:
             self.active_queries[query_id]["metadata"]["generate_time"] = 0
@@ -334,7 +364,7 @@ class HTTPServer:
         
         logger.info("Server stopped")
         
-async def run_server(data_sources: List[str], routing_strategy: str, model: str, disable_llm: bool = False) -> HTTPServer:
-    server = HTTPServer(data_sources, routing_strategy, model, disable_llm=disable_llm)
+async def run_server(dataset: str, data_sources: List[str], routing_strategy: str, model: str, disable_llm: bool = False) -> HTTPServer:
+    server = HTTPServer(dataset, data_sources, routing_strategy, model, disable_llm=disable_llm)
     await server.start()
     return server

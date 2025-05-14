@@ -3,36 +3,27 @@ from transformers import AutoTokenizer
 
 from liquid import Template
 
-from ragroute.config import MODELS
+from ragroute.config import MODELS, SYSTEM_PROMPTS, USER_PROMPT_TEMPLATES
 
 
-def generate_llm_message(question: str, context, options: str, model: str) -> List[Dict[str, str]]:
+def generate_llm_message(dataset: str, question: str, context, options: str, model: str) -> List[Dict[str, str]]:
     model_info = MODELS[model]
     tokenizer = AutoTokenizer.from_pretrained(model_info["hf_name"], cache_dir=None)
 
-    contexts = ["Document [{:d}] (Title: {:s}) {:s}".format(idx, context[idx]["title"], context[idx]["content"]) for idx in range(len(context))]
+    if dataset == "medrag":
+        contexts = ["Document [{:d}] (Title: {:s}) {:s}".format(idx, context[idx]["title"], context[idx]["content"]) for idx in range(len(context))]
+    elif dataset == "feb4rag":
+        contexts = ["Document [{:d}] (Title: {:s}) {:s}".format(idx, context[idx].get("title") or f"Doc {idx}", context[idx]["text"]) for idx in range(len(context))]
     if len(contexts) == 0:
         contexts = [""]
 
     encoded_docs_tokens = tokenizer.encode("\n".join(contexts), add_special_tokens=False)[:model_info["docs_context_length"]]
     context = tokenizer.decode(encoded_docs_tokens)
 
-    medrag_system_prompt = '''You are a helpful medical expert, and your task is to answer a multi-choice medical question using the relevant documents. Please first think step-by-step and then choose the answer from the provided options. Organize your output in a json formatted as Dict{"step_by_step_thinking": Str(explanation), "answer_choice": Str{A/B/C/...}}. Your responses will be used for research purposes only, so please have a definite answer.'''
-    medrag_prompt = Template('''
-        Here are the relevant documents:
-        {{context}}
-
-        Here is the question:
-        {{question}}
-
-        Here are the potential choices:
-        {{options}}
-
-        Please think step-by-step and generate your output in json formatted as Dict{"step_by_step_thinking": Str(explanation), "answer_choice": Str{A/B/C/...}}:
-        ''')
+    medrag_prompt = Template(USER_PROMPT_TEMPLATES[dataset])
 
     prompt_medrag = medrag_prompt.render(context=context, question=question, options=options)
     return [
-                    {"role": "system", "content": medrag_system_prompt},
-                    {"role": "user", "content": prompt_medrag}
-            ], len(encoded_docs_tokens)
+        {"role": "system", "content": SYSTEM_PROMPTS[dataset]},
+        {"role": "user", "content": prompt_medrag}
+        ], len(encoded_docs_tokens)

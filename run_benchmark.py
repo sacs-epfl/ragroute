@@ -20,10 +20,11 @@ async def fetch_answer(session, url):
 
 async def main():
     parser = argparse.ArgumentParser(description="Run a benchmark with RAGRoute.")
-    parser.add_argument("--benchmark", type=str, default="MIRAGE", choices=["MIRAGE"], help="Benchmark name")
+    parser.add_argument("--benchmark", type=str, default="FeB4RAG", choices=["MIRAGE", "FeB4RAG"], help="Benchmark name")
+    parser.add_argument("--benchmark-path", type=str, default="data/benchmark", help="Path to the benchmark data")
     parser.add_argument("--parallel", type=int, default=1, help="Number of parallel requests to send")
     parser.add_argument("--routing", type=str, required=True, choices=["ragroute", "all", "random", "none"], help="Routing method to use")
-    parser.add_argument("--questions", type=str, default=None, choices=['medqa', 'medmcqa', 'pubmedqa', 'bioasq', 'mmlu'], help="The questions to use for the benchmark")
+    parser.add_argument("--questions", type=str, default=None, choices=['medqa', 'medmcqa', 'pubmedqa', 'bioasq', 'mmlu'], help="The questions to use for the benchmark")  # TODO add questions from FeB4RAG
     args = parser.parse_args()
 
     benchmark_file: str = os.path.join("data", "benchmark_%s_%s.csv" % (args.benchmark, args.routing))
@@ -51,7 +52,7 @@ async def main():
     num_correct: int = 0
     
     # Load the benchmark
-    benchmark = Benchmark(args.benchmark)
+    benchmark = Benchmark(args.benchmark_path, args.benchmark)
     async with aiohttp.ClientSession() as session:
         question_banks = list(benchmark.benchmark_data.keys())
         if args.questions is not None:
@@ -73,7 +74,7 @@ async def main():
 
                     encoded_question = aiohttp.helpers.quote(question)
                     encoded_options = aiohttp.helpers.quote(json.dumps(options))
-                    url = f"http://localhost:8000/query?q={encoded_question}&choices={encoded_options}"
+                    url = f"http://localhost:8000/query?q={encoded_question}&choices={encoded_options}&qid={question_id}"
 
                     task = fetch_answer(session, url)
                     tasks.append(task)
@@ -87,9 +88,9 @@ async def main():
                         continue
 
                     # Process the question result
-                    is_correct = benchmark.check_mirage_answer(question_data, result["answer"])
+                    is_correct = benchmark.check_mirage_answer(question_data, result["answer"]) if args.benchmark == "MIRAGE" else True
                     num_questions += 1
-                    num_correct += bool(is_correct)
+                    num_correct += int(is_correct)
 
                     # Record the answer
                     with open(answer_file, "a") as f:
@@ -107,7 +108,8 @@ async def main():
                         for data_source, stats in metadata["data_sources_stats"].items():
                             f.write(f"{args.benchmark},{question_bank},{question_id},{data_source},{stats['duration']},{stats['message_size']}\n")
 
-                    print(f"--> Score: {num_correct}/{num_questions}")
+                    if args.benchmark == "MIRAGE":
+                        print(f"--> Score: {num_correct}/{num_questions}")
 
 
 if __name__ == "__main__":
