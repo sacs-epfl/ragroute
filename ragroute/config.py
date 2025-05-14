@@ -24,7 +24,7 @@ FEB4RAG_DIR = os.path.join(USR_DIR, "FeB4RAG")
 
 # Dataset information
 DATA_SOURCES = {
-    "medrag": ["statpearls", "textbooks"], #["pubmed", "statpearls", "textbooks", "wikipedia"],
+    "medrag": ["pubmed", "statpearls", "textbooks", "wikipedia"],
     "feb4rag": ["msmarco", "trec-covid", "nfcorpus", "scidocs", "nq", "hotpotqa", "fiqa", "arguana", "webis-touche2020", "dbpedia-entity", "fever", "climate-fever", "scifact"],
 }
 EMBEDDING_MODELS_PER_DATA_SOURCE = {
