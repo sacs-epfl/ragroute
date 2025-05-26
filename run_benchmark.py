@@ -7,6 +7,7 @@ import aiohttp
 from tqdm import tqdm
 
 from ragroute.benchmark import Benchmark
+import time
 
 
 async def fetch_answer(session, url):
@@ -27,9 +28,18 @@ async def main():
     parser.add_argument("--questions", type=str, default=None, choices=['medqa', 'medmcqa', 'pubmedqa', 'bioasq', 'mmlu'], help="The questions to use for the benchmark")  # TODO add questions from FeB4RAG
     args = parser.parse_args()
 
-    benchmark_file: str = os.path.join("data", "benchmark_%s_%s.csv" % (args.benchmark, args.routing))
-    ds_stats_file: str = os.path.join("data", "ds_stats_%s_%s.csv" % (args.benchmark, args.routing))
-    answer_file: str = os.path.join("data", "answers.jsonl")
+    file_suffix = f"{args.benchmark}_{args.routing}_p{args.parallel}"
+
+    benchmark_file: str = os.path.join("data", f"_benchmark_{file_suffix}.csv")
+    ds_stats_file: str = os.path.join("data", f"_ds_stats_{file_suffix}.csv")
+    answer_file: str = os.path.join("data", f"_answers_{file_suffix}.jsonl")
+
+
+    batch_log_path = os.path.join("data", f"_batch_timings_{file_suffix}.csv")
+    if not os.path.exists(batch_log_path):
+        with open(batch_log_path, "w") as f:
+            f.write("successes,batch_time,total_sent\n")
+
 
     if not os.path.exists(benchmark_file):
         with open(benchmark_file, "w") as f:
@@ -54,13 +64,13 @@ async def main():
     # Load the benchmark
     benchmark = Benchmark(args.benchmark_path, args.benchmark)
     async with aiohttp.ClientSession() as session:
-        question_banks = list(benchmark.benchmark_data.keys())
+        question_banks = sorted(benchmark.benchmark_data.keys())
         if args.questions is not None:
             question_banks = [args.questions]
 
         for question_bank in question_banks:
             questions = benchmark.benchmark_data[question_bank]
-            question_items = list(questions.items())
+            question_items = sorted(questions.items())
             for i in tqdm(range(0, len(question_items), args.parallel)):
                 batch = question_items[i:i + args.parallel]
                 tasks = []
@@ -79,8 +89,19 @@ async def main():
                     task = fetch_answer(session, url)
                     tasks.append(task)
 
+
+                batch_start_time = time.time()
                 # Run the batch concurrently
                 results = await asyncio.gather(*tasks)
+                # TODO
+                batch_end_time = time.time()
+                batch_duration = batch_end_time - batch_start_time
+                # Count valid responses (skip None and generation failures)
+                valid_results = [r for r in results if r and r["metadata"]["generate_time"] != -1]
+                question_ids = [qid for qid,_ in batch]
+                if valid_results:
+                    with open(batch_log_path, "a") as f:
+                        f.write(f"{json.dumps(question_ids)},{len(valid_results)},{batch_duration:.4f},{len(tasks)}\n")
 
                 for result in results:
                     if not result:

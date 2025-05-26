@@ -19,6 +19,7 @@ import zmq.asyncio
 from ragroute.config import (
     EMBEDDING_MODELS_PER_DATA_SOURCE, FEB4RAG_DIR, K, SERVER_ROUTER_PORT, ROUTER_SERVER_PORT,
     SERVER_CLIENT_BASE_PORT, CLIENT_SERVER_BASE_PORT,
+    INTERNAL_SERVER_ROUTER_PORT, INTERNAL_ROUTER_SERVER_PORT, INTERNAL_SERVER_CLIENT_BASE_PORT, INTERNAL_CLIENT_SERVER_BASE_PORT,
     HTTP_HOST, HTTP_PORT, MODELS
 )
 from ragroute.llm_message import generate_llm_message
@@ -60,7 +61,7 @@ class HTTPServer:
         
         # Socket to receive routing decisions from router
         self.router_receiver = self.context.socket(zmq.PULL)
-        self.router_receiver.bind(f"tcp://*:{ROUTER_SERVER_PORT}")
+        self.router_receiver.bind(f"tcp://*:{INTERNAL_ROUTER_SERVER_PORT}")
         
         # Sockets to send queries to clients
         self.client_senders = {}
@@ -73,7 +74,7 @@ class HTTPServer:
         self.client_receivers = {}
         for client_id in range(self.num_clients):
             socket = self.context.socket(zmq.PULL)
-            socket.bind(f"tcp://*:{CLIENT_SERVER_BASE_PORT + client_id}")
+            socket.bind(f"tcp://*:{INTERNAL_CLIENT_SERVER_BASE_PORT + client_id}")
             self.client_receivers[client_id] = socket
 
         # Start listener for router responses
@@ -152,7 +153,8 @@ class HTTPServer:
         
         # Wait for all results
         try:
-            results = await asyncio.wait_for(future, timeout=300.0)
+            #results = await asyncio.wait_for(future, timeout=300.0)
+            results = await asyncio.wait_for(future, timeout=100000.0)
             return web.json_response(results)
         except asyncio.TimeoutError:
             logger.error(f"Query timed out: {query_id}")
@@ -196,7 +198,6 @@ class HTTPServer:
                             data_source_name: str = self.data_sources[client_id]
                             model_for_data_source = EMBEDDING_MODELS_PER_DATA_SOURCE[self.dataset][data_source_name][0]
 
-                            # TODO this should be done in parallel
                             await self.client_senders[client_id].send_json({
                                 "id": query_id,
                                 "query": query,
@@ -264,6 +265,7 @@ class HTTPServer:
             return
         
         query_data = self.active_queries[query_id]
+        print("FINISHED QUERY ", query_id)
         
         # Combine results from all clients
         response = {
@@ -292,12 +294,30 @@ class HTTPServer:
         else:
             try:
                 start_time = time.time()
-                response_: ChatResponse = await AsyncClient().chat(model=self.model_info["ollama_name"], messages=llm_message, options={"num_predict": self.model_info["max_tokens"]})
-                generate_time = time.time() - start_time
-                self.active_queries[query_id]["metadata"]["generate_time"] = generate_time
-                response["answer"] = response_['message']['content']
+                # TODO
+                #response_: ChatResponse = await AsyncClient().chat(model=self.model_info["ollama_name"], messages=llm_message, options={"num_predict": self.model_info["max_tokens"]})
+                try:
+                    response_: ChatResponse = await asyncio.wait_for(
+                        AsyncClient().chat(
+                            model=self.model_info["ollama_name"],
+                            messages=llm_message,
+                            options={"num_predict": self.model_info["max_tokens"]}
+                        ),
+                        timeout=120
+                    )
+                    generate_time = time.time() - start_time
+                    self.active_queries[query_id]["metadata"]["generate_time"] = generate_time
+                    response["answer"] = response_['message']['content']
+
+                except asyncio.TimeoutError:
+                    logger.warning(f"LLM generation timed out for query {query_id}")
+                    response_ = "TIMEOUT"
+                    self.active_queries[query_id]["metadata"]["generate_time"] = -1
+                    response["answer"] = "Error generation timed out."
+
             except Exception as e:
                 logger.error(f"Error generating LLM message: {e}", exc_info=True)
+                self.active_queries[query_id]["metadata"]["generate_time"] = -1
                 response["answer"] = f"Error generating response: {str(e)}"
 
         response["metadata"] = query_data["metadata"]
@@ -368,3 +388,5 @@ async def run_server(dataset: str, data_sources: List[str], routing_strategy: st
     server = HTTPServer(dataset, data_sources, routing_strategy, model, disable_llm=disable_llm)
     await server.start()
     return server
+
+

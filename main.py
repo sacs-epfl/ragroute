@@ -15,9 +15,9 @@ def start_router(dataset: str, data_sources: List[str], routing_strategy: str):
     from ragroute.router import run_router
     asyncio.run(run_router(dataset, data_sources, routing_strategy))
 
-def start_data_source(index: int, dataset: str, data_source: str):
+def start_data_source(index: int, dataset: str, data_source: str, bs: int):
     from ragroute.data_source import run_data_source
-    asyncio.run(run_data_source(index, dataset, data_source))
+    asyncio.run(run_data_source(index, dataset, data_source, bs))
 
 
 class FederatedSearchSystem:
@@ -34,6 +34,7 @@ class FederatedSearchSystem:
         self.main_task = None
         self.data_sources: List[str] = DATA_SOURCES[self.dataset]
         self.data_source_processes: Dict = {}
+        self.bs: int = args.bs
         
     async def start(self):
         logger.info(f"Starting RAGRoute with dataset {self.dataset}")
@@ -49,7 +50,7 @@ class FederatedSearchSystem:
         
         # Start data source processes
         for idx, data_source in enumerate(self.data_sources):
-            data_source_process = Process(target=start_data_source, args=(idx, self.dataset, data_source))
+            data_source_process = Process(target=start_data_source, args=(idx, self.dataset, data_source, self.bs))
             data_source_process.start()
             self.processes.append(data_source_process)
             self.data_source_processes[data_source] = data_source_process
@@ -138,6 +139,7 @@ def main():
     parser.add_argument("--routing", type=str, default="ragroute", choices=["ragroute", "all", "random", "none"], help="The routing method to use - for random, we randomly pick n/2 of the n data sources")
     parser.add_argument("--disable-llm", action="store_true", help="Disable the LLM for testing purposes")
     parser.add_argument("--model", type=str, default=SUPPORTED_MODELS[0], choices=SUPPORTED_MODELS, help="The model to use for the LLM")
+    parser.add_argument("--bs", type=int, default=1, help="The batch size to use for concurrency in the datasources")
     args = parser.parse_args()
     
     controller = FederatedSearchSystem(args)
@@ -153,3 +155,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+

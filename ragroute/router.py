@@ -17,9 +17,10 @@ import torch.nn.functional as F
 import zmq
 import zmq.asyncio
 
-from ragroute.config import EMBEDDING_MAX_LENGTH, EMBEDDING_MODELS_PER_DATA_SOURCE, FEB4RAG_SOURCE_TO_ID, MODELS_FEB4RAG_DIR, MODELS_USR_DIR, SERVER_ROUTER_PORT, ROUTER_SERVER_PORT, MAX_QUEUE_SIZE, USR_DIR
+from ragroute.config import EMBEDDING_MAX_LENGTH, EMBEDDING_MODELS_PER_DATA_SOURCE, FEB4RAG_SOURCE_TO_ID, MODELS_FEB4RAG_DIR, MODELS_USR_DIR, SERVER_ROUTER_PORT, ROUTER_SERVER_PORT, MAX_QUEUE_SIZE, USR_DIR, INTERNAL_SERVER_ROUTER_PORT
 from ragroute.models.medrag.custom_sentence_transformer import CustomizeSentenceTransformer
 from ragroute.queue_manager import QueryQueue
+import random
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("router")
@@ -90,7 +91,7 @@ class Router:
         
         # Socket to receive queries from server
         self.receiver = self.context.socket(zmq.PULL)
-        self.receiver.bind(f"tcp://*:{SERVER_ROUTER_PORT}")
+        self.receiver.bind(f"tcp://*:{INTERNAL_SERVER_ROUTER_PORT}")
         
         # Socket to send routing decisions back to server
         self.sender = self.context.socket(zmq.PUSH)
@@ -133,6 +134,11 @@ class Router:
             centroid = np.pad(centroid, (0, EMBEDDING_MAX_LENGTH[self.dataset] - len(centroid)))  # Pad to max length
             self.centroids[corpus] = centroid
         
+        #warmup
+        with torch.no_grad():
+            dummy_input = torch.zeros(1, self.router.fc1.in_features).to(self.device)
+            _ = self.router(dummy_input)
+        
         try:
             await asyncio.gather(receive_task, process_task)
         except asyncio.CancelledError:
@@ -161,64 +167,136 @@ class Router:
             logger.info("Receive task cancelled")
             raise
             
+    # async def _process_queue(self):
+    #     """Process queries from the queue."""
+    #     try:
+    #         while self.running:
+    #             if not self.queue.empty():
+    #                 query_data = await self.queue.dequeue()
+    #                 await self._process_query(query_data)
+    #                 self.queue.task_done()
+    #             else:
+    #                 await asyncio.sleep(0.1)
+    #     except asyncio.CancelledError:
+    #         logger.info("Process task cancelled")
+    #         raise
     async def _process_queue(self):
-        """Process queries from the queue."""
+        """Process batches of queries from the queue."""
         try:
             while self.running:
-                if not self.queue.empty():
-                    query_data = await self.queue.dequeue()
-                    await self._process_query(query_data)
-                    self.queue.task_done()
+                query_batch = await self.queue.dequeue_batch(batch_size=64, timeout=0.5)
+                if query_batch:
+                    await self._process_batch(query_batch)
+                    for _ in query_batch:
+                        self.queue.task_done()
                 else:
-                    await asyncio.sleep(0.1)
+                    await asyncio.sleep(0.05)
         except asyncio.CancelledError:
             logger.info("Process task cancelled")
             raise
 
-    def select_relevant_sources(self, query_embeddings: Dict[str, torch.Tensor]) -> List[str]:
+    # def select_relevant_sources(self, query_embeddings: Dict[str, torch.Tensor]) -> List[str]:
+    #     if self.routing_strategy == "ragroute":
+    #         return self.select_relevant_sources_ragroute(query_embeddings)
+    #     elif self.routing_strategy == "all":
+    #         return self.data_sources
+    #     elif self.routing_strategy == "random":
+    #         raise NotImplementedError("Random routing strategy is not implemented yet.")
+    #     elif self.routing_strategy == "none":
+    #         return []
+    #     else:
+    #         raise ValueError(f"Unknown routing strategy: {self.routing_strategy}")
+    def select_relevant_sources(self, query_embeddings_batch: List[Dict[str, np.ndarray]]) -> List[List[str]]:
         if self.routing_strategy == "ragroute":
-            return self.select_relevant_sources_ragroute(query_embeddings)
+            return self.select_relevant_sources_ragroute_batch(query_embeddings_batch)
         elif self.routing_strategy == "all":
-            return self.data_sources
+            return [self.data_sources for _ in query_embeddings_batch]
         elif self.routing_strategy == "random":
-            raise NotImplementedError("Random routing strategy is not implemented yet.")
+            if self.dataset == "medrag":
+                return self.select_random_sources(query_embeddings_batch, k=2)
+            elif self.dataset == "feb4rag":
+                return self.select_random_sources(query_embeddings_batch, k=9)
         elif self.routing_strategy == "none":
-            return []
+            return [[] for _ in query_embeddings_batch]
         else:
             raise ValueError(f"Unknown routing strategy: {self.routing_strategy}")
 
-    def select_relevant_sources_ragroute(self, query_embeddings: Dict[str, torch.Tensor]) -> List[str]:
-        inputs = []
+    # def select_relevant_sources_ragroute(self, query_embeddings: Dict[str, torch.Tensor]) -> List[str]:
+    #     inputs = []
 
-        # First, we pad the query embeddings to the maximum length
-        padded_query_embeddings = {}
-        for model_name in query_embeddings.keys():
-            query_embed = query_embeddings[model_name]
-            padded_q = np.pad(query_embed, (0, EMBEDDING_MAX_LENGTH[self.dataset] - len(query_embed)))
-            padded_query_embeddings[model_name] = padded_q
+    #     # First, we pad the query embeddings to the maximum length
+    #     padded_query_embeddings = {}
+    #     for model_name in query_embeddings.keys():
+    #         query_embed = query_embeddings[model_name]
+    #         padded_q = np.pad(query_embed, (0, EMBEDDING_MAX_LENGTH[self.dataset] - len(query_embed)))
+    #         padded_query_embeddings[model_name] = padded_q
 
-        for corpus in self.data_sources:
-            model_for_corpus: str = EMBEDDING_MODELS_PER_DATA_SOURCE[self.dataset][corpus][0]
-            features = np.concatenate([padded_query_embeddings[model_for_corpus], self.centroids[corpus]])
-            if self.dataset == "feb4rag":
-                # We need to append the one-hot vector for the corpus when using the feb4rag dataset
-                source_id = FEB4RAG_SOURCE_TO_ID[corpus]
-                source_id_vec = np.eye(len(FEB4RAG_SOURCE_TO_ID))[source_id]
-                features = np.concatenate([features, source_id_vec])
-            inputs.append(features)
+    #     for corpus in self.data_sources:
+    #         model_for_corpus: str = EMBEDDING_MODELS_PER_DATA_SOURCE[self.dataset][corpus][0]
+    #         features = np.concatenate([padded_query_embeddings[model_for_corpus], self.centroids[corpus]])
+    #         if self.dataset == "feb4rag":
+    #             # We need to append the one-hot vector for the corpus when using the feb4rag dataset
+    #             source_id = FEB4RAG_SOURCE_TO_ID[corpus]
+    #             source_id_vec = np.eye(len(FEB4RAG_SOURCE_TO_ID))[source_id]
+    #             features = np.concatenate([features, source_id_vec])
+    #         inputs.append(features)
         
+    #     if self.dataset == "medrag":
+    #         inputs = self.scaler.transform(inputs)
+    #     input_tensor = torch.tensor(inputs, dtype=torch.float32).to(self.device)
+
+    #     with torch.no_grad():
+    #         outputs = self.router(input_tensor)
+    #         outputs = outputs.view(-1)
+    #         probabilities = torch.sigmoid(outputs)
+    #         predictions = (probabilities > 0.5).cpu().numpy()
+
+    #     sources_corpora = [corpus for prediction, corpus in zip(predictions, self.data_sources) if prediction]
+    #     return sources_corpora
+    def select_random_sources(self, query_embeddings_batch: List[Dict[str, np.ndarray]], k: int = 2) -> List[List[str]]:
+        results = []
+        for _ in query_embeddings_batch:
+            selected = random.sample(self.data_sources, k)
+            results.append(selected)
+        return results
+
+    def select_relevant_sources_ragroute_batch(self, query_embeddings_batch: List[Dict[str, np.ndarray]]) -> List[List[str]]:
+        inputs = []
+        for query_embeddings in query_embeddings_batch:
+            padded_query_embeddings = {
+                model_name: np.pad(emb, (0, EMBEDDING_MAX_LENGTH[self.dataset] - len(emb)))
+                for model_name, emb in query_embeddings.items()
+            }
+
+            for corpus in self.data_sources:
+                model_name = EMBEDDING_MODELS_PER_DATA_SOURCE[self.dataset][corpus][0]
+                features = np.concatenate([padded_query_embeddings[model_name], self.centroids[corpus]])
+
+                if self.dataset == "feb4rag":
+                    source_id = FEB4RAG_SOURCE_TO_ID[corpus]
+                    one_hot = np.eye(len(FEB4RAG_SOURCE_TO_ID))[source_id]
+                    features = np.concatenate([features, one_hot])
+
+                inputs.append(features)
+
         if self.dataset == "medrag":
             inputs = self.scaler.transform(inputs)
+
         input_tensor = torch.tensor(inputs, dtype=torch.float32).to(self.device)
 
         with torch.no_grad():
-            outputs = self.router(input_tensor)
-            outputs = outputs.view(-1)
-            probabilities = torch.sigmoid(outputs)
-            predictions = (probabilities > 0.5).cpu().numpy()
+            outputs = self.router(input_tensor).view(-1)
+            probs = torch.sigmoid(outputs).cpu().numpy()
 
-        sources_corpora = [corpus for prediction, corpus in zip(predictions, self.data_sources) if prediction]
-        return sources_corpora
+        # Reshape to (num_queries, num_sources)
+        num_queries = len(query_embeddings_batch)
+        sources_corpora_batch = []
+        for i in range(num_queries):
+            offset = i * len(self.data_sources)
+            preds = probs[offset:offset + len(self.data_sources)] > 0.5
+            selected = [ds for ds, p in zip(self.data_sources, preds) if p]
+            sources_corpora_batch.append(selected)
+        return sources_corpora_batch
 
     def encode_query(self, query):
         with torch.no_grad():
@@ -230,33 +308,84 @@ class Router:
                     emb = model.encode_queries([query], batch_size=1, convert_to_tensor=False)[0]
                     embeddings[model_name] = emb
         return embeddings
+    
+    async def _process_batch(self, query_batch: List[Dict]):
+        query_texts = [query_data["query"] for query_data in query_batch]
+        query_ids = [query_data["id"] for query_data in query_batch]
 
-    async def _process_query(self, query_data):
-        """Process a query and determine which clients should handle it."""
-        logger.debug(f"Router processing query: {query_data['id']}")
+        logger.debug(f"Encoding batch of size {len(query_batch)}")
 
         start_time = time.time()
-        query_embeddings: Dict[str, torch.Tensor] = self.encode_query(query_data["query"])
+        # Encode using all models in batch
+        query_embeddings_by_model = {}
+        for model_name, model in self.embedding_models.items():
+            if self.dataset == "medrag":
+                query_embeddings_by_model[model_name] = model.encode(query_texts, show_progress_bar=False)
+            elif self.dataset == "feb4rag":
+                query_embeddings_by_model[model_name] = model.encode_queries(query_texts, batch_size=len(query_texts), convert_to_tensor=False)
         embed_time = time.time() - start_time
 
+        logger.debug(f"Batch embedding took {embed_time:.4f} seconds")
+        print(f"Batch embedding {len(query_batch)} took {embed_time:.4f} seconds")
+
         start_time = time.time()
-        sources_corpora = self.select_relevant_sources(query_embeddings)
+        # Prepare batch-wise query embeddings for routing
+        query_embeddings_batch = [
+            {
+                model_name: query_embeddings_by_model[model_name][i]
+                for model_name in query_embeddings_by_model
+            }
+            for i in range(len(query_batch))
+        ]
+
+        sources_corpora_batch = self.select_relevant_sources(query_embeddings_batch)
         select_time = time.time() - start_time
 
-        serialized_embeddings = {}
-        for model_name, embedding in query_embeddings.items():
-            serialized_embeddings[model_name] = embedding.tolist() if isinstance(embedding, np.ndarray) else embedding
+        responses = []
+        for i in range(len(query_batch)):
+            serialized_embeddings = {
+                model_name: query_embeddings_by_model[model_name][i].tolist()
+                for model_name in query_embeddings_by_model
+            }
+
+            responses.append({
+                "query_id": query_ids[i],
+                "data_sources": sources_corpora_batch[i],
+                "embeddings": serialized_embeddings,
+                "embedding_time": embed_time / len(query_batch),
+                "selection_time": select_time / len(query_batch),
+            })
+
+        for response in responses:
+            await self.sender.send_json(response)
+            logger.info(f"Router sent routing decision {response['data_sources']} to server for query: {response['query_id']}")
+
+    # async def _process_query(self, query_data):
+    #     """Process a query and determine which clients should handle it."""
+    #     logger.debug(f"Router processing query: {query_data['id']}")
+
+    #     start_time = time.time()
+    #     query_embeddings: Dict[str, torch.Tensor] = self.encode_query(query_data["query"])
+    #     embed_time = time.time() - start_time
+
+    #     start_time = time.time()
+    #     sources_corpora = self.select_relevant_sources(query_embeddings)
+    #     select_time = time.time() - start_time
+
+    #     serialized_embeddings = {}
+    #     for model_name, embedding in query_embeddings.items():
+    #         serialized_embeddings[model_name] = embedding.tolist() if isinstance(embedding, np.ndarray) else embedding
         
-        response = {
-            "query_id": query_data["id"],
-            "data_sources": sources_corpora,
-            "embeddings": serialized_embeddings,
-            "embedding_time": embed_time,
-            "selection_time": select_time,
-        }
+    #     response = {
+    #         "query_id": query_data["id"],
+    #         "data_sources": sources_corpora,
+    #         "embeddings": serialized_embeddings,
+    #         "embedding_time": embed_time,
+    #         "selection_time": select_time,
+    #     }
         
-        await self.sender.send_json(response)
-        logger.info(f"Router sent routing decision {response['data_sources']} to server for query: {query_data['id']}")
+    #     await self.sender.send_json(response)
+    #     logger.info(f"Router sent routing decision {response['data_sources']} to server for query: {query_data['id']}")
         
     def stop(self):
         """Stop the router."""

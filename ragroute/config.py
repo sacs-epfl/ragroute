@@ -1,9 +1,32 @@
 import os
 
-SERVER_ROUTER_PORT = 5555
-ROUTER_SERVER_PORT = 5556
-SERVER_CLIENT_BASE_PORT = 6000
-CLIENT_SERVER_BASE_PORT = 7500
+#SERVER_ROUTER_PORT = 5555
+#ROUTER_SERVER_PORT = 5556
+#SERVER_CLIENT_BASE_PORT = 6000
+#CLIENT_SERVER_BASE_PORT = 7500
+
+
+
+
+
+## External ports used by Toxiproxy (what clients connect to)
+#SERVER_ROUTER_PORT = 5055
+#ROUTER_SERVER_PORT = 5056
+
+#SERVER_CLIENT_BASE_PORT = 6100
+#CLIENT_SERVER_BASE_PORT = 7600
+
+# Internal ports used by components to bind()
+INTERNAL_SERVER_ROUTER_PORT = 5555
+INTERNAL_ROUTER_SERVER_PORT = 5556
+INTERNAL_SERVER_CLIENT_BASE_PORT = 6000
+INTERNAL_CLIENT_SERVER_BASE_PORT = 7500
+
+# Use the internal ports directly, no proxies
+SERVER_ROUTER_PORT = INTERNAL_SERVER_ROUTER_PORT      # 5555
+ROUTER_SERVER_PORT = INTERNAL_ROUTER_SERVER_PORT      # 5556
+SERVER_CLIENT_BASE_PORT = INTERNAL_SERVER_CLIENT_BASE_PORT  # 6000
+CLIENT_SERVER_BASE_PORT = INTERNAL_CLIENT_SERVER_BASE_PORT  # 7500
 
 # HTTP server settings
 HTTP_HOST = "127.0.0.1"
@@ -13,7 +36,7 @@ HTTP_PORT = 8000
 MAX_QUEUE_SIZE = 100
 
 # For loading the models
-MODELS_USR_DIR = "/mnt/nfs/home/mdevos"
+MODELS_USR_DIR = "/mnt/nfs/home/dpetresc"
 MODELS_MEDRAG_DIR = os.path.join(MODELS_USR_DIR, "MedRAG", "corpus")
 MODELS_FEB4RAG_DIR = os.path.join(MODELS_USR_DIR, "FeB4RAG")
 
@@ -25,6 +48,8 @@ FEB4RAG_DIR = os.path.join(USR_DIR, "FeB4RAG")
 # Dataset information
 DATA_SOURCES = {
     "medrag": ["pubmed", "statpearls", "textbooks", "wikipedia"],
+    # TODO for testing 
+    #"medrag": ["textbooks", "statpearls"],
     "feb4rag": ["msmarco", "trec-covid", "nfcorpus", "scidocs", "nq", "hotpotqa", "fiqa", "arguana", "webis-touche2020", "dbpedia-entity", "fever", "climate-fever", "scifact"],
 }
 EMBEDDING_MODELS_PER_DATA_SOURCE = {
@@ -105,7 +130,8 @@ MODELS = {
         "docs_context_length": 128000,
         "max_tokens": 131072,
         "hf_name": "meta-llama/Meta-Llama-3.1-8B-Instruct",
-        "ollama_name": "llama3.1:8b-instruct-q4_K_M",
+        "ollama_name": "llama3.1",
+        #"ollama_name": "llama3.1:8b-instruct-q4_K_M",
     },
     "qwen3-8B": {
         "docs_context_length": 38000,
@@ -120,3 +146,4 @@ MODELS = {
         "ollama_name": "qwen3:0.6b",
     }
 }
+
