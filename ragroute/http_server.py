@@ -17,7 +17,7 @@ import zmq
 import zmq.asyncio
 
 from ragroute.config import (
-    EMBEDDING_MODELS_PER_DATA_SOURCE, FEB4RAG_DIR, K, SERVER_ROUTER_PORT, ROUTER_SERVER_PORT,
+    EMBEDDING_MODELS_PER_DATA_SOURCE, FEB4RAG_DIR, K, LLM_DELAY, SERVER_ROUTER_PORT, ROUTER_SERVER_PORT,
     SERVER_CLIENT_BASE_PORT, CLIENT_SERVER_BASE_PORT,
     HTTP_HOST, HTTP_PORT, MODELS
 )
@@ -30,13 +30,14 @@ logger = logging.getLogger("server")
 class HTTPServer:
     """HTTP server that coordinates the federated search system."""
     
-    def __init__(self, dataset: str, data_sources: List[str], routing_strategy: str, model: str, disable_llm: bool = False):
+    def __init__(self, dataset: str, data_sources: List[str], routing_strategy: str, model: str, disable_llm: bool = False, simulate: bool = False):
         self.dataset: str = dataset
         self.data_sources: List[str] = data_sources
         self.routing_strategy: str = routing_strategy
         self.model: str = model
         self.model_info = MODELS[model]
         self.disable_llm: bool = disable_llm
+        self.simulate: bool = simulate
         self.num_clients = len(data_sources)
         self.app = web.Application()
         self.app.add_routes([
@@ -166,7 +167,7 @@ class HTTPServer:
             while self.running:
                 try:
                     # Wait for messages with a timeout to allow for clean shutdown
-                    routing_data = await asyncio.wait_for(self.router_receiver.recv_json(), timeout=5)
+                    routing_data = await self.router_receiver.recv_json()
                     query_id = routing_data["query_id"]
                     data_sources = routing_data["data_sources"]
                     embeddings = routing_data["embeddings"]
@@ -225,14 +226,14 @@ class HTTPServer:
             while self.running:
                 try:
                     # Wait for messages with a timeout to allow for clean shutdown
-                    raw_message = await asyncio.wait_for(self.client_receivers[client_id].recv(), timeout=1)
+                    raw_message = await self.client_receivers[client_id].recv()
                     message_size = len(raw_message)  # Get the size of the raw message in bytes
                     result_data = json.loads(raw_message.decode('utf-8'))
 
                     query_id = result_data["query_id"]
                     ds_name: str = result_data["name"]
                     
-                    logger.debug(f"Received results from data source {ds_name} for query {query_id}")
+                    logger.info(f"Received results from data source {ds_name} for query {query_id}")
                     
                     if query_id in self.active_queries:
                         # Store the results
@@ -284,14 +285,17 @@ class HTTPServer:
             filtered_docs, _ = rerank_medrag(all_docs, all_scores, K)
         elif self.dataset == "feb4rag":
             filtered_docs, _ = rerank_feb4rag(all_indices, all_docs, query_data["question_id"], K, self.relevance_data)
-        llm_message, docs_tokens = generate_llm_message(self.dataset, query_data["query"], filtered_docs, query_data["choices"], self.model)
 
         if self.disable_llm:
             self.active_queries[query_id]["metadata"]["generate_time"] = 0
             response["answer"] = ""
+            docs_tokens = 0
+            if self.simulate:
+                await asyncio.sleep(LLM_DELAY)
         else:
             try:
                 start_time = time.time()
+                llm_message, docs_tokens = generate_llm_message(self.dataset, query_data["query"], filtered_docs, query_data["choices"], self.model)
                 response_: ChatResponse = await AsyncClient().chat(model=self.model_info["ollama_name"], messages=llm_message, options={"num_predict": self.model_info["max_tokens"]})
                 generate_time = time.time() - start_time
                 self.active_queries[query_id]["metadata"]["generate_time"] = generate_time
@@ -364,7 +368,7 @@ class HTTPServer:
         
         logger.info("Server stopped")
         
-async def run_server(dataset: str, data_sources: List[str], routing_strategy: str, model: str, disable_llm: bool = False) -> HTTPServer:
-    server = HTTPServer(dataset, data_sources, routing_strategy, model, disable_llm=disable_llm)
+async def run_server(dataset: str, data_sources: List[str], routing_strategy: str, model: str, disable_llm: bool = False, simulate: bool = False) -> HTTPServer:
+    server = HTTPServer(dataset, data_sources, routing_strategy, model, disable_llm=disable_llm, simulate=simulate)
     await server.start()
     return server

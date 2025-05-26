@@ -22,6 +22,11 @@ USR_DIR = "/mnt/nfs/home/dpetresc"
 MEDRAG_DIR = os.path.join(USR_DIR, "MedRAG", "corpus")
 FEB4RAG_DIR = os.path.join(USR_DIR, "FeB4RAG")
 
+# If we're in simulation mode, these are the delays for each component (in seconds)
+ROUTER_DELAY = 1
+DATA_SOURCE_DELAY = 2
+LLM_DELAY = 1
+
 # Dataset information
 DATA_SOURCES = {
     "medrag": ["pubmed", "statpearls", "textbooks", "wikipedia"],
