@@ -14,16 +14,17 @@ import numpy as np
 import zmq
 import zmq.asyncio
 
-from ragroute.config import EMBEDDING_MODELS_PER_DATA_SOURCE, FEB4RAG_DIR, K, MEDRAG_DIR, SERVER_CLIENT_BASE_PORT, CLIENT_SERVER_BASE_PORT
+from ragroute.config import DATA_SOURCE_DELAY, EMBEDDING_MODELS_PER_DATA_SOURCE, FEB4RAG_DIR, K, MEDRAG_DIR, SERVER_CLIENT_BASE_PORT, CLIENT_SERVER_BASE_PORT
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("client")
 
 class DataSource:
     
-    def __init__(self, client_id: int, dataset: str, name: str):
+    def __init__(self, client_id: int, dataset: str, name: str, simulate: bool = False):
         self.client_id: int = client_id
         self.dataset: str = dataset
+        self.simulate: bool = simulate
         
         if dataset == "medrag":
             self.dataset_dir = MEDRAG_DIR
@@ -49,6 +50,17 @@ class DataSource:
             self.doc_ids_path: str = os.path.join(self.index_dir, f"{name}_{model_name}.docids.json")
         self.faiss_indexes = None
         self.cache_jsonl = {}
+
+    def load_faiss_index(self):
+        logger.info(f"Loading FAISS index for {self.name}")
+        index = faiss.read_index(self.index_path)
+        if self.dataset == "medrag":
+            metadatas = [json.loads(line) for line in open(self.doc_ids_path).read().strip().split('\n')]
+        elif self.dataset == "feb4rag":
+            with open(self.doc_ids_path, "r") as f:
+                metadatas = json.load(f)
+        self.faiss_indexes = index, metadatas
+        logger.info(f"FAISS index for {self.name} loaded successfully")
         
     async def start(self):
         """Start the client and listen for queries."""
@@ -63,31 +75,30 @@ class DataSource:
         self.sender = self.context.socket(zmq.PUSH)
         self.sender.connect(f"tcp://localhost:{self.send_port}")
 
-        # Load the FAISS index and metadata
-        logger.info(f"Loading FAISS index for {self.name}")
-        index = faiss.read_index(self.index_path)
-        if self.dataset == "medrag":
-            metadatas = [json.loads(line) for line in open(self.doc_ids_path).read().strip().split('\n')]
-        elif self.dataset == "feb4rag":
-            with open(self.doc_ids_path, "r") as f:
-                metadatas = json.load(f)
-        self.faiss_indexes = index, metadatas
-        logger.info(f"FAISS index for {self.name} loaded successfully")
+        if not self.simulate:
+            self.load_faiss_index()
         
         try:
             while self.running:
                 try:
                     # Wait for queries with a timeout to allow for clean shutdown
-                    query_data = await asyncio.wait_for(self.receiver.recv_json(), timeout=0.5)
-                    logger.debug(f"Data source {self.client_id} received query: {query_data['id']}")
+                    query_data = await self.receiver.recv_json()
+                    logger.info(f"Data source {self.client_id} received query: {query_data['id']}")
                     start_time = time.time()
 
-                    embedding = query_data["embedding"]
-                    embedding = np.array(embedding, dtype=np.float32).reshape(1, -1)
-                    if self.dataset == "medrag":
-                        ids, docs, scores = self.retrieve_docs_medrag(embedding, K)
-                    elif self.dataset == "feb4rag":
-                        ids, docs, scores = self.retrieve_docs_fed4rag(embedding, K)
+                    if self.simulate:
+                        # Simulate passing of time (async)
+                        ids = ["doc1", "doc2", "doc3"]
+                        docs = ["Document 1 content", "Document 2 content", "Document 3 content"]
+                        scores = [0.9, 0.85, 0.8]
+                        await asyncio.sleep(DATA_SOURCE_DELAY)
+                    else:
+                        embedding = query_data["embedding"]
+                        embedding = np.array(embedding, dtype=np.float32).reshape(1, -1)
+                        if self.dataset == "medrag":
+                            ids, docs, scores = self.retrieve_docs_medrag(embedding, K)
+                        elif self.dataset == "feb4rag":
+                            ids, docs, scores = self.retrieve_docs_fed4rag(embedding, K)
                     
                     # Prepare and send response
                     response = {
@@ -100,7 +111,7 @@ class DataSource:
                         "duration": time.time() - start_time,
                     }
                     await self.sender.send_json(response)
-                    logger.debug(f"Client {self.client_id} sent response for query: {query_data['id']}")
+                    logger.info(f"Client {self.client_id} sent response for query: {query_data['id']}")
                     
                 except asyncio.TimeoutError:
                     continue
@@ -170,6 +181,6 @@ class DataSource:
         self.sender.close()
         self.context.term()
 
-async def run_data_source(client_id: int, dataset: int, name: str):
-    data_source = DataSource(client_id, dataset, name)
+async def run_data_source(client_id: int, dataset: int, name: str, simulate: bool = False):
+    data_source = DataSource(client_id, dataset, name, simulate=simulate)
     await data_source.start()

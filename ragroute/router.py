@@ -17,7 +17,7 @@ import torch.nn.functional as F
 import zmq
 import zmq.asyncio
 
-from ragroute.config import EMBEDDING_MAX_LENGTH, EMBEDDING_MODELS_PER_DATA_SOURCE, FEB4RAG_SOURCE_TO_ID, MODELS_FEB4RAG_DIR, MODELS_USR_DIR, SERVER_ROUTER_PORT, ROUTER_SERVER_PORT, MAX_QUEUE_SIZE, USR_DIR
+from ragroute.config import EMBEDDING_MAX_LENGTH, EMBEDDING_MODELS_PER_DATA_SOURCE, FEB4RAG_SOURCE_TO_ID, MODELS_FEB4RAG_DIR, MODELS_USR_DIR, ROUTER_DELAY, SERVER_ROUTER_PORT, ROUTER_SERVER_PORT, MAX_QUEUE_SIZE, USR_DIR
 from ragroute.models.medrag.custom_sentence_transformer import CustomizeSentenceTransformer
 from ragroute.queue_manager import QueryQueue
 
@@ -54,10 +54,11 @@ class CorpusRoutingNN(nn.Module):
 class Router:
     """Router that processes queries and determines which clients should handle them."""
     
-    def __init__(self, dataset: str, data_sources: List[str], routing_strategy: str):
+    def __init__(self, dataset: str, data_sources: List[str], routing_strategy: str, simulate: bool = False):
         self.dataset: str = dataset
         self.data_sources: List[str] = data_sources
         self.routing_strategy: str = routing_strategy
+        self.simulate: bool = simulate
         self.running: bool = False
         self.context = zmq.asyncio.Context()
         self.queue = QueryQueue(MAX_QUEUE_SIZE)
@@ -67,6 +68,14 @@ class Router:
         embedding_models_info: Set[str] = set()
         for data_source in self.data_sources:
             embedding_models_info.add(EMBEDDING_MODELS_PER_DATA_SOURCE[dataset][data_source])
+
+        if self.simulate:
+            # Skip the loading of embedding models in simulation mode
+            logger.info("Running in simulation mode, skipping embedding model loading")
+            self.embedding_models = {}
+            for model_name, _ in embedding_models_info:
+                self.embedding_models[model_name] = None
+            return
 
         logger.info(f"Loading embedding models: {embedding_models_info}")
         self.embedding_models = {}
@@ -82,25 +91,8 @@ class Router:
                         CustomModel(model_dir=os.path.join(MODELS_FEB4RAG_DIR, "dataset_creation/2_search/models"), specific_model=model_name)
                 model = model_loader.load_model(model_name, model_name_or_path=None, cuda=torch.cuda.is_available())
                 self.embedding_models[model_name] = model
-        
-    async def start(self):
-        """Start the router and process queries."""
-        logger.info("Starting router process with %d data sources", len(self.data_sources))
-        self.running = True
-        
-        # Socket to receive queries from server
-        self.receiver = self.context.socket(zmq.PULL)
-        self.receiver.bind(f"tcp://*:{SERVER_ROUTER_PORT}")
-        
-        # Socket to send routing decisions back to server
-        self.sender = self.context.socket(zmq.PUSH)
-        self.sender.connect(f"tcp://localhost:{ROUTER_SERVER_PORT}")
-        
-        # Start the worker tasks
-        receive_task = asyncio.create_task(self._receive_queries())
-        process_task = asyncio.create_task(self._process_queue())
 
-        # Load the router model
+    def load_router(self):
         if self.dataset == "medrag":
             model_path = os.path.join(MODELS_USR_DIR, "MedRAG/routing/best_model.pth")
             input_dim = MEDRAG_INPUT_DIMENSION
@@ -133,6 +125,28 @@ class Router:
             centroid = np.pad(centroid, (0, EMBEDDING_MAX_LENGTH[self.dataset] - len(centroid)))  # Pad to max length
             self.centroids[corpus] = centroid
         
+    async def start(self):
+        """Start the router and process queries."""
+        logger.info("Starting router process with %d data sources", len(self.data_sources))
+        self.running = True
+        
+        # Socket to receive queries from server
+        self.receiver = self.context.socket(zmq.PULL)
+        self.receiver.bind(f"tcp://*:{SERVER_ROUTER_PORT}")
+        
+        # Socket to send routing decisions back to server
+        self.sender = self.context.socket(zmq.PUSH)
+        self.sender.connect(f"tcp://localhost:{ROUTER_SERVER_PORT}")
+        
+        # Start the worker tasks
+        receive_task = asyncio.create_task(self._receive_queries())
+        process_task = asyncio.create_task(self._process_queue())
+
+        if not self.simulate:
+            self.load_router()
+        else:
+            logger.info("Running in simulation mode, skipping router loading")
+        
         try:
             await asyncio.gather(receive_task, process_task)
         except asyncio.CancelledError:
@@ -152,7 +166,7 @@ class Router:
             while self.running:
                 try:
                     # Wait for queries with a timeout to allow for clean shutdown
-                    query_data = await asyncio.wait_for(self.receiver.recv_json(), timeout=0.5)
+                    query_data = await self.receiver.recv_json()
                     logger.debug(f"Router received query: {query_data['id']}")
                     await self.queue.enqueue(query_data)
                 except asyncio.TimeoutError:
@@ -176,6 +190,9 @@ class Router:
             raise
 
     def select_relevant_sources(self, query_embeddings: Dict[str, torch.Tensor]) -> List[str]:
+        if self.simulate:  # Return all data sources in simulation mode
+            return self.data_sources
+
         if self.routing_strategy == "ragroute":
             return self.select_relevant_sources_ragroute(query_embeddings)
         elif self.routing_strategy == "all":
@@ -221,6 +238,10 @@ class Router:
         return sources_corpora
 
     def encode_query(self, query):
+        if self.simulate:
+            logger.info("Running in simulation mode, skipping query encoding")
+            return {model_name: np.random.rand(EMBEDDING_MAX_LENGTH[self.dataset]) for model_name in self.embedding_models.keys()}  # Generate some random embeddings
+
         with torch.no_grad():
             embeddings: Dict[str, torch.Tensor] = {}
             for model_name, model in self.embedding_models.items():
@@ -246,6 +267,9 @@ class Router:
         serialized_embeddings = {}
         for model_name, embedding in query_embeddings.items():
             serialized_embeddings[model_name] = embedding.tolist() if isinstance(embedding, np.ndarray) else embedding
+
+        if self.simulate:
+            await asyncio.sleep(ROUTER_DELAY)
         
         response = {
             "query_id": query_data["id"],
@@ -266,9 +290,9 @@ class Router:
         self.sender.close()
         self.context.term()
 
-async def run_router(dataset: str, data_sources: List[str], routing_strategy: str):
+async def run_router(dataset: str, data_sources: List[str], routing_strategy: str, simulate: bool = False):
     """Run the router process."""
-    router = Router(dataset, data_sources, routing_strategy)
+    router = Router(dataset, data_sources, routing_strategy, simulate=simulate)
     await router.start()
 
 
