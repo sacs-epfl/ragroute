@@ -296,10 +296,26 @@ class HTTPServer:
             try:
                 start_time = time.time()
                 llm_message, docs_tokens = generate_llm_message(self.dataset, query_data["query"], filtered_docs, query_data["choices"], self.model)
-                response_: ChatResponse = await AsyncClient().chat(model=self.model_info["ollama_name"], messages=llm_message, options={"num_predict": self.model_info["max_tokens"]})
-                generate_time = time.time() - start_time
-                self.active_queries[query_id]["metadata"]["generate_time"] = generate_time
-                response["answer"] = response_['message']['content']
+                #response_: ChatResponse = await AsyncClient().chat(model=self.model_info["ollama_name"], messages=llm_message, options={"num_predict": self.model_info["max_tokens"]})
+                try:
+                    response_: ChatResponse = await asyncio.wait_for(
+                            AsyncClient().chat(
+                                model=self.model_info["ollama_name"],
+                                messages=llm_message,
+                                options={"num_predict": self.model_info["max_tokens"]}
+                            ),
+                            timeout=240
+                        )
+                    generate_time = time.time() - start_time
+                    self.active_queries[query_id]["metadata"]["generate_time"] = generate_time
+                    response["answer"] = response_['message']['content']
+
+                except asyncio.TimeoutError:
+                    logger.warning(f"LLM generation timed out for query {query_id}")
+                    response_ = "TIMEOUT"
+                    self.active_queries[query_id]["metadata"]["generate_time"] = -1
+                    response["answer"] = "Error generation timed out."
+
             except Exception as e:
                 logger.error(f"Error generating LLM message: {e}", exc_info=True)
                 response["answer"] = f"Error generating response: {str(e)}"

@@ -29,7 +29,7 @@ async def main():
 
     benchmark_file: str = os.path.join("data", "benchmark_%s_%s.csv" % (args.benchmark, args.routing))
     ds_stats_file: str = os.path.join("data", "ds_stats_%s_%s.csv" % (args.benchmark, args.routing))
-    answer_file: str = os.path.join("data", "answers.jsonl")
+    answer_file: str = os.path.join("data", "answers_%s_%s.jsonl" % (args.benchmark, args.routing))
 
     if not os.path.exists(benchmark_file):
         with open(benchmark_file, "w") as f:
@@ -54,21 +54,41 @@ async def main():
     # Load the benchmark
     benchmark = Benchmark(args.benchmark_path, args.benchmark)
     async with aiohttp.ClientSession() as session:
-        question_banks = list(benchmark.benchmark_data.keys())
+        question_banks = sorted(benchmark.benchmark_data.keys())
         if args.questions is not None:
             question_banks = [args.questions]
 
+        all_question_batches = {}
+
         for question_bank in question_banks:
             questions = benchmark.benchmark_data[question_bank]
-            question_items = list(questions.items())
+            # For reproducibility 
+            order_path = f"data/question_order_{args.benchmark}_{question_bank}.json"
+
+            if os.path.exists(order_path):
+                with open(order_path) as f:
+                    ordered_ids = json.load(f)
+                question_items = [(qid, questions[qid]) for qid in ordered_ids if qid in questions]
+                print(f"Reusing saved question order from {order_path}")
+            else:
+                question_items = list(questions.items())
+                with open(order_path, "w") as f:
+                    json.dump([qid for qid, _ in question_items], f)
+                print(f"Saved new question order to {order_path}")
+
+            all_question_batches[question_bank] = question_items
+
             for i in tqdm(range(0, len(question_items), args.parallel)):
-                batch = question_items[i:i + args.parallel]
                 tasks = []
+                raw_batch = question_items[i:i + args.parallel]
+
+                # Filter out already-processed questions
+                batch = [(qid, qdata) for qid, qdata in raw_batch if qid not in existing_question_ids]
+                
+                if not batch:
+                    continue
 
                 for question_id, question_data in batch:
-                    if question_id in existing_question_ids:
-                        print(f"Skipping {question_id} as it is already processed.")
-                        continue
                     question = question_data['question']
                     options = question_data['options']
 
@@ -82,7 +102,7 @@ async def main():
                 # Run the batch concurrently
                 results = await asyncio.gather(*tasks)
 
-                for result in results:
+                for (question_id, question_data), result in zip(batch, results):
                     if not result:
                         print("Error: No result returned from the server.")
                         continue
@@ -114,3 +134,4 @@ async def main():
 
 if __name__ == "__main__":
     asyncio.run(main())
+

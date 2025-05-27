@@ -13,6 +13,7 @@ import numpy as np
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
+import random
 
 import zmq
 import zmq.asyncio
@@ -144,6 +145,10 @@ class Router:
 
         if not self.simulate:
             self.load_router()
+            #warmup
+            with torch.no_grad():
+                dummy_input = torch.zeros(1, self.router.fc1.in_features).to(self.device)
+                _ = self.router(dummy_input)
         else:
             logger.info("Running in simulation mode, skipping router loading")
         
@@ -198,7 +203,10 @@ class Router:
         elif self.routing_strategy == "all":
             return self.data_sources
         elif self.routing_strategy == "random":
-            raise NotImplementedError("Random routing strategy is not implemented yet.")
+            if self.dataset == "medrag":
+                return random.sample(self.data_sources, 2)
+            elif self.dataset == "feb4rag":
+                return random.sample(self.data_sources, 9)
         elif self.routing_strategy == "none":
             return []
         else:
@@ -232,7 +240,10 @@ class Router:
             outputs = self.router(input_tensor)
             outputs = outputs.view(-1)
             probabilities = torch.sigmoid(outputs)
-            predictions = (probabilities > 0.5).cpu().numpy()
+            if self.dataset == "medrag":	
+            	predictions = (probabilities > 0.5760).cpu().numpy()
+            else:
+            	predictions = (probabilities > 0.5).cpu().numpy()
 
         sources_corpora = [corpus for prediction, corpus in zip(predictions, self.data_sources) if prediction]
         return sources_corpora

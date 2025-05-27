@@ -1,3 +1,15 @@
+# Ignore everything in data/
+data/*
+
+# To reproduce the resuts, allow the benchmark folder and specific JSON files
+!data/benchmark/
+!data/question_order_FeB4RAG_FeB4RAG.json
+!data/question_order_MIRAGE_bioasq.json
+!data/question_order_MIRAGE_medmcqa.json
+!data/question_order_MIRAGE_medqa.json
+!data/question_order_MIRAGE_mmlu.json
+!data/question_order_MIRAGE_pubmedqa.json
+
+# Other ignores
 **/__pycache__/**
-data/**
 nohup.out

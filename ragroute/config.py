@@ -13,7 +13,7 @@ HTTP_PORT = 8000
 MAX_QUEUE_SIZE = 100
 
 # For loading the models
-MODELS_USR_DIR = "/mnt/nfs/home/mdevos"
+MODELS_USR_DIR = "/mnt/nfs/home/dpetresc"
 MODELS_MEDRAG_DIR = os.path.join(MODELS_USR_DIR, "MedRAG", "corpus")
 MODELS_FEB4RAG_DIR = os.path.join(MODELS_USR_DIR, "FeB4RAG")
 
@@ -110,7 +110,8 @@ MODELS = {
         "docs_context_length": 128000,
         "max_tokens": 131072,
         "hf_name": "meta-llama/Meta-Llama-3.1-8B-Instruct",
-        "ollama_name": "llama3.1:8b-instruct-q4_K_M",
+        #"ollama_name": "llama3.1:8b-instruct-q4_K_M",
+        "ollama_name": "llama3.1_extended",
     },
     "qwen3-8B": {
         "docs_context_length": 38000,
