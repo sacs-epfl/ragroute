@@ -83,34 +83,36 @@ def retrieve_docs(query_embed, cid):
     WIKI_DIR = "/mnt/nfs/home/dpetresc/wiki_dataset/dpr_wiki_index"
     CLUSTER_DIR = os.path.join(WIKI_DIR, "faiss_clusters")
     NORM_INDEX_DIR = os.path.join(CLUSTER_DIR, "normalized_indexes")
-    TITLE_FILE = os.path.join(WIKI_DIR, "wiki_titles.txt")
-    TEXT_FILE = os.path.join(WIKI_DIR, "wiki_texts.txt")
+    SPLIT_TEXTS_DIR = os.path.join(CLUSTER_DIR, "split_texts_titles")
 
-    with open(os.path.join(CLUSTER_DIR, "cluster_index_map.pkl"), "rb") as f:
-        cluster_index_map = pickle.load(f)
-    with open(TITLE_FILE, "r", encoding="utf-8") as f:
-        all_titles = f.read().splitlines()
-    with open(TEXT_FILE, "r", encoding="utf-8") as f:
-        all_texts = f.read().splitlines()
+    # Load cluster-local titles and texts
+    cluster_titles_path = os.path.join(SPLIT_TEXTS_DIR, f"titles_{cid}.txt")
+    cluster_texts_path = os.path.join(SPLIT_TEXTS_DIR, f"texts_{cid}.txt")
 
-    # Load normalized FAISS index for this cluster
+    with open(cluster_titles_path, "r", encoding="utf-8") as f:
+        cluster_titles = f.read().splitlines()
+
+    with open(cluster_texts_path, "r", encoding="utf-8") as f:
+        cluster_texts = f.read().splitlines()
+
+    # Load cluster-local FAISS index (normalized)
     if cid not in index_cache:
         index_path = os.path.join(NORM_INDEX_DIR, f"faiss_index_{cid}_normalized.index")
         index_cache[cid] = faiss.read_index(index_path)
     index = index_cache[cid]
-    cluster_doc_ids = cluster_index_map[cid]
 
-    # Normalize the query
+    # Normalize the query vector
     query_vec = query_embed.reshape(1, -1).astype(np.float32)
     faiss.normalize_L2(query_vec)
 
+    # Perform search
     scores, local_indices = index.search(query_vec, K)
 
+    # Use local indices to retrieve documents
     docs, doc_scores = [], []
     for i, (score, local_idx) in enumerate(zip(scores[0], local_indices[0])):
-        global_idx = cluster_doc_ids[local_idx]
-        title = all_titles[global_idx]
-        text = all_texts[global_idx]
+        title = cluster_titles[local_idx]
+        text = cluster_texts[local_idx]
         docs.append((title, text))
         doc_scores.append(score)
 
