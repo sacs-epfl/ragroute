@@ -112,22 +112,25 @@ class ClusterDataset(Dataset):
     def __getitem__(self, idx): return self.features[idx], self.labels[idx]
 
 # === Model ===
-class ClusterRouterNN(nn.Module):
+class CorpusRoutingNN(nn.Module):
     def __init__(self, input_dim):
-        super().__init__()
+        super(CorpusRoutingNN, self).__init__()
         self.fc1 = nn.Linear(input_dim, 256)
         self.ln1 = nn.LayerNorm(256)
-        self.drop1 = nn.Dropout(0.4)
+        self.dropout1 = nn.Dropout(0.4)
+
         self.fc2 = nn.Linear(256, 128)
         self.ln2 = nn.LayerNorm(128)
-        self.drop2 = nn.Dropout(0.4)
-        self.out = nn.Linear(128, 1)
+        self.dropout2 = nn.Dropout(0.4)
+
+        self.fc3 = nn.Linear(128, 1)
+
     def forward(self, x):
         x = F.relu(self.ln1(self.fc1(x)))
-        x = self.drop1(x)
+        x = self.dropout1(x)
         x = F.relu(self.ln2(self.fc2(x)))
-        x = self.drop2(x)
-        return self.out(x).squeeze()
+        x = self.dropout2(x)
+        return self.fc3(x)
 
 # === Split per query ===
 query_to_samples = defaultdict(list)
@@ -173,7 +176,7 @@ val_loader = DataLoader(ClusterDataset(val_data), batch_size=BATCH_SIZE)
 test_loader = DataLoader(ClusterDataset(test_data), batch_size=BATCH_SIZE)
 
 # === Model Init ===
-model = ClusterRouterNN(input_dim=train_feats[0].shape[0]).to(device)
+model = CorpusRoutingNN(input_dim=train_feats[0].shape[0]).to(device)
 optimizer = torch.optim.Adam(model.parameters(), lr=1e-3, weight_decay=1e-5)
 criterion = nn.BCEWithLogitsLoss()
 
@@ -192,7 +195,7 @@ for epoch in range(EPOCHS):
         features, labels = features.to(device), labels.to(device)
         optimizer.zero_grad()
         outputs = model(features)
-        loss = criterion(outputs, labels)
+        loss = criterion(outputs.squeeze(), labels)
         loss.backward()
         torch.nn.utils.clip_grad_norm_(model.parameters(), 1.0)
         optimizer.step()

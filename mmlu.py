@@ -36,27 +36,29 @@ def encode_query(question):
     return embeddings.cpu().numpy().astype(np.float32)[0]
 
 def select_relevant_sources(query_embed):
-    class ClusterRouterNN(nn.Module):
+    class CorpusRoutingNN(nn.Module):
         def __init__(self, input_dim):
-            super().__init__()
+            super(CorpusRoutingNN, self).__init__()
             self.fc1 = nn.Linear(input_dim, 256)
             self.ln1 = nn.LayerNorm(256)
-            self.drop1 = nn.Dropout(0.4)
+            self.dropout1 = nn.Dropout(0.4)
+
             self.fc2 = nn.Linear(256, 128)
             self.ln2 = nn.LayerNorm(128)
-            self.drop2 = nn.Dropout(0.4)
-            self.out = nn.Linear(128, 1)
+            self.dropout2 = nn.Dropout(0.4)
+
+            self.fc3 = nn.Linear(128, 1)
+
         def forward(self, x):
             x = F.relu(self.ln1(self.fc1(x)))
-            x = self.drop1(x)
+            x = self.dropout1(x)
             x = F.relu(self.ln2(self.fc2(x)))
-            x = self.drop2(x)
-            return self.out(x).squeeze()
-        
+            x = self.dropout2(x)
+            return self.fc3(x) 
     
     CLUSTER_STATS_FILE = os.path.join(CLUSTER_DIR, "cluster_stats.json")
 
-    router_model = ClusterRouterNN(768 + 768).to(device)
+    router_model = CorpusRoutingNN(768 + 768).to(device)
     router_model.load_state_dict(torch.load(os.path.join(BASE_DIR, "cluster_router_output", "best_model.pth")))
     router_model.eval()
 
@@ -155,31 +157,22 @@ def verify_answer(item, prediction):
     return int(prediction == gold)
 
 
-
-
-QUESTIONS_FILE = os.path.join(RETRIEVAL_DIR, "questions.json")
-with open(QUESTIONS_FILE) as f:
-    formatted_questions = json.load(f)
+dataset = load_dataset("cais/mmlu", "all", split="test")
 TARGET_SUBJECTS = {
     "high_school_microeconomics", "international_law", "high_school_mathematics",
     "college_mathematics", "business_ethics", "high_school_biology", "astronomy",
     "philosophy", "public_relations", "college_biology", "electrical_engineering",
     "conceptual_physics", "professional_psychology"
 }
-dataset = load_dataset("cais/mmlu", "all", split="test")
-def preproc(d): return "\n".join([d["question"], " | ".join(d["choices"])])
-formatted_to_item = {preproc(item): item for item in dataset}
 
-for i, formatted_q in enumerate(tqdm(formatted_questions)):
-    if formatted_q not in formatted_to_item:
-        continue
-
-    item = formatted_to_item[formatted_q]
+for i, item in enumerate(tqdm(dataset)):
     if item["subject"] not in TARGET_SUBJECTS:
         continue
+
     question_id = f"question_{i}"
     question = item["question"]
     options = item["choices"]
+    formatted_q = "\n".join([question, " | ".join(options)])
 
     try:
         query_embed = encode_query(formatted_q)
