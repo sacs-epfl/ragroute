@@ -10,22 +10,42 @@ from sklearn.preprocessing import StandardScaler
 from tqdm import tqdm
 import random
 from sklearn.metrics import roc_auc_score
+from torch.utils.data import random_split
+import argparse
+
+# Parse command line arguments to track router experiments
+parser = argparse.ArgumentParser()
+parser.add_argument("--experiment_id", type=int, default=0, help="ID of the experiment (e.g., 0, 1, 2...)")
+args = parser.parse_args()
+
 
 # Set random seeds for reproducibility
-SEED = 42
-random.seed(SEED)
-np.random.seed(SEED)
-torch.manual_seed(SEED)
-if torch.cuda.is_available():
-    torch.cuda.manual_seed(SEED)
-    torch.cuda.manual_seed_all(SEED)
+def set_seed(seed=42):
+    random.seed(seed)
+    np.random.seed(seed)
+    torch.manual_seed(seed)
+    torch.cuda.manual_seed(seed)
+    torch.cuda.manual_seed_all(seed)
+
+    torch.backends.cudnn.deterministic = True
+    torch.backends.cudnn.benchmark = False
+
+SEED=42
+set_seed(SEED)
 
 # **Paths and Configuration**
 BASE_DIR = "/mnt/nfs/home/dpetresc/MedRAG/retrieval_cache/"
 ROUTING_DIR = "/mnt/nfs/home/dpetresc/MedRAG/routing/"
 RELEVANT_DIR = "./relevant/"
+EXPERIMENT_ID = args.experiment_id
+EXPERIMENT_DIR = os.path.join(ROUTING_DIR, f"experiment_{EXPERIMENT_ID}")
+os.makedirs(EXPERIMENT_DIR, exist_ok=True)
+
 CORPORA = ["pubmed", "statpearls", "textbooks", "wikipedia"]
 TRAIN_TEST_SPLIT_RATIO = 0.4
+
+source_to_id = {src: i for i, src in enumerate(CORPORA)}
+num_sources = len(source_to_id)
 
 # **Define Device**
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -85,7 +105,6 @@ def load_data():
     for benchmark in os.listdir(BASE_DIR):
         benchmark_path = os.path.join(BASE_DIR, benchmark)
         emb_queries_path = os.path.join(benchmark_path, "emb_queries")
-        #relevant_file = os.path.join(RELEVANT_DIR, f"{benchmark}_relevant_top_10.json")
         relevant_file = os.path.join(RELEVANT_DIR, f"{benchmark}_relevant_top_32.json")
 
         if not os.path.exists(emb_queries_path) or not os.path.exists(relevant_file):
@@ -117,7 +136,10 @@ def load_data():
                 num_documents = corpus_stats[corpus]["num_documents"]
                 density = corpus_stats[corpus]["density"]
                 centroid_similarity = np.dot(query_embedding, centroid)
-
+                source_id = source_to_id[corpus]
+                source_id_vec = np.eye(num_sources)[source_id]  # one-hot
+                
+                # To experiment
                 #features = np.concatenate([query_embedding, centroid, [centroid_similarity, num_documents, density]])
                 #features = np.array([centroid_similarity], dtype=np.float32)  # Ensure it's a NumPy array
                 features = np.concatenate([query_embedding, centroid])
@@ -145,7 +167,7 @@ def find_optimal_threshold(model, val_loader):
             features, labels = features.to(device), labels.to(device)
             output = model(features).squeeze()
 
-            # ✅ Convert logits to probabilities for thresholding
+            # Convert logits to probabilities for thresholding
             probabilities = torch.sigmoid(output)
 
             all_labels.extend(labels.cpu().numpy())
@@ -158,7 +180,7 @@ def find_optimal_threshold(model, val_loader):
     optimal_idx = np.argmax(tpr - fpr)
     optimal_threshold = thresholds[optimal_idx]
 
-    print(f"🔹 Optimal threshold found: {optimal_threshold:.4f}")
+    print(f"Optimal threshold found: {optimal_threshold:.4f}")
     return optimal_threshold  # This will now be in probability space
 
 
@@ -177,10 +199,11 @@ def evaluate_model_with_metrics(model, loader, threshold=0.5):
             features, label = features.to(device), label.to(device)
             output = model(features).squeeze()
 
-            # ✅ Apply sigmoid to convert logits to probabilities
+            # Apply sigmoid to convert logits to probabilities
             probabilities = torch.sigmoid(output)
 
             predictions = (probabilities > threshold).float()
+
             all_labels.extend(label.cpu().numpy())
             all_outputs.extend(probabilities.cpu().numpy())  # Save probabilities for AUC
 
@@ -216,19 +239,19 @@ import pickle
 
 def save_preprocessed_data(train_data, val_data, test_datasets, scaler, val_qs):
     """ Save train/val/test data and scaler to disk to avoid recomputation. """
-    save_path = os.path.join(ROUTING_DIR, "preprocessed_data.pkl")
+    save_path = os.path.join(EXPERIMENT_DIR, "preprocessed_data.pkl")
     with open(save_path, "wb") as f:
         pickle.dump((train_data, val_data, test_datasets, scaler, val_qs), f)
-    print(f"✅ Preprocessed data saved to {save_path}")
+    print(f"Preprocessed data saved to {save_path}")
 
 
 def load_preprocessed_data():
     """ Load saved preprocessed train/val/test data if available. """
-    load_path = os.path.join(ROUTING_DIR, "preprocessed_data.pkl")
+    load_path = os.path.join(EXPERIMENT_DIR, "preprocessed_data.pkl")
     if os.path.exists(load_path):
         with open(load_path, "rb") as f:
             train_data, val_data, test_datasets, scaler, val_qs = pickle.load(f)
-        print(f"✅ Loaded preprocessed data from {load_path}")
+        print(f"Loaded preprocessed data from {load_path}")
         return train_data, val_data, test_datasets, scaler, val_qs
     return None, None, None, None, None
 
@@ -246,10 +269,10 @@ def evaluate_model(model, loader, criterion):
             loss = criterion(output, label)
             total_loss += loss.item()
 
-            # ✅ Apply sigmoid to convert logits to probabilities
+            # Apply sigmoid to convert logits to probabilities
             probabilities = torch.sigmoid(output)
 
-            # ✅ Use probability threshold (default: 0.5)
+            # Use probability threshold (default: 0.5)
             predictions = (probabilities > 0.5).float()
 
             correct += (predictions == label).sum().item()
@@ -263,10 +286,13 @@ def train_and_evaluate():
     # Load saved data if available
     train_data, val_data, test_datasets, scaler, val_qs = load_preprocessed_data()
 
+    # For feature experiment
+    train_data = None
+
     if train_data is None or test_datasets is None:
         query_to_data, benchmark_to_questions = load_data()
 
-        # Load saved train-test split
+        # Load saved train-test split - same for all experiments
         split_file = os.path.join(ROUTING_DIR, "train_test_split_per_benchmark.json")
         if os.path.exists(split_file):
             with open(split_file, "r") as f:
@@ -302,6 +328,8 @@ def train_and_evaluate():
         if val_qs is None:
             VALIDATION_SPLIT = 0.1
             train_qs, val_qs = train_test_split(train_questions, test_size=VALIDATION_SPLIT, random_state=SEED)
+        else:
+            train_qs = [q for q in train_questions if q not in val_qs]
 
         print(f"Total Train Questions: {len(train_questions)} | Train: {len(train_qs)}, Validation: {len(val_qs)}")
 
@@ -318,13 +346,15 @@ def train_and_evaluate():
             for benchmark, test_qs in test_questions.items()
         }
 
-        # Scale features
+        # Scale features or not
         scaler = StandardScaler()
         train_features = scaler.fit_transform([features for features, _ in train_data])
+#        train_features = [features for features, _ in train_data]
         train_labels = [label for _, label in train_data]
         train_data = list(zip(train_features, train_labels))
 
         val_features = scaler.transform([features for features, _ in val_data])
+#        val_features = [features for features, _ in val_data]
         val_labels = [label for _, label in val_data]
         val_data = list(zip(val_features, val_labels))
 
@@ -335,6 +365,14 @@ def train_and_evaluate():
             ))
             for benchmark, data in test_datasets.items()
         }
+#        test_datasets = {
+#	    benchmark: list(zip(
+#		[features for features, _ in data],
+#		[label for _, label in data]
+#	    ))
+#	    for benchmark, data in test_datasets.items()
+#	}
+
 
         # Save processed data for future runs
         save_preprocessed_data(train_data, val_data, test_datasets, scaler, val_qs)
@@ -380,7 +418,7 @@ def train_and_evaluate():
     best_val_loss = float("inf")
     best_val_acc = 0
     best_model_state = None
-    MODEL_PATH = os.path.join(ROUTING_DIR, "best_model.pth")
+    MODEL_PATH = os.path.join(EXPERIMENT_DIR, "best_model.pth")
 
     # Train the model
     for epoch in range(num_epochs):
@@ -429,7 +467,6 @@ def train_and_evaluate():
             torch.save(best_model_state, MODEL_PATH)
             print(f"Best model saved with Val Loss: {val_loss:.4f}, Val Acc: {val_acc:.2%}")
 
-    #torch.save(model.state_dict(), os.path.join(ROUTING_DIR, "trained_routing_model.pth"))
     # Ensure we use the best saved model
     model.load_state_dict(torch.load(MODEL_PATH, weights_only=True))
     print(f"\n Best model loaded from {MODEL_PATH} for final evaluation.")
@@ -442,9 +479,31 @@ def train_and_evaluate():
         test_loader = DataLoader(RoutingDataset(test_data), batch_size=128, shuffle=False)
         accuracy, precision, recall, f1, auc, tp, tn, fp, fn = evaluate_model_with_metrics(model, test_loader, threshold=optimal_threshold)
 
-        print(f"\n🔹 **Test Results for {benchmark}** 🔹")
+        print(f"\n**Test Results for {benchmark}**")
         print(f"Accuracy: {accuracy:.2%}, Precision: {precision:.2%}, Recall: {recall:.2%}, F1-Score: {f1:.2%}, AUC: {auc:.2%}")
         print(f"TP: {tp}, TN: {tn}, FP: {fp}, FN: {fn}")
+    
+    model.eval()
+    results = {}
+    with torch.no_grad():
+        for benchmark, question_ids in test_questions.items():
+            for question_id in tqdm(question_ids, desc=f"Predicting for {benchmark}"):
+                if question_id not in query_to_data:
+                    continue
+                predicted_relevant = []
+                for idx, (features, _) in enumerate(query_to_data[question_id]):
+                    features_tensor = torch.tensor(scaler.transform([features]), dtype=torch.float32).to(device)
+                    output = model(features_tensor).squeeze().item()
+                    prob = torch.sigmoid(torch.tensor(output)).item()
+                    if prob > optimal_threshold:
+                        predicted_relevant.append(CORPORA[idx])
+
+                results[question_id] = predicted_relevant
+
+    # Save predictions for this benchmark
+    output_path = os.path.join(EXPERIMENT_DIR, f"question_predictions.json")
+    with open(output_path, "w") as f:
+        json.dump(results, f, indent=2)
 
 if __name__ == "__main__":
     train_and_evaluate()
