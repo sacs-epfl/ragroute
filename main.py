@@ -11,7 +11,7 @@ logger = logging.getLogger("main")
 
 def main():
     parser = argparse.ArgumentParser(description="RAGRoute")
-    parser.add_argument("--dataset", type=str, default="feb4rag", choices=["medrag", "feb4rag"], help="The dataset being evaluated (influences the data sources)")
+    parser.add_argument("--dataset", type=str, default="wikipedia", choices=["medrag", "feb4rag", "wikipedia"], help="The dataset being evaluated (influences the data sources)")
     parser.add_argument("--routing", type=str, default="ragroute", choices=["ragroute", "all", "random", "none"], help="The routing method to use - for random, we randomly pick n/2 of the n data sources")
     parser.add_argument("--disable-llm", action="store_true", help="Disable the LLM for testing purposes")
     parser.add_argument("--simulate", action="store_true", help="Simulate the system (for testing purposes)")

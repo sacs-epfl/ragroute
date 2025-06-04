@@ -18,6 +18,8 @@ import random
 import zmq
 import zmq.asyncio
 
+from transformers import DPRQuestionEncoder, DPRQuestionEncoderTokenizer
+
 from ragroute.config import EMBEDDING_MAX_LENGTH, EMBEDDING_MODELS_PER_DATA_SOURCE, FEB4RAG_SOURCE_TO_ID, MODELS_FEB4RAG_DIR, MODELS_USR_DIR, ROUTER_DELAY, SERVER_ROUTER_PORT, ROUTER_SERVER_PORT, MAX_QUEUE_SIZE, USR_DIR
 from ragroute.models.medrag.custom_sentence_transformer import CustomizeSentenceTransformer
 from ragroute.queue_manager import QueryQueue
@@ -27,8 +29,9 @@ logger = logging.getLogger("router")
 
 
 # Dimension of the input features for the neural network
-MEDRAG_INPUT_DIMENSION = 1536 
-FEDRAG_INPUT_DIMENSION = 8205
+MEDRAG_INPUT_DIMENSION =    1536 
+FEDRAG_INPUT_DIMENSION =    8205
+WIKIPEDIA_INPUT_DIMENSION = 1536
 
 
 class CorpusRoutingNN(nn.Module):
@@ -63,6 +66,7 @@ class Router:
         self.running: bool = False
         self.context = zmq.asyncio.Context()
         self.queue = QueryQueue(MAX_QUEUE_SIZE)
+        self.tokenizer = None  # For MMLU
 
         self.device="cuda" if torch.cuda.is_available() else "cpu"
 
@@ -92,6 +96,12 @@ class Router:
                         CustomModel(model_dir=os.path.join(MODELS_FEB4RAG_DIR, "dataset_creation/2_search/models"), specific_model=model_name)
                 model = model_loader.load_model(model_name, model_name_or_path=None, cuda=torch.cuda.is_available())
                 self.embedding_models[model_name] = model
+        elif dataset == "wikipedia":
+            for model_name, _ in embedding_models_info:
+                model = DPRQuestionEncoder.from_pretrained(model_name).to(self.device)
+                model.eval()
+                self.embedding_models[model_name] = model
+                self.tokenizer = DPRQuestionEncoderTokenizer.from_pretrained(model_name)
 
     def load_router(self):
         if self.dataset == "medrag":
@@ -100,6 +110,9 @@ class Router:
         elif self.dataset == "feb4rag":
             model_path = os.path.join(MODELS_USR_DIR, "FeB4RAG/dataset_creation/2_search/router_best_model.pt")
             input_dim = FEDRAG_INPUT_DIMENSION
+        elif self.dataset == "wikipedia":
+            model_path = os.path.join(MODELS_USR_DIR, "Retrieval-QA-Benchmark_backup", "euromlsys", "new_submission", "cluster_router_output", "best_model.pth")
+            input_dim = WIKIPEDIA_INPUT_DIMENSION
 
         self.router = CorpusRoutingNN(input_dim).to(self.device)
         self.router.load_state_dict(torch.load(model_path, map_location=self.device))
@@ -118,9 +131,11 @@ class Router:
                 stats_file = os.path.join(USR_DIR, "MedRAG/routing/", f"{corpus}_stats.json")
             elif self.dataset == "feb4rag":
                 stats_file = os.path.join(USR_DIR, "FeB4RAG/dataset_creation/2_search/embeddings", corpus+"_"+EMBEDDING_MODELS_PER_DATA_SOURCE[self.dataset][corpus][0]+"_stats.json")
-            
+            elif self.dataset == "wikipedia":
+                stats_file = os.path.join(USR_DIR, "wiki_dataset", "dpr_wiki_index", "faiss_clusters", "cluster_stats.json")
             with open(stats_file, "r") as f:
-                corpus_stats = json.load(f)
+                cluster_num = int(corpus)
+                corpus_stats = json.load(f)[cluster_num]
 
             centroid = np.array(corpus_stats["centroid"], dtype=np.float32)
             centroid = np.pad(centroid, (0, EMBEDDING_MAX_LENGTH[self.dataset] - len(centroid)))  # Pad to max length
@@ -261,6 +276,10 @@ class Router:
                 elif self.dataset == "feb4rag":
                     emb = model.encode_queries([query], batch_size=1, convert_to_tensor=False)[0]
                     embeddings[model_name] = emb
+                elif self.dataset == "wikipedia":
+                    inputs = self.tokenizer(query, return_tensors="pt", truncation=True, padding=True).to(self.device)
+                    emb = model(**inputs).pooler_output
+                    embeddings[model_name] = emb.cpu().numpy()[0]
         return embeddings
 
     async def _process_query(self, query_data):

@@ -21,8 +21,8 @@ from ragroute.config import (
     SERVER_CLIENT_BASE_PORT, CLIENT_SERVER_BASE_PORT,
     HTTP_HOST, HTTP_PORT, MODELS
 )
-from ragroute.llm_message import generate_llm_message
-from ragroute.rerank import rerank_feb4rag, rerank_medrag
+from ragroute.llm_message import generate_llm_message, generate_llm_message_wikipedia
+from ragroute.rerank import rerank_feb4rag, rerank_medrag, rerank_wikipedia
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("server")
@@ -285,6 +285,8 @@ class HTTPServer:
             filtered_docs, _ = rerank_medrag(all_docs, all_scores, K)
         elif self.dataset == "feb4rag":
             filtered_docs, _ = rerank_feb4rag(all_indices, all_docs, query_data["question_id"], K, self.relevance_data)
+        elif self.dataset == "wikipedia":
+            filtered_docs, _ = rerank_wikipedia(all_docs, all_scores, K)
 
         if self.disable_llm:
             self.active_queries[query_id]["metadata"]["generate_time"] = 0
@@ -295,7 +297,10 @@ class HTTPServer:
         else:
             try:
                 start_time = time.time()
-                llm_message, docs_tokens = generate_llm_message(self.dataset, query_data["query"], filtered_docs, query_data["choices"], self.model)
+                if self.dataset == "wikipedia":
+                    llm_message, docs_tokens = generate_llm_message_wikipedia(query_data["query"], filtered_docs, query_data["choices"], self.model)
+                else:
+                    llm_message, docs_tokens = generate_llm_message(self.dataset, query_data["query"], filtered_docs, query_data["choices"], self.model)
                 #response_: ChatResponse = await AsyncClient().chat(model=self.model_info["ollama_name"], messages=llm_message, options={"num_predict": self.model_info["max_tokens"]})
                 try:
                     response_: ChatResponse = await asyncio.wait_for(

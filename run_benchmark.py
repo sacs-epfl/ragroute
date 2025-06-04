@@ -20,7 +20,7 @@ async def fetch_answer(session, url):
 
 async def main():
     parser = argparse.ArgumentParser(description="Run a benchmark with RAGRoute.")
-    parser.add_argument("--benchmark", type=str, default="FeB4RAG", choices=["MIRAGE", "FeB4RAG"], help="Benchmark name")
+    parser.add_argument("--benchmark", type=str, default="MMLU", choices=["MIRAGE", "FeB4RAG", "MMLU"], help="Benchmark name")
     parser.add_argument("--benchmark-path", type=str, default="data/benchmark", help="Path to the benchmark data")
     parser.add_argument("--parallel", type=int, default=1, help="Number of parallel requests to send")
     parser.add_argument("--routing", type=str, required=True, choices=["ragroute", "all", "random", "none"], help="Routing method to use")
@@ -89,6 +89,7 @@ async def main():
                     continue
 
                 for question_id, question_data in batch:
+                    #print(question_data)
                     question = question_data['question']
                     options = question_data['options']
 
@@ -108,7 +109,12 @@ async def main():
                         continue
 
                     # Process the question result
-                    is_correct = benchmark.check_mirage_answer(question_data, result["answer"]) if args.benchmark == "MIRAGE" else True
+                    if args.benchmark == "MIRAGE":
+                        is_correct = benchmark.check_mirage_answer(question_data, result["answer"])
+                    elif args.benchmark == "MMLU":
+                        is_correct = benchmark.check_mmlu_answer(question_data, result["answer"])
+                    else:
+                        is_correct = True
                     num_questions += 1
                     num_correct += int(is_correct)
 

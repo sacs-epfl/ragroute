@@ -3,6 +3,8 @@ import os
 import re
 from typing import Dict
 
+from datasets import load_dataset
+
 
 class Benchmark:
 
@@ -19,6 +21,11 @@ class Benchmark:
                 for line in f:
                     obj = json.loads(line)
                     self.benchmark_data["FeB4RAG"][str(obj["_id"])] = {"question": obj["text"], "options": []}
+        elif benchmark_name == "MMLU":
+            self.benchmark_data = {"MMLU": {}}
+            dataset = load_dataset("cais/mmlu", "all", split="test")
+            for qid, question_data in enumerate(dataset):
+                self.benchmark_data["MMLU"][str(qid)] = {"question": question_data["question"], "options": question_data["choices"], "answer": question_data["answer"], "subject": question_data["subject"]}
         else:
             raise ValueError("Unsupported benchmark name: %s" % benchmark_name)
 
@@ -72,3 +79,12 @@ class Benchmark:
         if ans in answer_list and data_question["answer"] in answer_list:
             return ans == data_question["answer"]
         return False
+
+    def check_mmlu_answer(self, data_question: Dict, llm_output: str) -> bool:
+        """
+        Check if the LLM output matches the expected answer for MMLU benchmark.
+        """
+        llm_output = llm_output.split("The best answer is")[-1].strip().replace(".", "").replace('"', "").strip()
+        print(llm_output)
+        gold = chr(65 + data_question["answer"])
+        return int(llm_output == gold)
