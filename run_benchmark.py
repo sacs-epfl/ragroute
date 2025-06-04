@@ -24,12 +24,17 @@ async def main():
     parser.add_argument("--benchmark-path", type=str, default="data/benchmark", help="Path to the benchmark data")
     parser.add_argument("--parallel", type=int, default=1, help="Number of parallel requests to send")
     parser.add_argument("--routing", type=str, required=True, choices=["ragroute", "all", "random", "none"], help="Routing method to use")
-    parser.add_argument("--questions", type=str, default=None, choices=['medqa', 'medmcqa', 'pubmedqa', 'bioasq', 'mmlu'], help="The questions to use for the benchmark")  # TODO add questions from FeB4RAG
+    parser.add_argument("--questions", type=str, default=None, choices=['medqa', 'medmcqa', 'pubmedqa', 'bioasq', 'high_school_microeconomics', 'international_law', 'business_ethics', 'high_school_biology', 'college_mathematics'], help="The questions to use for the benchmark")
     args = parser.parse_args()
 
-    benchmark_file: str = os.path.join("data", "benchmark_%s_%s.csv" % (args.benchmark, args.routing))
-    ds_stats_file: str = os.path.join("data", "ds_stats_%s_%s.csv" % (args.benchmark, args.routing))
-    answer_file: str = os.path.join("data", "answers_%s_%s.jsonl" % (args.benchmark, args.routing))
+    if args.questions is not None:
+        benchmark_file: str = os.path.join("data", "benchmark_%s_%s_%s.csv" % (args.benchmark, args.routing, args.questions))
+        ds_stats_file: str = os.path.join("data", "ds_stats_%s_%s_%s.csv" % (args.benchmark, args.routing, args.questions))
+        answer_file: str = os.path.join("data", "answers_%s_%s_%s.jsonl" % (args.benchmark, args.routing, args.questions))
+    else:
+        benchmark_file: str = os.path.join("data", "benchmark_%s_%s.csv" % (args.benchmark, args.routing))
+        ds_stats_file: str = os.path.join("data", "ds_stats_%s_%s.csv" % (args.benchmark, args.routing))
+        answer_file: str = os.path.join("data", "answers_%s_%s.jsonl" % (args.benchmark, args.routing))
 
     if not os.path.exists(benchmark_file):
         with open(benchmark_file, "w") as f:
@@ -140,4 +145,3 @@ async def main():
 
 if __name__ == "__main__":
     asyncio.run(main())
-

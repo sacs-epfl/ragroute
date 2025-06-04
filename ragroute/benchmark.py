@@ -22,10 +22,17 @@ class Benchmark:
                     obj = json.loads(line)
                     self.benchmark_data["FeB4RAG"][str(obj["_id"])] = {"question": obj["text"], "options": []}
         elif benchmark_name == "MMLU":
-            self.benchmark_data = {"MMLU": {}}
             dataset = load_dataset("cais/mmlu", "all", split="test")
             for qid, question_data in enumerate(dataset):
-                self.benchmark_data["MMLU"][str(qid)] = {"question": question_data["question"], "options": question_data["choices"], "answer": question_data["answer"], "subject": question_data["subject"]}
+                subject = question_data["subject"]
+                if subject not in self.benchmark_data:
+                    self.benchmark_data[subject] = {}
+                self.benchmark_data[subject][str(qid)] = {
+                    "question": question_data["question"],
+                    "options": question_data["choices"],
+                    "answer": question_data["answer"],
+                    "subject": subject
+                }
         else:
             raise ValueError("Unsupported benchmark name: %s" % benchmark_name)
 

@@ -126,8 +126,8 @@ MODELS = {
         "max_tokens": 131072,
         "hf_name": "meta-llama/Meta-Llama-3.1-8B-Instruct",
         #"ollama_name": "llama3.1:8b-instruct-q4_K_M",
-        #"ollama_name": "llama3.1_extended",
-        "ollama_name": "llama3.1:8b-instruct-q8_0",
+        "ollama_name": "llama3.1_extended",
+        #"ollama_name": "llama3.1:8b-instruct-q8_0",
     },
     "qwen3-8B": {
         "docs_context_length": 38000,
