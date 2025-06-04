@@ -326,6 +326,7 @@ class HTTPServer:
                 response["answer"] = f"Error generating response: {str(e)}"
 
         response["metadata"] = query_data["metadata"]
+        response["metadata"]["top_docs"] = filtered_docs
         response["metadata"]["e2e_time"] = time.time() - query_data["query_start_time"]
         response["metadata"]["docs_tokens"] = docs_tokens
         response["metadata"]["llm"] = self.model

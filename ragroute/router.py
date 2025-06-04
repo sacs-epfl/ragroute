@@ -133,9 +133,13 @@ class Router:
                 stats_file = os.path.join(USR_DIR, "FeB4RAG/dataset_creation/2_search/embeddings", corpus+"_"+EMBEDDING_MODELS_PER_DATA_SOURCE[self.dataset][corpus][0]+"_stats.json")
             elif self.dataset == "wikipedia":
                 stats_file = os.path.join(USR_DIR, "wiki_dataset", "dpr_wiki_index", "faiss_clusters", "cluster_stats.json")
-            with open(stats_file, "r") as f:
-                cluster_num = int(corpus)
-                corpus_stats = json.load(f)[cluster_num]
+            if self.dataset == "wikipedia":
+                with open(stats_file, "r") as f:
+                    cluster_num = int(corpus)
+                    corpus_stats = json.load(f)[cluster_num]
+            else:
+                with open(stats_file, "r") as f:
+                    corpus_stats = json.load(f)
 
             centroid = np.array(corpus_stats["centroid"], dtype=np.float32)
             centroid = np.pad(centroid, (0, EMBEDDING_MAX_LENGTH[self.dataset] - len(centroid)))  # Pad to max length
@@ -258,10 +262,10 @@ class Router:
             outputs = outputs.view(-1)
             probabilities = torch.sigmoid(outputs)
             if self.dataset == "medrag":	
-            	predictions = (probabilities > 0.5760).cpu().numpy()
+                predictions = (probabilities > 0.5760).cpu().numpy()
             else:
-            	predictions = (probabilities > 0.5).cpu().numpy()
-
+                predictions = (probabilities > 0.5).cpu().numpy()
+        
         sources_corpora = [corpus for prediction, corpus in zip(predictions, self.data_sources) if prediction]
         return sources_corpora
 

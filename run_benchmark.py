@@ -22,19 +22,23 @@ async def main():
     parser = argparse.ArgumentParser(description="Run a benchmark with RAGRoute.")
     parser.add_argument("--benchmark", type=str, default="MMLU", choices=["MIRAGE", "FeB4RAG", "MMLU"], help="Benchmark name")
     parser.add_argument("--benchmark-path", type=str, default="data/benchmark", help="Path to the benchmark data")
+    parser.add_argument("--save-logs-dir", dest="save_logs_dir", type=str, default="data", help="Path to the benchmark data")
     parser.add_argument("--parallel", type=int, default=1, help="Number of parallel requests to send")
     parser.add_argument("--routing", type=str, required=True, choices=["ragroute", "all", "random", "none"], help="Routing method to use")
     parser.add_argument("--questions", type=str, default=None, choices=['medqa', 'medmcqa', 'pubmedqa', 'bioasq', 'high_school_microeconomics', 'international_law', 'business_ethics', 'high_school_biology', 'college_mathematics'], help="The questions to use for the benchmark")
     args = parser.parse_args()
 
+    os.makedirs(args.save_logs_dir, exist_ok=True)
     if args.questions is not None:
-        benchmark_file: str = os.path.join("data", "benchmark_%s_%s_%s.csv" % (args.benchmark, args.routing, args.questions))
-        ds_stats_file: str = os.path.join("data", "ds_stats_%s_%s_%s.csv" % (args.benchmark, args.routing, args.questions))
-        answer_file: str = os.path.join("data", "answers_%s_%s_%s.jsonl" % (args.benchmark, args.routing, args.questions))
+        benchmark_file: str = os.path.join("%s" % args.save_logs_dir, "benchmark_%s_%s_%s.csv" % (args.benchmark, args.routing, args.questions))
+        ds_stats_file: str = os.path.join("%s" % args.save_logs_dir, "ds_stats_%s_%s_%s.csv" % (args.benchmark, args.routing, args.questions))
+        answer_file: str = os.path.join("%s" % args.save_logs_dir, "answers_%s_%s_%s.jsonl" % (args.benchmark, args.routing, args.questions))
+        top_docs_file: str = os.path.join("%s" % args.save_logs_dir, "top_docs_%s_%s_%s.jsonl" % (args.benchmark, args.routing, args.questions))
     else:
-        benchmark_file: str = os.path.join("data", "benchmark_%s_%s.csv" % (args.benchmark, args.routing))
-        ds_stats_file: str = os.path.join("data", "ds_stats_%s_%s.csv" % (args.benchmark, args.routing))
-        answer_file: str = os.path.join("data", "answers_%s_%s.jsonl" % (args.benchmark, args.routing))
+        benchmark_file: str = os.path.join("%s" % args.save_logs_dir, "benchmark_%s_%s.csv" % (args.benchmark, args.routing))
+        ds_stats_file: str = os.path.join("%s" % args.save_logs_dir, "ds_stats_%s_%s.csv" % (args.benchmark, args.routing))
+        answer_file: str = os.path.join("%s" % args.save_logs_dir, "answers_%s_%s.jsonl" % (args.benchmark, args.routing))
+        top_docs_file: str = os.path.join("%s" % args.save_logs_dir, "top_docs_%s_%s.jsonl" % (args.benchmark, args.routing))
 
     if not os.path.exists(benchmark_file):
         with open(benchmark_file, "w") as f:
@@ -126,6 +130,14 @@ async def main():
                     # Record the answer
                     with open(answer_file, "a") as f:
                         f.write(json.dumps({"question_id": question_id, "answer": result["answer"]}) + "\n")
+                    
+                    # Save top documents used in reranking
+                    top_docs_record = {
+                        "question_id": question_id,
+                        "top_docs": result["metadata"]["top_docs"]
+                    }
+                    with open(top_docs_file, "a") as f:
+                        f.write(json.dumps(top_docs_record) + "\n")
 
                     metadata = result["metadata"]
                     data_sources = ":".join(metadata["data_sources"])
