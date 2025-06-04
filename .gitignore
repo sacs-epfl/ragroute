@@ -9,6 +9,11 @@ data/*
 !data/question_order_MIRAGE_medqa.json
 !data/question_order_MIRAGE_mmlu.json
 !data/question_order_MIRAGE_pubmedqa.json
+!data/question_order_MMLU_business_ethics.json
+!data/question_order_MMLU_college_mathematics.json
+!data/question_order_MMLU_high_school_biology.json
+!data/question_order_MMLU_high_school_microeconomics.json
+!data/question_order_MMLU_international_law.json
 
 # Other ignores
 **/__pycache__/**
