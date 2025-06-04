@@ -62,7 +62,7 @@ class DataSource:
                 self.mmlu_texts = f.read().splitlines()
 
             logger.info(f"Initialized Wikipedia data source {name} with index path {self.index_path}")
-
+        
         self.faiss_indexes = None
         self.cache_jsonl = {}
 
@@ -113,11 +113,11 @@ class DataSource:
                         embedding = query_data["embedding"]
                         embedding = np.array(embedding, dtype=np.float32).reshape(1, -1)
                         if self.dataset == "medrag":
-                            ids, docs, scores = self.retrieve_docs_medrag(embedding, K)
+                            ids, docs, scores = self.retrieve_docs_medrag(embedding, K[self.dataset])
                         elif self.dataset == "feb4rag":
-                            ids, docs, scores = self.retrieve_docs_fed4rag(embedding, K)
+                            ids, docs, scores = self.retrieve_docs_fed4rag(embedding, K[self.dataset])
                         elif self.dataset == "wikipedia":
-                            ids, docs, scores = self.retrieve_docs_wikipedia(embedding, K)
+                            ids, docs, scores = self.retrieve_docs_wikipedia(embedding, K[self.dataset])
                     
                     # Prepare and send response
                     response = {
@@ -199,7 +199,7 @@ class DataSource:
         faiss.normalize_L2(query_vec)
 
         index, metadatas = self.faiss_indexes
-        res_ = index.search(query_vec, K)
+        res_ = index.search(query_vec, k)
         scores = res_[0][0].tolist()
         local_indices = res_[1]
 

@@ -222,6 +222,8 @@ class Router:
                 return random.sample(self.data_sources, 2)
             elif self.dataset == "feb4rag":
                 return random.sample(self.data_sources, 9)
+            elif self.dataset == "wikipedia":
+                return random.sample(self.data_sources, 1)
         elif self.routing_strategy == "none":
             return []
         else:

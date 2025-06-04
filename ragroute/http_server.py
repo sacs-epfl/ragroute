@@ -282,11 +282,11 @@ class HTTPServer:
             all_scores.extend(results[2])
 
         if self.dataset == "medrag":
-            filtered_docs, _ = rerank_medrag(all_docs, all_scores, K)
+            filtered_docs, _ = rerank_medrag(all_docs, all_scores, K[self.dataset])
         elif self.dataset == "feb4rag":
-            filtered_docs, _ = rerank_feb4rag(all_indices, all_docs, query_data["question_id"], K, self.relevance_data)
+            filtered_docs, _ = rerank_feb4rag(all_indices, all_docs, query_data["question_id"], K[self.dataset], self.relevance_data)
         elif self.dataset == "wikipedia":
-            filtered_docs, _ = rerank_wikipedia(all_docs, all_scores, K)
+            filtered_docs, _ = rerank_wikipedia(all_docs, all_scores, K[self.dataset])
 
         if self.disable_llm:
             self.active_queries[query_id]["metadata"]["generate_time"] = 0

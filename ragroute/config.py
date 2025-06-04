@@ -89,7 +89,11 @@ EMBEDDING_MAX_LENGTH = {
     "feb4rag": 4096,
     "wikipedia": 768,
 }
-K = 32  # Number of documents to retrieve from each data source
+K = {
+    "medrag": 32,
+    "feb4rag": 10,
+    "wikipedia": 10,
+}
 
 SYSTEM_PROMPTS = {
     "medrag": """You are a helpful medical expert, and your task is to answer a multi-choice medical question using the relevant documents.
