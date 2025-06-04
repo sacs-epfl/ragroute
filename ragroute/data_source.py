@@ -6,6 +6,7 @@ import asyncio
 import json
 import logging
 import os
+import pickle
 import time
 
 import faiss
@@ -14,7 +15,7 @@ import numpy as np
 import zmq
 import zmq.asyncio
 
-from ragroute.config import DATA_SOURCE_DELAY, EMBEDDING_MODELS_PER_DATA_SOURCE, FEB4RAG_DIR, K, MEDRAG_DIR, SERVER_CLIENT_BASE_PORT, CLIENT_SERVER_BASE_PORT
+from ragroute.config import DATA_SOURCE_DELAY, EMBEDDING_MODELS_PER_DATA_SOURCE, FEB4RAG_DIR, K, MEDRAG_DIR, SERVER_CLIENT_BASE_PORT, CLIENT_SERVER_BASE_PORT, WIKIPEDIA_DIR
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("client")
@@ -30,6 +31,8 @@ class DataSource:
             self.dataset_dir = MEDRAG_DIR
         elif dataset == "feb4rag":
             self.dataset_dir = FEB4RAG_DIR
+        elif dataset == "wikipedia":
+            self.dataset_dir = WIKIPEDIA_DIR
         else:
             raise ValueError(f"Unknown dataset when starting data source {name}: {dataset}")
 
@@ -48,6 +51,18 @@ class DataSource:
             model_name: str = EMBEDDING_MODELS_PER_DATA_SOURCE[dataset][name][0]
             self.index_path: str = os.path.join(self.index_dir, f"{name}_{model_name}.faiss")
             self.doc_ids_path: str = os.path.join(self.index_dir, f"{name}_{model_name}.docids.json")
+        elif dataset == "wikipedia":
+            self.index_dir: str = os.path.join(self.dataset_dir, "faiss_clusters", "normalized_indexes")
+            self.index_path: str = os.path.join(self.index_dir, f"faiss_index_{name}_normalized.index")
+
+            # Load auxiliary data for Wikipedia
+            with open(os.path.join(self.dataset_dir, "faiss_clusters", "split_texts_titles", f"titles_{self.name}.txt"), "r", encoding="utf-8") as f:
+                self.mmlu_titles = f.read().splitlines()
+            with open(os.path.join(self.dataset_dir, "faiss_clusters", "split_texts_titles", f"texts_{self.name}.txt"), "r", encoding="utf-8") as f:
+                self.mmlu_texts = f.read().splitlines()
+
+            logger.info(f"Initialized Wikipedia data source {name} with index path {self.index_path}")
+
         self.faiss_indexes = None
         self.cache_jsonl = {}
 
@@ -59,6 +74,8 @@ class DataSource:
         elif self.dataset == "feb4rag":
             with open(self.doc_ids_path, "r") as f:
                 metadatas = json.load(f)
+        elif self.dataset == "wikipedia":
+            metadatas = []  # TODO not sure what to do here
         self.faiss_indexes = index, metadatas
         logger.info(f"FAISS index for {self.name} loaded successfully")
         
@@ -99,6 +116,8 @@ class DataSource:
                             ids, docs, scores = self.retrieve_docs_medrag(embedding, K)
                         elif self.dataset == "feb4rag":
                             ids, docs, scores = self.retrieve_docs_fed4rag(embedding, K)
+                        elif self.dataset == "wikipedia":
+                            ids, docs, scores = self.retrieve_docs_wikipedia(embedding, K)
                     
                     # Prepare and send response
                     response = {
@@ -173,6 +192,24 @@ class DataSource:
         docs = idx2txt(indices)
 
         return indices, docs, scores
+
+    def retrieve_docs_wikipedia(self, query_embed, k):
+        # Normalize the query
+        query_vec = query_embed.reshape(1, -1).astype(np.float32)
+        faiss.normalize_L2(query_vec)
+
+        index, metadatas = self.faiss_indexes
+        res_ = index.search(query_vec, K)
+        scores = res_[0][0].tolist()
+        local_indices = res_[1]
+
+        docs = []
+        for i, local_idx in enumerate(local_indices[0]):
+            title = self.mmlu_titles[local_idx]
+            text = self.mmlu_texts[local_idx]
+            docs.append((title, text))
+
+        return local_indices[0].tolist(), docs, scores
             
     def stop(self):
         logger.info(f"Stopping client {self.client_id}")

@@ -21,6 +21,7 @@ MODELS_FEB4RAG_DIR = os.path.join(MODELS_USR_DIR, "FeB4RAG")
 USR_DIR = "/mnt/nfs/home/dpetresc"
 MEDRAG_DIR = os.path.join(USR_DIR, "MedRAG", "corpus")
 FEB4RAG_DIR = os.path.join(USR_DIR, "FeB4RAG")
+WIKIPEDIA_DIR = os.path.join(USR_DIR, "wiki_dataset", "dpr_wiki_index")
 
 # If we're in simulation mode, these are the delays for each component (in seconds)
 ROUTER_DELAY = 1
@@ -31,6 +32,7 @@ LLM_DELAY = 1
 DATA_SOURCES = {
     "medrag": ["pubmed", "statpearls", "textbooks", "wikipedia"],
     "feb4rag": ["msmarco", "trec-covid", "nfcorpus", "scidocs", "nq", "hotpotqa", "fiqa", "arguana", "webis-touche2020", "dbpedia-entity", "fever", "climate-fever", "scifact"],
+    "wikipedia": ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"],
 }
 EMBEDDING_MODELS_PER_DATA_SOURCE = {
     "medrag": {
@@ -53,6 +55,18 @@ EMBEDDING_MODELS_PER_DATA_SOURCE = {
         "fever": ("UAE-Large-V1", "custom"),
         "climate-fever": ("UAE-Large-V1", "custom"),
         "scifact": ("gte-base", "beir"),
+    },
+    "wikipedia": {
+        "0": ("facebook/dpr-question_encoder-single-nq-base", None),
+        "1": ("facebook/dpr-question_encoder-single-nq-base", None),
+        "2": ("facebook/dpr-question_encoder-single-nq-base", None),
+        "3": ("facebook/dpr-question_encoder-single-nq-base", None),
+        "4": ("facebook/dpr-question_encoder-single-nq-base", None),
+        "5": ("facebook/dpr-question_encoder-single-nq-base", None),
+        "6": ("facebook/dpr-question_encoder-single-nq-base", None),
+        "7": ("facebook/dpr-question_encoder-single-nq-base", None),
+        "8": ("facebook/dpr-question_encoder-single-nq-base", None),
+        "9": ("facebook/dpr-question_encoder-single-nq-base", None),
     }
 }
 FEB4RAG_SOURCE_TO_ID = {
@@ -73,6 +87,7 @@ FEB4RAG_SOURCE_TO_ID = {
 EMBEDDING_MAX_LENGTH = {
     "medrag": 768,
     "feb4rag": 4096,
+    "wikipedia": 768,
 }
 K = 32  # Number of documents to retrieve from each data source
 
@@ -111,7 +126,8 @@ MODELS = {
         "max_tokens": 131072,
         "hf_name": "meta-llama/Meta-Llama-3.1-8B-Instruct",
         #"ollama_name": "llama3.1:8b-instruct-q4_K_M",
-        "ollama_name": "llama3.1_extended",
+        #"ollama_name": "llama3.1_extended",
+        "ollama_name": "llama3.1:8b-instruct-q8_0",
     },
     "qwen3-8B": {
         "docs_context_length": 38000,

@@ -23,3 +23,12 @@ def rerank_feb4rag(ids, docs, query_id, k, relevance_data):
     sorted_ids, sorted_docs = zip(*sorted_data) if sorted_data else ([], [])
 
     return list(sorted_docs[:k]), list(sorted_ids[:k])
+
+
+def rerank_wikipedia(docs, scores, k):
+    # Just rerank based on scores for the moment
+    sorted_indices = np.argsort(scores)[::-1]  # Sort scores descending
+    merged_docs = [docs[i] for i in sorted_indices][:k]
+    merged_scores = [scores[i] for i in sorted_indices][:k]
+
+    return merged_docs, merged_scores
