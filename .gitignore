@@ -1,7 +1,7 @@
 # Ignore everything in data/
 data/*
 
-# Ignore all data_ prefixed files/directories
+# Ignore all data_ for logs
 data_*
 
 # To reproduce the resuts, allow the benchmark folder and specific JSON files
