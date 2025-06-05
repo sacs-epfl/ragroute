@@ -27,7 +27,7 @@ def rerank_feb4rag(ids, docs, query_id, k, relevance_data):
 
 def rerank_wikipedia(docs, scores, k):
     # Just rerank based on scores for the moment
-    sorted_indices = np.argsort(scores)[::-1]  # Sort scores descending
+    sorted_indices = np.argsort(scores)[::]
     merged_docs = [docs[i] for i in sorted_indices][:k]
     merged_scores = [scores[i] for i in sorted_indices][:k]
 

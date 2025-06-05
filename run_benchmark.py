@@ -98,6 +98,7 @@ async def main():
                     continue
 
                 for question_id, question_data in batch:
+                    print(question_id)
                     #print(question_data)
                     question = question_data['question']
                     options = question_data['options']

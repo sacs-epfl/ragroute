@@ -144,11 +144,15 @@ class HTTPServer:
             "metadata": {},
             "query_start_time": time.time(),
         }
+        if self.dataset == "wikipedia":
+            formatted_query = "\n".join([query, " | ".join(choices)])
+        else:
+            formatted_query = query
         
         # Send query to router
         await self.router_sender.send_json({
             "id": query_id,
-            "query": query
+            "query": formatted_query
         })
         
         # Wait for all results
@@ -301,6 +305,7 @@ class HTTPServer:
                     llm_message, docs_tokens = generate_llm_message_wikipedia(query_data["query"], filtered_docs, query_data["choices"], self.model)
                 else:
                     llm_message, docs_tokens = generate_llm_message(self.dataset, query_data["query"], filtered_docs, query_data["choices"], self.model)
+                #llm_message, docs_tokens = generate_llm_message(self.dataset, query_data["query"], filtered_docs, query_data["choices"], self.model)
                 #response_: ChatResponse = await AsyncClient().chat(model=self.model_info["ollama_name"], messages=llm_message, options={"num_predict": self.model_info["max_tokens"]})
                 try:
                     response_: ChatResponse = await asyncio.wait_for(

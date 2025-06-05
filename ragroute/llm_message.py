@@ -15,9 +15,7 @@ def generate_llm_message(dataset: str, question: str, context, options: str, mod
     elif dataset == "feb4rag":
         contexts = ["Document [{:d}] (Title: {:s}) {:s}".format(idx, context[idx].get("title") or f"Doc {idx}", context[idx]["text"]) for idx in range(len(context))]
     elif dataset == "wikipedia":
-        contexts = []
-        for j, (title, text) in enumerate(context):
-            context.append(f"Document {j+1} [{title}]: {text}\n")
+        contexts = ["Document [{:d}] (Title: {:s}) {:s}".format(idx, title, text) for idx, (title, text) in enumerate(context)]
     if len(contexts) == 0:
         contexts = [""]
 
@@ -39,7 +37,7 @@ def generate_llm_message_wikipedia(question: str, top_docs: str, options: str, m
     model_info = MODELS[model]
     tokenizer = AutoTokenizer.from_pretrained(model_info["hf_name"], cache_dir=None)
 
-    def prompt_context(ctx):
+    def prompt_context(ctx, question, options):
         return (
             f"<|begin_of_text|><|start_header_id|>system<|end_header_id|>\n\n"
             f"You are an assistant for answering multiple-choice questions. Below are relevant parts of documents retrieved for the question. "
@@ -57,10 +55,10 @@ def generate_llm_message_wikipedia(question: str, top_docs: str, options: str, m
     
     docs_context = []
     for j, (title, text) in enumerate(top_docs):
-        docs_context.append(f"Document {j+1} [{title}]: {text}\n")
+        docs_context.append(f"##### Document {j+1} [{title}] #####\n{text}")
 
-    encoded_docs_tokens = tokenizer.encode("\n".join(docs_context), add_special_tokens=False)[:model_info["docs_context_length"]]
+    encoded_docs_tokens = tokenizer.encode("\n\n".join(docs_context), add_special_tokens=False)[:model_info["docs_context_length"]]
     context = tokenizer.decode(encoded_docs_tokens)
     
-    ctx_prompt = prompt_context("".join(context))
+    ctx_prompt = prompt_context("\n\n".join(docs_context), question, options)
     return [{"role": "user", "content": ctx_prompt}], len(encoded_docs_tokens)

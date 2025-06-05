@@ -283,6 +283,7 @@ class Router:
                     emb = model.encode_queries([query], batch_size=1, convert_to_tensor=False)[0]
                     embeddings[model_name] = emb
                 elif self.dataset == "wikipedia":
+                    #print(query)
                     inputs = self.tokenizer(query, return_tensors="pt", truncation=True, padding=True).to(self.device)
                     emb = model(**inputs).pooler_output
                     embeddings[model_name] = emb.cpu().numpy()[0]

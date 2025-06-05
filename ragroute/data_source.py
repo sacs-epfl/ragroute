@@ -197,6 +197,7 @@ class DataSource:
         # Normalize the query
         query_vec = query_embed.reshape(1, -1).astype(np.float32)
         faiss.normalize_L2(query_vec)
+        #print(query_vec)
 
         index, metadatas = self.faiss_indexes
         res_ = index.search(query_vec, k)
@@ -208,6 +209,8 @@ class DataSource:
             title = self.mmlu_titles[local_idx]
             text = self.mmlu_texts[local_idx]
             docs.append((title, text))
+
+        #print(self.name, local_indices[0].tolist(), scores, docs)
 
         return local_indices[0].tolist(), docs, scores
             

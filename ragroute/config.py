@@ -103,7 +103,10 @@ Your responses will be used for research purposes only, so please have a definit
     "feb4rag": """You are a helpful assistant helping to answer user requests based on the provided search result.
 Your responses should directly address the user's request and must be based on the information obtained from the provided search results.
 You are forbidden to create new information that is not supported by these results.
-You must attribute your response to the source from the search results by including citations, for example, [1]."""
+You must attribute your response to the source from the search results by including citations, for example, [1].""",
+    "wikipedia": """You are an assistant for answering multiple-choice questions. Below are relevant parts of documents retrieved for the question. 
+Use the provided context to choose the correct answer. If the context does not help, use the question and options alone. 
+Your response should be a single letter: A, B, C, or D. Only output one letter."""
 }
 USER_PROMPT_TEMPLATES = {
     "medrag": """Here are the relevant documents:
@@ -120,7 +123,23 @@ Please think step-by-step and generate your output in json formatted as Dict{"st
 {{context}}
 
 Here is the question:
-{{question}}"""
+{{question}}""",
+    "wikipedia": """Given the following context, question, and four candidate answers (A, B, C, and D), choose the best answer.
+
+Context:
+{{context}}
+
+Question: {{question}}
+A. {{options[0]}}
+B. {{options[1]}}
+C. {{options[2]}}
+D. {{options[3]}}
+
+Your response should be in the format: "The best answer is [letter]".
+Do not include any additional explanation or justification.
+Only output one letter: A, B, C, or D.
+
+The best answer is"""
 }
 
 SUPPORTED_MODELS = ["llama3.1-8B-instruct", "qwen3-8B", "qwen3-0.6B"]
