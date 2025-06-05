@@ -251,6 +251,11 @@ class Router:
                 source_id = FEB4RAG_SOURCE_TO_ID[corpus]
                 source_id_vec = np.eye(len(FEB4RAG_SOURCE_TO_ID))[source_id]
                 features = np.concatenate([features, source_id_vec])
+            elif self.dataset == "medrag":
+                source_id = MEDRAG_SOURCE_TO_ID[corpus]
+                source_id_vec = np.eye(len(MEDRAG_SOURCE_TO_ID))[source_id]
+                features = np.concatenate([features, source_id_vec])
+
             inputs.append(features)
         
         if self.dataset == "medrag":

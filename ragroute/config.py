@@ -84,6 +84,11 @@ FEB4RAG_SOURCE_TO_ID = {
   "trec-covid": 11,
   "webis-touche2020": 12
 }
+
+MEDRAG_SOURCE_TO_ID = {
+'pubmed': 0, 'statpearls': 1, 'textbooks': 2, 'wikipedia': 3
+}
+
 EMBEDDING_MAX_LENGTH = {
     "medrag": 768,
     "feb4rag": 4096,
