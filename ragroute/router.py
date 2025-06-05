@@ -262,7 +262,7 @@ class Router:
             outputs = outputs.view(-1)
             probabilities = torch.sigmoid(outputs)
             if self.dataset == "medrag":	
-                predictions = (probabilities > 0.5760).cpu().numpy()
+                predictions = (probabilities > 0.4924).cpu().numpy()
             else:
                 predictions = (probabilities > 0.5).cpu().numpy()
         
