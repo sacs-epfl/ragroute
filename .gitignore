@@ -1,6 +1,9 @@
 # Ignore everything in data/
 data/*
 
+# Ignore all data_ prefixed files/directories
+data_*
+
 # To reproduce the resuts, allow the benchmark folder and specific JSON files
 !data/benchmark/
 !data/question_order_FeB4RAG_FeB4RAG.json

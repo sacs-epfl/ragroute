@@ -31,7 +31,7 @@ logger = logging.getLogger("router")
 # Dimension of the input features for the neural network
 MEDRAG_INPUT_DIMENSION =    1540 
 FEDRAG_INPUT_DIMENSION =    8205
-WIKIPEDIA_INPUT_DIMENSION = 1536
+WIKIPEDIA_INPUT_DIMENSION = 1546
 
 
 class CorpusRoutingNN(nn.Module):
@@ -123,6 +123,11 @@ class Router:
             scaler_path = os.path.join(MODELS_USR_DIR, "MedRAG/routing/preprocessed_data.pkl")
             with open(scaler_path, "rb") as f:
                 _, _, _, self.scaler, _ = pickle.load(f)
+
+        if self.dataset == "wikipedia":
+            scaler_path = os.path.join(MODELS_USR_DIR, "Retrieval-QA-Benchmark_backup", "euromlsys", "new_submission", "cluster_router_output", "scaler.pkl")
+            with open(scaler_path, "rb") as f:
+                self.scaler = pickle.load(f)
 
         # Load the centroids
         self.centroids = {}
@@ -227,7 +232,7 @@ class Router:
             elif self.dataset == "feb4rag":
                 return random.sample(self.data_sources, 9)
             elif self.dataset == "wikipedia":
-                return random.sample(self.data_sources, 1)
+                return random.sample(self.data_sources, 2)
         elif self.routing_strategy == "none":
             return []
         else:
@@ -255,10 +260,13 @@ class Router:
                 source_id = MEDRAG_SOURCE_TO_ID[corpus]
                 source_id_vec = np.eye(len(MEDRAG_SOURCE_TO_ID))[source_id]
                 features = np.concatenate([features, source_id_vec])
+            elif self.dataset == "wikipedia":
+                source_id_vec = np.eye(len(self.data_sources))[int(corpus)]
+                features = np.concatenate([features, source_id_vec])
 
             inputs.append(features)
         
-        if self.dataset == "medrag":
+        if self.dataset == "medrag" or self.dataset == "wikipedia":
             inputs = self.scaler.transform(inputs)
         input_tensor = torch.tensor(inputs, dtype=torch.float32).to(self.device)
 
