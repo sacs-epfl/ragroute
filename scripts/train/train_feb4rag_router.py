@@ -1,5 +1,6 @@
 import os
 import pickle
+import json
 import numpy as np
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score, precision_recall_fscore_support, roc_auc_score
@@ -8,57 +9,80 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from torch.utils.data import Dataset, DataLoader
+import random
 
-BASE_DIR = "/mnt/sacs/scratch/home/dpetresc/FeB4RAG/dataset_creation/2_search/embeddings"
+def set_seed(seed=42):
+    random.seed(seed)
+    np.random.seed(seed)
+    torch.manual_seed(seed)
+    torch.cuda.manual_seed_all(seed)  # if using multi-GPU
 
-# === 1. Load dataset and metadata ===
-with open(os.path.join(BASE_DIR, "routing_grouped_by_query.pkl"), "rb") as f:
-    query_to_data = pickle.load(f)
+    torch.backends.cudnn.deterministic = True
+    torch.backends.cudnn.benchmark = False
 
-encoder_dims = {
-  "e5-large": 1024,
-  "SGPT-5.8B-weightedmean-msmarco-specb-bitfit": 4096,
-  "UAE-Large-V1": 1024,
-  "all-mpnet-base-v2": 768,
-  "multilingual-e5-large": 1024,
-  "ember-v1": 1024,
-  "e5-base": 768,
-  "gte-base": 768
-}
+set_seed()
 
-source_to_id = {
-  "arguana": 0,
-  "climate-fever": 1,
-  "dbpedia-entity": 2,
-  "fever": 3,
-  "fiqa": 4,
-  "hotpotqa": 5,
-  "msmarco": 6,
-  "nfcorpus": 7,
-  "nq": 8,
-  "scidocs": 9,
-  "scifact": 10,
-  "trec-covid": 11,
-  "webis-touche2020": 12
-}
+def load_data(include_source_id=True, include_centroid=True, split_path="split.json"):
+    with open("embeddings/routing_grouped_by_query.pkl", "rb") as f:
+        query_to_data = pickle.load(f)
 
-# === 2. Split queries ===
-query_ids = list(query_to_data.keys())
-#train_q, temp_q = train_test_split(query_ids, test_size=0.5, random_state=42)
-#val_q, test_q = train_test_split(temp_q, test_size=0.9, random_state=42)
-train_q, rest_q = train_test_split(query_ids, test_size=0.7, random_state=42)  # 30% train
-val_q, test_q = train_test_split(rest_q, test_size=6/7, random_state=42)       # 10% val, 60% test
+    with open("embeddings/encoder_dims.json", "r") as f:
+        encoder_dims = json.load(f)
+    max_dim = max(encoder_dims.values())
 
-# === 3. Flatten and unpack ===
-def flatten(qids): return [ex for qid in qids for ex in query_to_data[qid]]
-def unpack(data):
-    X = np.array([x for x, _ in data])
-    y = np.array([y for _, y in data])
-    return X, y
+    with open("embeddings/source_id_map.json", "r") as f:
+        source_to_id = json.load(f)
+    num_sources = len(source_to_id)
 
-X_train, y_train = unpack(flatten(train_q))
-X_val, y_val = unpack(flatten(val_q))
-X_test, y_test = unpack(flatten(test_q))
+    query_ids = list(query_to_data.keys())
+
+    if os.path.exists(split_path):
+        with open(split_path, "r") as f:
+            split_data = json.load(f)
+        train_q = split_data["train"]
+        val_q = split_data["val"]
+        test_q = split_data["test"]
+        print(f"Loaded existing split from {split_path}")
+    else:
+        train_q, rest_q = train_test_split(query_ids, test_size=0.7, random_state=42)
+        val_q, test_q = train_test_split(rest_q, test_size=6/7, random_state=42)
+        split_data = {"train": train_q, "val": val_q, "test": test_q}
+        with open(split_path, "w") as f:
+            json.dump(split_data, f, indent=2)
+        print(f"Saved new split to {split_path}")
+
+    def flatten(qids):
+        return [ex for qid in qids for ex in query_to_data[qid]]
+
+    def unpack(data):
+        X_all = []
+        y_all = []
+        for x, y in data:
+            q_vec = x[:max_dim]
+            c_vec = x[max_dim:2*max_dim]
+            s_vec = x[2*max_dim:]
+
+            parts = [q_vec]
+            if include_centroid:
+                parts.append(c_vec)
+            if include_source_id:
+                parts.append(s_vec)
+
+            x_new = np.concatenate(parts)
+            print(len(x_new))
+            X_all.append(x_new)
+            y_all.append(y)
+        return np.array(X_all), np.array(y_all)
+
+    X_train, y_train = unpack(flatten(train_q))
+    X_val, y_val = unpack(flatten(val_q))
+    X_test, y_test = unpack(flatten(test_q))
+
+    return (X_train, y_train), (X_val, y_val), (X_test, y_test), num_sources if include_source_id else 0
+
+include_source_id = True
+include_centroid = True
+(X_train, y_train), (X_val, y_val), (X_test, y_test), _ = load_data(include_source_id, include_centroid)
 
 # === 4. Torch Dataset ===
 class RoutingDataset(Dataset):
@@ -192,3 +216,4 @@ print("\nLoaded best model from disk.")
 # === 9. Final Evaluation ===
 print("\nFinal Test Set Evaluation:")
 evaluate_with_metrics(test_loader)
+
