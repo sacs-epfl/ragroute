@@ -31,7 +31,7 @@ logger = logging.getLogger("router")
 # Dimension of the input features for the neural network
 MEDRAG_INPUT_DIMENSION =    1536 
 FEDRAG_INPUT_DIMENSION =    8205
-WIKIPEDIA_INPUT_DIMENSION = 1536
+WIKIPEDIA_INPUT_DIMENSION = 1540
 
 
 class CorpusRoutingNN(nn.Module):
