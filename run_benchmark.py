@@ -25,7 +25,7 @@ async def main():
     parser.add_argument("--save-logs-dir", dest="save_logs_dir", type=str, default="data", help="Path to the benchmark data")
     parser.add_argument("--parallel", type=int, default=1, help="Number of parallel requests to send")
     parser.add_argument("--routing", type=str, required=True, choices=["ragroute", "all", "random", "none"], help="Routing method to use")
-    parser.add_argument("--questions", type=str, default=None, choices=['medqa', 'medmcqa', 'pubmedqa', 'bioasq', 'high_school_microeconomics', 'international_law', 'business_ethics', 'high_school_biology', 'college_mathematics'], help="The questions to use for the benchmark")
+    parser.add_argument("--questions", type=str, default=None, choices=['medqa', 'medmcqa', 'pubmedqa', 'bioasq', 'mmlu', 'high_school_microeconomics', 'international_law', 'business_ethics', 'high_school_biology', 'college_mathematics'], help="The questions to use for the benchmark")
     args = parser.parse_args()
 
     os.makedirs(args.save_logs_dir, exist_ok=True)
