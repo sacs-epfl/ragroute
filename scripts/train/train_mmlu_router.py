@@ -1,3 +1,4 @@
+# === top of the file ===
 import os
 import json
 import numpy as np
@@ -10,10 +11,15 @@ from datasets import load_dataset
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 from tqdm import tqdm
-from sklearn.metrics import classification_report, f1_score
 import random
+from sklearn.metrics import (
+    classification_report, f1_score, roc_auc_score, confusion_matrix,
+    precision_score, recall_score, roc_curve, accuracy_score
+)
+from sklearn.metrics import precision_recall_curve
 from collections import defaultdict
 import pickle
+import csv
 
 # === Config ===
 WIKI_DIR = "/mnt/nfs/home/dpetresc/wiki_dataset/dpr_wiki_index"
@@ -25,21 +31,16 @@ NUM_CLUSTERS = 10
 SEED = 42
 BATCH_SIZE = 128
 EPOCHS = 150
-THRESHOLD = 0.5
+DEFAULT_THRESHOLD = 0.5
 OUTPUT_DIR = "./cluster_router_output"
 os.makedirs(OUTPUT_DIR, exist_ok=True)
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-# === Target subjects (with >3% improvement) ===
 TARGET_SUBJECTS = {
-    "high_school_microeconomics", "international_law", "high_school_mathematics",
-    "college_mathematics", "business_ethics", "high_school_biology", "astronomy",
-    "philosophy", "public_relations", "college_biology", "electrical_engineering",
-    "conceptual_physics", "professional_psychology"
+"high_school_microeconomics", "international_law", "college_biology", "college_physics", "miscellaneous", "prehistory", "philosophy", "professional_psychology", "high_school_mathematics"
 }
 
-# === Reproducibility ===
 def set_seed(seed):
     random.seed(seed)
     np.random.seed(seed)
@@ -62,13 +63,6 @@ def encode_query_dpr(question: str) -> np.ndarray:
 
 # === Load MMLU and questions.json ===
 dataset = load_dataset("cais/mmlu", "all", split="test")
-with open(QUESTIONS_FILE, "r") as f:
-    formatted_questions = json.load(f)
-
-def preproc(d): return "\n".join([d["question"], " | ".join(d["choices"])])
-
-filtered = [x for x in dataset]
-formatted_to_item = {preproc(item): item for item in filtered}
 
 # === Load Cluster Stats ===
 with open(CLUSTER_STATS_FILE) as f:
@@ -77,12 +71,9 @@ centroids = [np.array(c["centroid"], dtype=np.float32) for c in cluster_stats]
 
 # === Build Samples ===
 samples = []
-meta_test_info = []  # for evaluation
+meta_test_info = []
 
-for i, formatted_q in enumerate(tqdm(formatted_questions)):
-    if formatted_q not in formatted_to_item:
-        continue
-    item = formatted_to_item[formatted_q]
+for i, item in enumerate(tqdm(dataset)):
     if item["subject"] not in TARGET_SUBJECTS:
         continue
 
@@ -90,13 +81,19 @@ for i, formatted_q in enumerate(tqdm(formatted_questions)):
     if not os.path.exists(cluster_file):
         continue
 
+    q_id = f"question_{i}"
+    question = item["question"]
+    options = item["choices"]
+    formatted_q = "\n".join([question, " | ".join(options)])
+
     q_emb = encode_query_dpr(formatted_q)
 
     with open(cluster_file) as f:
         retrieved_clusters = set(int(line.strip()) for line in f if line.strip().isdigit())
 
     for cid in range(NUM_CLUSTERS):
-        features = np.concatenate([q_emb, centroids[cid]])
+        features = np.concatenate([q_emb, centroids[cid], np.eye(NUM_CLUSTERS)[cid]])
+        #print(len(features))
         label = 1 if cid in retrieved_clusters else 0
         samples.append((features, label))
         meta_test_info.append((i, cid, label))
@@ -118,13 +115,10 @@ class CorpusRoutingNN(nn.Module):
         self.fc1 = nn.Linear(input_dim, 256)
         self.ln1 = nn.LayerNorm(256)
         self.dropout1 = nn.Dropout(0.4)
-
         self.fc2 = nn.Linear(256, 128)
         self.ln2 = nn.LayerNorm(128)
         self.dropout2 = nn.Dropout(0.4)
-
         self.fc3 = nn.Linear(128, 1)
-
     def forward(self, x):
         x = F.relu(self.ln1(self.fc1(x)))
         x = self.dropout1(x)
@@ -135,7 +129,6 @@ class CorpusRoutingNN(nn.Module):
 # === Split per query ===
 query_to_samples = defaultdict(list)
 query_indices = set()
-
 for (i, cid, label), (features, _) in zip(meta_test_info, samples):
     query_to_samples[i].append((features, label))
     query_indices.add(i)
@@ -144,7 +137,8 @@ query_indices = sorted(list(query_indices))
 train_qs, test_qs = train_test_split(query_indices, test_size=0.6, random_state=SEED)
 train_qs, val_qs = train_test_split(train_qs, test_size=0.1, random_state=SEED)
 
-print(f"Train questions: {len(train_qs)}, Val questions: {len(val_qs)}, Test questions: {len(test_qs)}")
+with open(os.path.join(OUTPUT_DIR, "test_question_ids.json"), "w") as f:
+    json.dump(test_qs, f, indent=2)
 
 def flatten_sample_set(qs):
     return [sample for q in qs for sample in query_to_samples[q]]
@@ -178,7 +172,15 @@ test_loader = DataLoader(ClusterDataset(test_data), batch_size=BATCH_SIZE)
 # === Model Init ===
 model = CorpusRoutingNN(input_dim=train_feats[0].shape[0]).to(device)
 optimizer = torch.optim.Adam(model.parameters(), lr=1e-3, weight_decay=1e-5)
-criterion = nn.BCEWithLogitsLoss()
+
+# === Pos weight for imbalance ===
+num_pos = sum(train_labels)
+num_neg = len(train_labels) - num_pos
+pos_weight = torch.tensor([num_neg / (num_pos + 1e-6)], dtype=torch.float32).to(device)
+print(f"Using pos_weight = {pos_weight.item():.4f} (Pos: {num_pos}, Neg: {num_neg})")
+
+criterion = nn.BCEWithLogitsLoss(pos_weight=5*pos_weight)
+#criterion = nn.BCEWithLogitsLoss()
 
 scheduler_cyclic = torch.optim.lr_scheduler.CyclicLR(
     optimizer, base_lr=1e-3, max_lr=5e-3, step_size_up=10,
@@ -186,7 +188,7 @@ scheduler_cyclic = torch.optim.lr_scheduler.CyclicLR(
 )
 scheduler_step = torch.optim.lr_scheduler.StepLR(optimizer, step_size=50, gamma=0.05)
 
-# === Training Loop with Validation ===
+# === Training Loop ===
 best_val_f1 = 0
 for epoch in range(EPOCHS):
     model.train()
@@ -205,13 +207,20 @@ for epoch in range(EPOCHS):
         else:
             scheduler_step.step()
 
-        preds = (torch.sigmoid(outputs) > THRESHOLD).float()
+        outputs = model(features).squeeze()  # (batch_size,)
+        loss = criterion(outputs, labels)
+
+        probs = torch.sigmoid(outputs)
+        preds = (probs > DEFAULT_THRESHOLD).float()
+
+        labels = labels.squeeze()
+
+        # Now both preds and labels are 1D tensors
         correct += (preds == labels).sum().item()
         total += labels.size(0)
         total_loss += loss.item()
-
     acc = correct / total
-    print(f"Train Loss: {total_loss:.4f} | Accuracy: {acc:.2%}")
+    print(f"Train Loss: {total_loss:.4f} | Accuracy: {acc}")
 
     # === Validation ===
     model.eval()
@@ -221,7 +230,7 @@ for epoch in range(EPOCHS):
             features = features.to(device)
             outputs = model(features)
             probs = torch.sigmoid(outputs)
-            preds = (probs > THRESHOLD).float().cpu().numpy().tolist()
+            preds = (probs > DEFAULT_THRESHOLD).float().cpu().numpy().tolist()
             val_y_pred.extend(preds)
             val_y_true.extend(labels.numpy().tolist())
 
@@ -232,30 +241,36 @@ for epoch in range(EPOCHS):
         torch.save(model.state_dict(), os.path.join(OUTPUT_DIR, "best_model.pth"))
         print("Saved best model.")
 
+
 # === Final Evaluation ===
 model.load_state_dict(torch.load(os.path.join(OUTPUT_DIR, "best_model.pth")))
 model.eval()
-y_true, y_pred = [], []
+y_true, y_pred, y_probs = [], [], []
+
 with torch.no_grad():
     for features, labels in test_loader:
         features = features.to(device)
         outputs = model(features)
-        probs = torch.sigmoid(outputs)
-        preds = (probs > THRESHOLD).float().cpu().numpy().tolist()
-        y_pred.extend(preds)
-        y_true.extend(labels.numpy().tolist())
+        probs = torch.sigmoid(outputs).squeeze()
+        y_probs.extend(probs.cpu().numpy())
+        y_true.extend(labels.numpy())
 
-print("\n=== Final Test Results ===")
-print(classification_report(y_true, y_pred, digits=4))
+# Apply optimal threshold
+y_pred = [1 if p > 0.5 else 0 for p in y_probs]
 
-## === Save outputs ===
-#np.save(os.path.join(OUTPUT_DIR, "train_indices.npy"), train_data)
-#np.save(os.path.join(OUTPUT_DIR, "test_indices.npy"), test_data)
-#np.save(os.path.join(OUTPUT_DIR, "val_indices.npy"), val_data)
-#
-#with open(os.path.join(OUTPUT_DIR, "query_splits.json"), "w") as f:
-#    json.dump({"train": train_qs, "val": val_qs, "test": test_qs}, f, indent=2)
-#
-#with open(os.path.join(OUTPUT_DIR, "test_predictions.json"), "w") as f:
-#    json.dump({"true": y_true, "pred": y_pred}, f, indent=2)
-#
+# === Compute metrics ===
+cm = confusion_matrix(y_true, y_pred)
+tn, fp, fn, tp = cm.ravel()
+precision = precision_score(y_true, y_pred, zero_division=0)
+recall = recall_score(y_true, y_pred, zero_division=0)
+f1 = f1_score(y_true, y_pred, zero_division=0)
+auc = roc_auc_score(y_true, y_probs) if len(set(y_true)) > 1 else 0.0
+acc = (tp + tn) / (tp + tn + fp + fn)
+
+print("\nFinal Test Results")
+print(f"Accuracy: {acc:.2%}")
+print(f"Precision: {precision:.2%}")
+print(f"Recall: {recall:.2%}")
+print(f"F1-Score: {f1:.2%}")
+print(f"AUC: {auc:.4f}")
+print(f"TP: {tp}, TN: {tn}, FP: {fp}, FN: {fn}")

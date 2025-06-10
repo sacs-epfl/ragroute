@@ -26,14 +26,20 @@ async def main():
     parser.add_argument("--parallel", type=int, default=1, help="Number of parallel requests to send")
     parser.add_argument("--routing", type=str, required=True, choices=["ragroute", "all", "random", "none"], help="Routing method to use")
     parser.add_argument("--questions", type=str, default=None, choices=['medqa', 'medmcqa', 'pubmedqa', 'bioasq', 'mmlu', "high_school_microeconomics", "international_law", "college_biology", "college_physics", "miscellaneous", "prehistory", "philosophy", "professional_psychology", "high_school_mathematics"], help="The questions to use for the benchmark")
+    parser.add_argument("--shard", type=int, default=0, help="Index of the shard to run (zero-based)")
+    parser.add_argument("--num-shards", type=int, default=1, help="Total number of shards")
+
     args = parser.parse_args()
 
     os.makedirs(args.save_logs_dir, exist_ok=True)
+    print(args.save_logs_dir, " SAVING HERE")
+    shard_suffix = f"_shard{args.shard}" if args.num_shards > 1 else ""
+
     if args.questions is not None:
-        benchmark_file: str = os.path.join("%s" % args.save_logs_dir, "benchmark_%s_%s_%s.csv" % (args.benchmark, args.routing, args.questions))
-        ds_stats_file: str = os.path.join("%s" % args.save_logs_dir, "ds_stats_%s_%s_%s.csv" % (args.benchmark, args.routing, args.questions))
-        answer_file: str = os.path.join("%s" % args.save_logs_dir, "answers_%s_%s_%s.jsonl" % (args.benchmark, args.routing, args.questions))
-        top_docs_file: str = os.path.join("%s" % args.save_logs_dir, "top_docs_%s_%s_%s.jsonl" % (args.benchmark, args.routing, args.questions))
+        benchmark_file: str = os.path.join("%s" % args.save_logs_dir, "benchmark_%s_%s_%s%s.csv" % (args.benchmark, args.routing, args.questions, shard_suffix))
+        ds_stats_file: str = os.path.join("%s" % args.save_logs_dir, "ds_stats_%s_%s_%s%s.csv" % (args.benchmark, args.routing, args.questions, shard_suffix))
+        answer_file: str = os.path.join("%s" % args.save_logs_dir, "answers_%s_%s_%s%s.jsonl" % (args.benchmark, args.routing, args.questions, shard_suffix))
+        top_docs_file: str = os.path.join("%s" % args.save_logs_dir, "top_docs_%s_%s_%s%s.jsonl" % (args.benchmark, args.routing, args.questions, shard_suffix))
     else:
         benchmark_file: str = os.path.join("%s" % args.save_logs_dir, "benchmark_%s_%s.csv" % (args.benchmark, args.routing))
         ds_stats_file: str = os.path.join("%s" % args.save_logs_dir, "ds_stats_%s_%s.csv" % (args.benchmark, args.routing))
@@ -56,6 +62,16 @@ async def main():
             parts = line.strip().split(",")
             if len(parts) > 3:
                 existing_question_ids.add(parts[3])
+    # Also check the global benchmark file if using shards
+    if args.num_shards > 1:
+        global_benchmark_file = os.path.join(args.save_logs_dir, f"benchmark_{args.benchmark}_{args.routing}_{args.questions}.csv")
+        if os.path.exists(global_benchmark_file):
+            with open(global_benchmark_file, "r") as f:
+                lines = f.readlines()
+                for line in lines[1:]:
+                    parts = line.strip().split(",")
+                    if len(parts) > 3:
+                        existing_question_ids.add(parts[3])
 
     num_questions: int = 0
     num_correct: int = 0
@@ -84,7 +100,8 @@ async def main():
                 with open(order_path, "w") as f:
                     json.dump([qid for qid, _ in question_items], f)
                 print(f"Saved new question order to {order_path}")
-
+            
+            question_items = question_items[args.shard::args.num_shards]
             all_question_batches[question_bank] = question_items
 
             for i in tqdm(range(0, len(question_items), args.parallel)):
