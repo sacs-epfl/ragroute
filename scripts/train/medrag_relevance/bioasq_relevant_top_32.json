@@ -1,0 +1,2383 @@
+{
+    "5be44bef133db5eb78000014": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "5be44f50133db5eb78000017": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "5be47bff133db5eb78000018": [
+        "textbooks",
+        "pubmed"
+    ],
+    "5be48282133db5eb7800001b": [
+        "pubmed"
+    ],
+    "5be49287133db5eb7800001e": [
+        "statpearls",
+        "pubmed",
+        "wikipedia"
+    ],
+    "5be94b87133db5eb78000020": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "5c00f38e133db5eb78000023": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "5c010e09133db5eb78000024": [
+        "pubmed"
+    ],
+    "5c0114ec133db5eb78000028": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "5c0e838b133db5eb7800002e": [
+        "pubmed"
+    ],
+    "5c2f8127133db5eb78000032": [
+        "pubmed"
+    ],
+    "5c34794fda8336e21a000001": [
+        "pubmed"
+    ],
+    "5c51f44c07ef653866000004": [
+        "pubmed"
+    ],
+    "5c52028807ef653866000009": [
+        "textbooks",
+        "pubmed",
+        "wikipedia"
+    ],
+    "5c5215e67e3cb0e231000004": [
+        "pubmed"
+    ],
+    "5c5217fd7e3cb0e231000005": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "5c52cde87e3cb0e23100000e": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "5c531e887e3cb0e231000018": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "5c55d75807647bbc4b000008": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "5c56033607647bbc4b00000c": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "5c5607aa07647bbc4b00000e": [
+        "pubmed"
+    ],
+    "5c56fd7407647bbc4b000013": [
+        "pubmed"
+    ],
+    "5c57031107647bbc4b000014": [
+        "pubmed"
+    ],
+    "5c571f7607647bbc4b000017": [
+        "pubmed"
+    ],
+    "5c57216e07647bbc4b000018": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "5c5723a007647bbc4b000019": [
+        "pubmed"
+    ],
+    "5c5839e707647bbc4b00001f": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "5c58447f07647bbc4b000021": [
+        "pubmed"
+    ],
+    "5c58923c86df2b9174000005": [
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "5c589ddb86df2b917400000b": [
+        "pubmed"
+    ],
+    "5c58a74e86df2b917400000d": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "5c58ac2286df2b917400000f": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "5c5b2f4b1a4c55d80b000001": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "5c5b52731a4c55d80b000003": [
+        "pubmed"
+    ],
+    "5c5f0c5a1a4c55d80b00000f": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "5c5f12d91a4c55d80b000016": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "5c5f21a81a4c55d80b00001c": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "5c5f22951a4c55d80b00001d": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "5c5f2b771a4c55d80b000020": [
+        "pubmed"
+    ],
+    "5c5f2cef1a4c55d80b000022": [
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "5c61bacae842deac67000001": [
+        "pubmed"
+    ],
+    "5c629fffe842deac67000009": [
+        "pubmed"
+    ],
+    "5c62a529e842deac6700000b": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "5c640c2ee842deac67000010": [
+        "pubmed"
+    ],
+    "5c640fa1e842deac67000011": [
+        "pubmed"
+    ],
+    "5c643485e842deac67000015": [
+        "pubmed"
+    ],
+    "5c6438a5e842deac67000016": [
+        "pubmed"
+    ],
+    "5c6445f0e842deac67000017": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "5c644c3de842deac67000018": [
+        "pubmed"
+    ],
+    "5c647c52e842deac6700001c": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "5c65484ee842deac6700001f": [
+        "pubmed"
+    ],
+    "5c65495be842deac67000021": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "5c6549e1e842deac67000022": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "5c654c14e842deac67000025": [
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "5c6582207c78d69471000001": [
+        "textbooks",
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "5c6583117c78d69471000002": [
+        "pubmed"
+    ],
+    "5c6587d77c78d69471000005": [
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "5c662c507c78d6947100000d": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "5c6638717c78d69471000012": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "5c663afe7c78d69471000013": [
+        "pubmed"
+    ],
+    "5c674aed7c78d69471000019": [
+        "pubmed",
+        "statpearls"
+    ],
+    "5c674eac7c78d6947100001b": [
+        "pubmed"
+    ],
+    "5c6ad3be7c78d69471000021": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "5c6b198f7c78d69471000025": [
+        "pubmed"
+    ],
+    "5c6b7a9e7c78d69471000029": [
+        "pubmed"
+    ],
+    "5c6b7bee7c78d6947100002a": [
+        "pubmed",
+        "statpearls"
+    ],
+    "5c6b82a17c78d6947100002f": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "5c6d441d7c78d69471000037": [
+        "pubmed"
+    ],
+    "5c6d7bb57c78d6947100003b": [
+        "pubmed"
+    ],
+    "5c6d97497c78d69471000040": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "5c6d9a157c78d69471000041": [
+        "pubmed"
+    ],
+    "5c6da11e7c78d69471000042": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "5c6df86b7c78d69471000045": [
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "5c6f15577c78d69471000053": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "5c6f6ae37c78d69471000054": [
+        "pubmed",
+        "statpearls"
+    ],
+    "5c6f6d997c78d69471000055": [
+        "pubmed"
+    ],
+    "5c7019557c78d6947100005f": [
+        "pubmed"
+    ],
+    "5c71648b7c78d69471000067": [
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "5c72768a7c78d6947100006c": [
+        "pubmed"
+    ],
+    "5c72a5ca7c78d6947100006d": [
+        "pubmed"
+    ],
+    "5c72aaed7c78d6947100006f": [
+        "pubmed"
+    ],
+    "5c72ba807c78d69471000076": [
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "5c72bd047c78d69471000077": [
+        "statpearls",
+        "pubmed",
+        "wikipedia"
+    ],
+    "5c72f8557c78d69471000080": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "5c73acea7c78d69471000085": [
+        "pubmed"
+    ],
+    "5c73aced7c78d69471000087": [
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "5c73acf17c78d69471000089": [
+        "pubmed"
+    ],
+    "5c73acf27c78d6947100008a": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "5c73ad0b7c78d69471000093": [
+        "pubmed"
+    ],
+    "5c73ad327c78d69471000097": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "5c73ad347c78d69471000098": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "5c73ad377c78d6947100009a": [
+        "pubmed"
+    ],
+    "5c76be617c78d694710000a5": [
+        "statpearls",
+        "pubmed",
+        "wikipedia"
+    ],
+    "5c76cea17c78d694710000a7": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "5c783236d774d04240000001": [
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "5c7836dad774d04240000002": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "5c7a4c35d774d04240000007": [
+        "pubmed"
+    ],
+    "5c7c0e2fd774d0424000000d": [
+        "pubmed"
+    ],
+    "5c7d6b3e45e140a523000001": [
+        "pubmed"
+    ],
+    "5c7f806d617e120c34000001": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "5c83f858617e120c34000003": [
+        "pubmed",
+        "statpearls"
+    ],
+    "5c840daf617e120c34000007": [
+        "pubmed"
+    ],
+    "5c8857e975a4a5d219000009": [
+        "pubmed"
+    ],
+    "5c8908a475a4a5d21900000c": [
+        "pubmed"
+    ],
+    "5c890c3375a4a5d21900000e": [
+        "pubmed"
+    ],
+    "5c891d5075a4a5d219000011": [
+        "pubmed"
+    ],
+    "5c891e5575a4a5d219000012": [
+        "pubmed"
+    ],
+    "5c89461675a4a5d219000013": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "5c895cf0f9c2ba6b28000001": [
+        "pubmed"
+    ],
+    "5c8972d4d558e5f232000006": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "5c8ab614d558e5f23200000d": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "5c8c05c70101eac870000001": [
+        "pubmed"
+    ],
+    "5c8cfca70101eac870000005": [
+        "pubmed"
+    ],
+    "5c8fe71b0101eac87000000b": [
+        "pubmed"
+    ],
+    "5c8fea130101eac87000000d": [
+        "pubmed"
+    ],
+    "5c900779ecadf2e73f000001": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "5c915e51ecadf2e73f00000c": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "5c9160bcecadf2e73f00000d": [
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "5c9162b5ecadf2e73f00000e": [
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "5c92159becadf2e73f000012": [
+        "pubmed"
+    ],
+    "5c928afeecadf2e73f000018": [
+        "pubmed"
+    ],
+    "5c93e6a1ecadf2e73f00001b": [
+        "pubmed"
+    ],
+    "5c960d88ecadf2e73f00001f": [
+        "textbooks",
+        "statpearls",
+        "pubmed",
+        "wikipedia"
+    ],
+    "5c97a08becadf2e73f000029": [
+        "textbooks",
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "5c98ac7fecadf2e73f00002b": [
+        "textbooks",
+        "statpearls",
+        "pubmed",
+        "wikipedia"
+    ],
+    "5c9906dcecadf2e73f00002f": [
+        "pubmed"
+    ],
+    "5c9e6ab9ecadf2e73f000035": [
+        "pubmed"
+    ],
+    "5c9e738decadf2e73f000037": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "5c9e766becadf2e73f000038": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "5c9f0dabecadf2e73f00003b": [
+        "textbooks",
+        "pubmed",
+        "wikipedia"
+    ],
+    "5c9f1b0cecadf2e73f00003c": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "5c9f7bb6ecadf2e73f00003e": [
+        "pubmed"
+    ],
+    "5ca0848aecadf2e73f000044": [
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "5ca0c81eecadf2e73f000047": [
+        "textbooks",
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "5ca0fa96ecadf2e73f000048": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "5ca0fdb0ecadf2e73f000049": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "5ca10fefecadf2e73f00004a": [
+        "pubmed"
+    ],
+    "5ca5127eecadf2e73f00004c": [
+        "pubmed",
+        "statpearls"
+    ],
+    "5ca61176ecadf2e73f00004e": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "5ca61b14ecadf2e73f00004f": [
+        "pubmed"
+    ],
+    "5caa0806ecadf2e73f000057": [
+        "pubmed"
+    ],
+    "5cb37f76ecadf2e73f00005c": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "5cb380b8ecadf2e73f00005d": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "5cb38a56ecadf2e73f00005e": [
+        "textbooks",
+        "pubmed",
+        "wikipedia"
+    ],
+    "5cb3a2dd99d1e53537000001": [
+        "pubmed"
+    ],
+    "5cc011e2a49efeb44c000001": [
+        "pubmed"
+    ],
+    "5cebe41ea49efeb44c000006": [
+        "pubmed"
+    ],
+    "5cf4dec0a49efeb44c00000c": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "5d31daacb3a6380763000003": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "5d35b9ecb3a6380763000004": [
+        "pubmed"
+    ],
+    "5d35c227b3a6380763000007": [
+        "pubmed"
+    ],
+    "5d35eb01b3a638076300000f": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "5d36b4817bc3fee31f000007": [
+        "pubmed"
+    ],
+    "5d36bb777bc3fee31f00000a": [
+        "pubmed"
+    ],
+    "5d371ec97bc3fee31f00000c": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "5d38462b7bc3fee31f000012": [
+        "pubmed"
+    ],
+    "5d384ce87bc3fee31f000013": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "5d3856ca7bc3fee31f000016": [
+        "pubmed"
+    ],
+    "5d385f717bc3fee31f00001a": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "5d387098a1e1595105000006": [
+        "pubmed"
+    ],
+    "5d387721a1e159510500000c": [
+        "pubmed"
+    ],
+    "5d387a51a1e159510500000e": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "5d38826ea1e1595105000016": [
+        "pubmed"
+    ],
+    "5e2906948b3851296d00000a": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "5e290a268b3851296d00000d": [
+        "pubmed"
+    ],
+    "5e29f959aa19d74431000004": [
+        "pubmed"
+    ],
+    "5e29fe76aa19d74431000007": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "5e2a04feaa19d74431000009": [
+        "pubmed"
+    ],
+    "5e2a0eb1aa19d7443100000c": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "5e2b0d71fbd6abf43b000001": [
+        "pubmed"
+    ],
+    "5e2b253ffbd6abf43b000006": [
+        "pubmed"
+    ],
+    "5e2b3784fbd6abf43b000009": [
+        "pubmed"
+    ],
+    "5e2b3d97fbd6abf43b00000a": [
+        "pubmed"
+    ],
+    "5e2d7ceefbd6abf43b00000b": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "5e2dac4efbd6abf43b00000f": [
+        "pubmed"
+    ],
+    "5e2dad57fbd6abf43b000010": [
+        "textbooks",
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "5e2db15cfbd6abf43b000014": [
+        "statpearls",
+        "pubmed",
+        "wikipedia"
+    ],
+    "5e2dbd0afbd6abf43b000017": [
+        "textbooks",
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "5e2dbf48fbd6abf43b00001a": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "5e2dfab2fbd6abf43b00001d": [
+        "pubmed"
+    ],
+    "5e2e0fa2fbd6abf43b00001f": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "5e2e1017fbd6abf43b000020": [
+        "textbooks",
+        "pubmed"
+    ],
+    "5e2e1d6afbd6abf43b000026": [
+        "pubmed"
+    ],
+    "5e30b56efbd6abf43b000037": [
+        "pubmed"
+    ],
+    "5e30e9e3fbd6abf43b00003c": [
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "5e30f23cfbd6abf43b000042": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "5e30f417fbd6abf43b000043": [
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "5e30f494fbd6abf43b000044": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "5e30f638fbd6abf43b000045": [
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "5e30f76afbd6abf43b000046": [
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "5e31c4adfbd6abf43b00004d": [
+        "pubmed",
+        "statpearls"
+    ],
+    "5e31cc22fbd6abf43b000050": [
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "5e31d181fbd6abf43b000053": [
+        "textbooks",
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "5e3234e0fbd6abf43b000054": [
+        "pubmed"
+    ],
+    "5e323780fbd6abf43b000055": [
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "5e3238bcfbd6abf43b000056": [
+        "pubmed"
+    ],
+    "5e323d79fbd6abf43b000058": [
+        "pubmed"
+    ],
+    "5e323e93fbd6abf43b000059": [
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "5e324167fbd6abf43b00005a": [
+        "pubmed"
+    ],
+    "5e3247f1fbd6abf43b00005b": [
+        "pubmed",
+        "statpearls"
+    ],
+    "5e338cf5fbd6abf43b00005d": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "5e33904afbd6abf43b00005f": [
+        "pubmed"
+    ],
+    "5e3390fafbd6abf43b000060": [
+        "pubmed",
+        "statpearls"
+    ],
+    "5e33916afbd6abf43b000061": [
+        "pubmed"
+    ],
+    "5e35d3c6158f994d3a000003": [
+        "pubmed"
+    ],
+    "5e36994092b3349b55000002": [
+        "pubmed"
+    ],
+    "5e36a4b7b5b409ea53000003": [
+        "pubmed"
+    ],
+    "5e36d498b5b409ea53000008": [
+        "pubmed"
+    ],
+    "5e36d807b5b409ea5300000a": [
+        "textbooks",
+        "pubmed",
+        "wikipedia"
+    ],
+    "5e36d924b5b409ea5300000b": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "5e3709a4b5b409ea53000012": [
+        "pubmed"
+    ],
+    "5e371a1db5b409ea53000015": [
+        "pubmed"
+    ],
+    "5e3a6c49b5b409ea53000017": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "5e3ab58db5b409ea5300001c": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "5e3c6850b5b409ea5300001f": [
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "5e3c6e15b5b409ea53000023": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "5e3c80abb5b409ea53000024": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "5e3d8edf48dab47f26000003": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "5e3e843748dab47f26000007": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "5e3ebaa348dab47f2600000a": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "5e41620648dab47f2600000e": [
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "5e43090d48dab47f26000011": [
+        "pubmed"
+    ],
+    "5e43ee1f48dab47f26000012": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "5e447f2448dab47f26000013": [
+        "pubmed"
+    ],
+    "5e44bdba48dab47f2600001c": [
+        "pubmed",
+        "statpearls"
+    ],
+    "5e44c18648dab47f2600001f": [
+        "pubmed"
+    ],
+    "5e44c33a48dab47f26000020": [
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "5e44c59848dab47f26000021": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "5e44c76f48dab47f26000022": [
+        "pubmed",
+        "statpearls"
+    ],
+    "5e44caaf48dab47f26000024": [
+        "pubmed"
+    ],
+    "5e46bdcd3f54159529000007": [
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "5e46bf743f54159529000008": [
+        "pubmed"
+    ],
+    "5e46ece93f5415952900000e": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "5e46fda33f54159529000012": [
+        "pubmed"
+    ],
+    "5e47656935b8f0833c000004": [
+        "textbooks",
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "5e476b99d14c9f295d000001": [
+        "textbooks",
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "5e476da1d14c9f295d000002": [
+        "pubmed"
+    ],
+    "5e480909d14c9f295d000003": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "5e480ccfd14c9f295d000005": [
+        "pubmed"
+    ],
+    "5e48b1ddd14c9f295d000012": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "5e48b9abd14c9f295d000015": [
+        "pubmed"
+    ],
+    "5e48bd2ed14c9f295d000017": [
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "5e48e0e0f8b2df0d49000001": [
+        "pubmed"
+    ],
+    "5e4946bf6d0a277941000005": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "5e494cf96d0a277941000008": [
+        "statpearls",
+        "pubmed",
+        "wikipedia"
+    ],
+    "5e49a1196d0a27794100000d": [
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "5e49c5336d0a277941000011": [
+        "pubmed"
+    ],
+    "5e4adcbe6d0a277941000017": [
+        "pubmed",
+        "statpearls"
+    ],
+    "5e4af1d86d0a277941000018": [
+        "pubmed"
+    ],
+    "5e4b5ef36d0a27794100001f": [
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "5e4b5f566d0a277941000020": [
+        "pubmed"
+    ],
+    "5e4b5f9a6d0a277941000021": [
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "5e4b5fd86d0a277941000022": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "5e4b62946d0a277941000024": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "5e4b639c6d0a277941000027": [
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "5e4b64126d0a277941000028": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "5e4b64516d0a277941000029": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "5e4c06d96d0a27794100002e": [
+        "textbooks",
+        "pubmed"
+    ],
+    "5e4d6e446d0a27794100002f": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "5e4fd4d56d0a277941000034": [
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "5e500d8c6d0a277941000035": [
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "5e51a2d76d0a27794100003a": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "5e51dab06d0a27794100003d": [
+        "pubmed"
+    ],
+    "5e52ab626d0a277941000046": [
+        "pubmed"
+    ],
+    "5e52bc986d0a277941000049": [
+        "pubmed"
+    ],
+    "5e52c0c76d0a27794100004b": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "5e52c9266d0a27794100004e": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "5e52c96b6d0a27794100004f": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "5e540db06d0a277941000053": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "5e540ed36d0a277941000054": [
+        "pubmed"
+    ],
+    "5e5437ffb761aafe09000002": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "5e5508e2b761aafe09000006": [
+        "pubmed"
+    ],
+    "5e57fa23b761aafe09000008": [
+        "pubmed"
+    ],
+    "5e5b5c6fb761aafe0900000a": [
+        "pubmed"
+    ],
+    "5e5b60adb761aafe0900000b": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "5e5b90b3752ebcdc7a000002": [
+        "pubmed"
+    ],
+    "5e5b93a2752ebcdc7a000003": [
+        "pubmed"
+    ],
+    "5e5d27531af46fc130000007": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "5e639a8b1af46fc130000011": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "5e64ed381af46fc130000015": [
+        "textbooks",
+        "pubmed",
+        "wikipedia"
+    ],
+    "5e64f11a1af46fc130000017": [
+        "textbooks",
+        "pubmed",
+        "wikipedia"
+    ],
+    "5e64f1921af46fc130000018": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "5e67bc121af46fc13000001c": [
+        "pubmed"
+    ],
+    "5e67cd6b1af46fc13000001e": [
+        "pubmed"
+    ],
+    "5e6df5b51af46fc130000025": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "5e6e2c1e7fc1ee872b000002": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "5e6e35b07fc1ee872b000004": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "5e6e8600c6a8763d23000002": [
+        "pubmed"
+    ],
+    "5e6f774ec6a8763d23000009": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "5e763645c6a8763d2300000d": [
+        "pubmed"
+    ],
+    "5e763c3fc6a8763d23000010": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "5e764732c6a8763d23000017": [
+        "textbooks",
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "5e766256835f4e4777000003": [
+        "pubmed"
+    ],
+    "5e7744c3835f4e4777000005": [
+        "pubmed",
+        "statpearls"
+    ],
+    "5e776541835f4e4777000009": [
+        "pubmed"
+    ],
+    "5e776a10835f4e477700000c": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "5e776c72835f4e477700000e": [
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "5e7f5cc5835f4e4777000015": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "5e7f6090835f4e477700001a": [
+        "textbooks",
+        "pubmed",
+        "wikipedia"
+    ],
+    "5e7f64a5835f4e477700001e": [
+        "pubmed"
+    ],
+    "5e7f69d2835f4e4777000021": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "5e80675d835f4e4777000026": [
+        "pubmed"
+    ],
+    "5e806ff7835f4e4777000027": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "5e8101e3835f4e477700002e": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "5e821ac5835f4e4777000031": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "5e8220e6835f4e4777000032": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "5e94902f2d3121100d000012": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "5e94a8250d431b5f73000001": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "5e94aadf0d431b5f73000002": [
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "5e9eba150d431b5f73000005": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "5fd78702a43ad31278000005": [
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "5fdb2e60a43ad3127800000c": [
+        "pubmed"
+    ],
+    "5fdb2ee4a43ad3127800000f": [
+        "pubmed"
+    ],
+    "5fdb4100a43ad31278000015": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "5fdb4124a43ad31278000017": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "5fdb415ba43ad31278000019": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "5fdb4253a43ad31278000022": [
+        "pubmed"
+    ],
+    "5fdb4290a43ad31278000024": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "5fdb42b7a43ad31278000025": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "5fdb42fba43ad31278000027": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "5fdb4311a43ad31278000028": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "5fe0c141a43ad31278000035": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "5fe31304a43ad3127800003a": [
+        "pubmed",
+        "statpearls"
+    ],
+    "5fe31319a43ad31278000046": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "5fe31321a43ad3127800004b": [
+        "pubmed"
+    ],
+    "601c18921cb411341a00000f": [
+        "pubmed"
+    ],
+    "601c1a271cb411341a000011": [
+        "pubmed",
+        "statpearls"
+    ],
+    "601c3f041cb411341a000018": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "601c44ab1cb411341a00001c": [
+        "textbooks",
+        "pubmed",
+        "wikipedia"
+    ],
+    "601c46f61cb411341a00001d": [
+        "pubmed",
+        "statpearls"
+    ],
+    "601c4e5e1cb411341a000021": [
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "601c4ff61cb411341a000022": [
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "601cb7a61cb411341a000026": [
+        "textbooks",
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "601d46d61cb411341a000030": [
+        "statpearls",
+        "pubmed",
+        "wikipedia"
+    ],
+    "601d6fe11cb411341a000033": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "601d724a1cb411341a000035": [
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "601d72e61cb411341a000039": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "601d73261cb411341a00003a": [
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "601d73c71cb411341a00003e": [
+        "pubmed"
+    ],
+    "601d73ee1cb411341a00003f": [
+        "pubmed"
+    ],
+    "601d75281cb411341a000043": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "601d76131cb411341a000044": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "601db7fb1cb411341a00004a": [
+        "pubmed"
+    ],
+    "601dc46c1cb411341a000050": [
+        "pubmed"
+    ],
+    "601ec5661cb411341a000063": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "601ecab41cb411341a000065": [
+        "pubmed"
+    ],
+    "601efda31cb411341a000069": [
+        "pubmed",
+        "statpearls"
+    ],
+    "601fff6a1cb411341a00007b": [
+        "pubmed"
+    ],
+    "6020010a1cb411341a00007c": [
+        "pubmed",
+        "statpearls"
+    ],
+    "60206bae1cb411341a00007d": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "6020a7391cb411341a00007e": [
+        "pubmed"
+    ],
+    "6020ab801cb411341a000081": [
+        "pubmed",
+        "statpearls"
+    ],
+    "6020ad161cb411341a000082": [
+        "pubmed",
+        "statpearls"
+    ],
+    "6020b0e21cb411341a000085": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "60234bd51cb411341a000093": [
+        "textbooks",
+        "pubmed",
+        "wikipedia"
+    ],
+    "602498cb1cb411341a00009e": [
+        "pubmed",
+        "statpearls"
+    ],
+    "60258ebe1cb411341a0000a8": [
+        "pubmed",
+        "statpearls"
+    ],
+    "6025912a1cb411341a0000aa": [
+        "textbooks",
+        "statpearls",
+        "pubmed",
+        "wikipedia"
+    ],
+    "602596691cb411341a0000ad": [
+        "textbooks",
+        "statpearls",
+        "pubmed",
+        "wikipedia"
+    ],
+    "602599251cb411341a0000b1": [
+        "pubmed"
+    ],
+    "60259fe91cb411341a0000b3": [
+        "textbooks",
+        "pubmed",
+        "statpearls"
+    ],
+    "6025d88c1cb411341a0000b6": [
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "6025d9e41cb411341a0000b7": [
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "6025db0e1cb411341a0000b8": [
+        "pubmed",
+        "statpearls"
+    ],
+    "6025dd0c1cb411341a0000b9": [
+        "textbooks",
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "6025ddde1cb411341a0000ba": [
+        "pubmed"
+    ],
+    "6025e2641cb411341a0000bb": [
+        "pubmed",
+        "statpearls"
+    ],
+    "6025fa371cb411341a0000be": [
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "6025fd261cb411341a0000bf": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "6025fdf41cb411341a0000c0": [
+        "pubmed"
+    ],
+    "602673e91cb411341a0000c7": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "6026754f1cb411341a0000c8": [
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "6026c1071cb411341a0000cb": [
+        "textbooks",
+        "pubmed",
+        "wikipedia"
+    ],
+    "6026db1f1cb411341a0000cf": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "6026de661cb411341a0000d1": [
+        "pubmed"
+    ],
+    "6026ee821cb411341a0000d3": [
+        "pubmed"
+    ],
+    "6027434c1cb411341a0000dc": [
+        "textbooks",
+        "pubmed",
+        "statpearls"
+    ],
+    "6027446d1cb411341a0000dd": [
+        "pubmed"
+    ],
+    "6027dc011cb411341a0000eb": [
+        "pubmed"
+    ],
+    "6027f7171cb411341a0000ec": [
+        "pubmed"
+    ],
+    "60282c3f1cb411341a0000fe": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "6028ffae1cb411341a000106": [
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "602905e81cb411341a000108": [
+        "pubmed"
+    ],
+    "60290a131cb411341a000109": [
+        "pubmed"
+    ],
+    "60290c2b1cb411341a00010a": [
+        "pubmed"
+    ],
+    "60292dc61cb411341a000110": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "60292e1b1cb411341a000111": [
+        "textbooks",
+        "pubmed",
+        "wikipedia"
+    ],
+    "602c26171cb411341a000122": [
+        "pubmed"
+    ],
+    "602c28551cb411341a000123": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "602c2ade1cb411341a000124": [
+        "pubmed"
+    ],
+    "602e84e61cb411341a000126": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "6031002d1cb411341a000129": [
+        "textbooks",
+        "pubmed",
+        "wikipedia"
+    ],
+    "603213ea1cb411341a000131": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "6032187e1cb411341a000132": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "60324b771cb411341a000139": [
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "60327e541cb411341a00013e": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "603285861cb411341a000141": [
+        "textbooks",
+        "pubmed",
+        "wikipedia"
+    ],
+    "60328f351cb411341a000145": [
+        "pubmed"
+    ],
+    "603291f21cb411341a000146": [
+        "pubmed"
+    ],
+    "6033f5541cb411341a00014c": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "603400051cb411341a00014e": [
+        "pubmed"
+    ],
+    "60354a7b1cb411341a000154": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "60367f5e1cb411341a000157": [
+        "pubmed"
+    ],
+    "603bc16b1cb411341a000158": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "603bc2b61cb411341a00015b": [
+        "pubmed"
+    ],
+    "603e43d51cb411341a00015e": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "604903551cb411341a000162": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "604906ed1cb411341a000163": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "60490dc71cb411341a000167": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "604915581cb411341a00016a": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "604fc22894d57fd879000008": [
+        "pubmed"
+    ],
+    "605265ee94d57fd87900000d": [
+        "pubmed"
+    ],
+    "6052715494d57fd87900000e": [
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "6056fbfc94d57fd87900001d": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "6057003594d57fd879000020": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "6057014c94d57fd879000022": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "60570af094d57fd879000025": [
+        "pubmed"
+    ],
+    "60570fe494d57fd879000026": [
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "6057151094d57fd879000027": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "605b9c2a94d57fd879000035": [
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "605e3c8294d57fd879000037": [
+        "pubmed",
+        "statpearls"
+    ],
+    "6060c7c094d57fd879000046": [
+        "textbooks",
+        "pubmed",
+        "wikipedia"
+    ],
+    "6060df1e94d57fd879000047": [
+        "textbooks",
+        "pubmed",
+        "wikipedia"
+    ],
+    "6060e03394d57fd879000048": [
+        "pubmed"
+    ],
+    "6060e1a094d57fd879000049": [
+        "pubmed"
+    ],
+    "606a232a94d57fd87900004c": [
+        "pubmed"
+    ],
+    "606b3b6794d57fd879000064": [
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "606b718994d57fd87900006b": [
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "606c017294d57fd879000076": [
+        "pubmed",
+        "statpearls"
+    ],
+    "6081a83f4e6a4cf630000007": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "6081af3c4e6a4cf630000008": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "6082f4374e6a4cf63000000f": [
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "61f58a1a882a024a10000009": [
+        "pubmed",
+        "statpearls"
+    ],
+    "61f593f8882a024a1000000f": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "61f59592882a024a10000010": [
+        "statpearls",
+        "pubmed",
+        "wikipedia"
+    ],
+    "61f5f89b882a024a10000019": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "61f602a3882a024a1000001f": [
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "61f608d4882a024a10000023": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "61f7cb37882a024a10000029": [
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "61f7cca7882a024a1000002b": [
+        "statpearls",
+        "pubmed"
+    ],
+    "61f7d2a5882a024a10000032": [
+        "statpearls",
+        "pubmed"
+    ],
+    "61f7d4da882a024a10000033": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "61f80c37882a024a1000003b": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "61f80d5d882a024a1000003c": [
+        "pubmed"
+    ],
+    "61f938e7882a024a10000049": [
+        "pubmed"
+    ],
+    "61f939a5882a024a1000004a": [
+        "textbooks",
+        "pubmed"
+    ],
+    "61f93c38882a024a1000004b": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "61f93cc7882a024a1000004c": [
+        "pubmed"
+    ],
+    "61f93e68882a024a1000004d": [
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "61f9605f882a024a1000004f": [
+        "pubmed"
+    ],
+    "61f9cb19c9dfcb9c09000002": [
+        "pubmed"
+    ],
+    "61fa904fc9dfcb9c09000004": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "61fa941ec9dfcb9c09000005": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "61fa9a60c9dfcb9c09000007": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "61faa1fcc9dfcb9c0900000a": [
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "61faa3bac9dfcb9c0900000b": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "62004357c9dfcb9c09000015": [
+        "pubmed"
+    ],
+    "62015485c9dfcb9c09000023": [
+        "pubmed"
+    ],
+    "620155b6c9dfcb9c09000024": [
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "620157bec9dfcb9c09000025": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "6201a4edc9dfcb9c09000028": [
+        "pubmed"
+    ],
+    "6201a85cc9dfcb9c0900002a": [
+        "pubmed"
+    ],
+    "62057b35c9dfcb9c0900002d": [
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "62057f1ec9dfcb9c0900002e": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "620580afc9dfcb9c0900002f": [
+        "pubmed"
+    ],
+    "620586a8c9dfcb9c09000032": [
+        "pubmed"
+    ],
+    "620588f9c9dfcb9c09000033": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "62068e67c9dfcb9c09000038": [
+        "pubmed"
+    ],
+    "620aedee3a8413c653000001": [
+        "pubmed"
+    ],
+    "620be4fd3a8413c653000002": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "620c27e93a8413c653000006": [
+        "pubmed"
+    ],
+    "6211566a3a8413c653000010": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "621218353a8413c653000013": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "62121c583a8413c653000016": [
+        "pubmed",
+        "statpearls"
+    ],
+    "6212c25c3a8413c653000019": [
+        "pubmed"
+    ],
+    "6217c0b63a8413c65300001e": [
+        "pubmed"
+    ],
+    "6217d9bf3a8413c653000024": [
+        "pubmed"
+    ],
+    "6217db763a8413c653000028": [
+        "pubmed"
+    ],
+    "6217dc173a8413c65300002b": [
+        "pubmed"
+    ],
+    "6217dc9d3a8413c65300002d": [
+        "pubmed"
+    ],
+    "6217dd013a8413c65300002f": [
+        "textbooks",
+        "pubmed"
+    ],
+    "6217e1ac3a8413c653000031": [
+        "pubmed"
+    ],
+    "621b5bcc3a8413c65300003d": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "621b61833a8413c65300003e": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "621b8dee3a8413c653000042": [
+        "pubmed"
+    ],
+    "621b950f3a8413c653000044": [
+        "pubmed"
+    ],
+    "621bd38d3a8413c653000046": [
+        "pubmed"
+    ],
+    "621d19cc3a8413c65300004a": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "621e62c33a8413c653000050": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "621e9aa13a8413c653000053": [
+        "pubmed"
+    ],
+    "621ea5a53a8413c653000055": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "621ebec63a8413c65300005d": [
+        "pubmed"
+    ],
+    "621ed10f3a8413c653000062": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "621fd6083a8413c653000066": [
+        "textbooks",
+        "pubmed",
+        "wikipedia"
+    ],
+    "6220cbf83a8413c653000067": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "62211b973a8413c65300006c": [
+        "pubmed"
+    ],
+    "62211c853a8413c65300006d": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "62211d6f3a8413c65300006f": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "622608ea3a8413c653000079": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "622629d13a8413c65300007e": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "6226317a3a8413c653000080": [
+        "pubmed"
+    ],
+    "622632483a8413c653000081": [
+        "pubmed"
+    ],
+    "622662e13a8413c653000085": [
+        "pubmed"
+    ],
+    "622668313a8413c653000087": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "62266c353a8413c65300008a": [
+        "pubmed"
+    ],
+    "6228b3553a8413c65300008b": [
+        "pubmed"
+    ],
+    "622901d23a8413c65300008c": [
+        "pubmed",
+        "statpearls"
+    ],
+    "622905043a8413c65300008e": [
+        "pubmed"
+    ],
+    "622b95dc3a8413c653000092": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "622baf3f3a8413c653000099": [
+        "pubmed",
+        "statpearls"
+    ],
+    "622ce21d3a8413c65300009c": [
+        "pubmed"
+    ],
+    "622d0aa63a8413c6530000a0": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "622dc4b63a8413c6530000a4": [
+        "pubmed"
+    ],
+    "622dd1433a8413c6530000a5": [
+        "pubmed",
+        "statpearls"
+    ],
+    "622f6ad13a8413c6530000aa": [
+        "pubmed"
+    ],
+    "6237a6e93a8413c6530000b1": [
+        "pubmed"
+    ],
+    "623a24d6f0baec9a1b000002": [
+        "pubmed"
+    ],
+    "624c88a1e764a53204000002": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "624f2355e764a5320400000b": [
+        "pubmed"
+    ],
+    "62507ca3e764a5320400000f": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "6250a545e764a53204000012": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "625144c9e764a53204000016": [
+        "pubmed"
+    ],
+    "6251465ae764a53204000017": [
+        "textbooks",
+        "pubmed",
+        "wikipedia"
+    ],
+    "62515021e764a53204000018": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "62532d42e764a53204000022": [
+        "pubmed"
+    ],
+    "625374a8e764a53204000027": [
+        "pubmed"
+    ],
+    "626aa563e764a53204000036": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "626aaaa8e764a5320400003a": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "6276d2d956bf9aee6f000002": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "6278d0a756bf9aee6f00000e": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "6278da4456bf9aee6f00000f": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "6278ddfe56bf9aee6f000013": [
+        "pubmed"
+    ],
+    "627926bc56bf9aee6f00001a": [
+        "pubmed"
+    ],
+    "627a6ef856bf9aee6f000020": [
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "63ee5eeaf36125a426000002": [
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "63eef94ff36125a426000010": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "63eef9b6f36125a426000011": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "63f02a82f36125a426000013": [
+        "pubmed"
+    ],
+    "63f02b50f36125a426000014": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "63f02e1bf36125a426000016": [
+        "textbooks",
+        "pubmed",
+        "wikipedia"
+    ],
+    "63f03155f36125a426000019": [
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "63f043e4f36125a426000023": [
+        "pubmed",
+        "statpearls"
+    ],
+    "63f73f1b33942b094c000008": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "63f9cbb433942b094c00000c": [
+        "pubmed"
+    ],
+    "63f9ccdc33942b094c00000f": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "63f9cd2f33942b094c000011": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "63f9cdb033942b094c000012": [
+        "pubmed"
+    ],
+    "63f9cdcc33942b094c000013": [
+        "pubmed"
+    ],
+    "63f9ee5c33942b094c000014": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "63fa13da201352f04a000001": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "6402c0d5201352f04a000008": [
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "6402c3fd201352f04a000009": [
+        "pubmed"
+    ],
+    "6402c868201352f04a00000b": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "6402c910201352f04a00000c": [
+        "pubmed"
+    ],
+    "64040af9201352f04a00000d": [
+        "pubmed"
+    ],
+    "64040bd8201352f04a00000e": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "64040d73201352f04a000010": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "64040edf201352f04a000011": [
+        "pubmed"
+    ],
+    "640418af201352f04a000018": [
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "6404199d201352f04a000019": [
+        "textbooks",
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "64041dae201352f04a00001d": [
+        "statpearls",
+        "pubmed",
+        "wikipedia"
+    ],
+    "64041e97201352f04a00001e": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "64041f38201352f04a00001f": [
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "64042000201352f04a000020": [
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "640c821c201352f04a000023": [
+        "textbooks",
+        "pubmed"
+    ],
+    "640e2616201352f04a00002a": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "64105502201352f04a00002d": [
+        "pubmed"
+    ],
+    "6410ef9b201352f04a000031": [
+        "pubmed"
+    ],
+    "6410f839201352f04a000032": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "6411b4a8201352f04a000035": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "641357bc201352f04a000039": [
+        "textbooks",
+        "pubmed",
+        "wikipedia"
+    ],
+    "641365f6201352f04a00003a": [
+        "pubmed",
+        "statpearls"
+    ],
+    "64137616201352f04a000041": [
+        "statpearls",
+        "pubmed",
+        "wikipedia"
+    ],
+    "64144200201352f04a000043": [
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "6414c124690f196b51000002": [
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "6414c5ba690f196b51000007": [
+        "pubmed",
+        "statpearls"
+    ],
+    "6415b7b8690f196b5100000c": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "6415ca99690f196b51000019": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "64163660690f196b5100001d": [
+        "statpearls",
+        "pubmed"
+    ],
+    "64178e15690f196b51000020": [
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "64178e34690f196b51000021": [
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "64178e4b690f196b51000022": [
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "64178e73690f196b51000023": [
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "641791ed690f196b51000032": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "64179337690f196b51000034": [
+        "pubmed"
+    ],
+    "6419d79c690f196b5100003b": [
+        "pubmed"
+    ],
+    "641ad941690f196b5100003d": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "641c516d690f196b5100003f": [
+        "pubmed"
+    ],
+    "6422e7ba690f196b51000044": [
+        "pubmed"
+    ],
+    "64281a47690f196b5100004f": [
+        "statpearls",
+        "pubmed",
+        "wikipedia"
+    ],
+    "6428d7da690f196b51000050": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "6428da47690f196b51000051": [
+        "pubmed"
+    ],
+    "6428da98690f196b51000053": [
+        "pubmed"
+    ],
+    "64299b6a57b1c7a315000001": [
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "6429cfb557b1c7a315000005": [
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "6429eb8457b1c7a31500000a": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "6429ee7457b1c7a31500000b": [
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "642d4c9b57b1c7a315000013": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "6431f71057b1c7a315000019": [
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "6432f75757b1c7a31500001d": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "643306cc57b1c7a315000027": [
+        "pubmed"
+    ],
+    "6436953757b1c7a315000028": [
+        "statpearls",
+        "pubmed",
+        "wikipedia"
+    ],
+    "643c396457b1c7a31500002d": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "643c446357b1c7a31500002f": [
+        "pubmed"
+    ],
+    "643c88a257b1c7a315000030": [
+        "statpearls",
+        "pubmed",
+        "wikipedia"
+    ],
+    "643ff48a57b1c7a31500003d": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "6440084357b1c7a31500003e": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "6440092d57b1c7a315000040": [
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "64410f8057b1c7a315000054": [
+        "pubmed"
+    ],
+    "64412c2757b1c7a315000055": [
+        "pubmed"
+    ],
+    "6441302d57b1c7a315000056": [
+        "pubmed"
+    ],
+    "644284a957b1c7a31500005c": [
+        "statpearls",
+        "pubmed",
+        "wikipedia"
+    ],
+    "64463f9357b1c7a31500006a": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "644e642a57b1c7a315000075": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "644efd2c57b1c7a315000085": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "644efd5157b1c7a315000086": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "644f0fd257b1c7a31500008a": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "645004fa57b1c7a31500008b": [
+        "pubmed",
+        "wikipedia"
+    ]
+}

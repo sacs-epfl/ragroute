@@ -1,0 +1,4612 @@
+{
+    "anatomy-000": [
+        "textbooks",
+        "pubmed",
+        "statpearls"
+    ],
+    "anatomy-001": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "anatomy-002": [
+        "textbooks",
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "anatomy-003": [
+        "pubmed"
+    ],
+    "anatomy-004": [
+        "pubmed",
+        "statpearls"
+    ],
+    "anatomy-005": [
+        "pubmed"
+    ],
+    "anatomy-006": [
+        "textbooks",
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "anatomy-007": [
+        "pubmed",
+        "statpearls"
+    ],
+    "anatomy-008": [
+        "textbooks",
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "anatomy-009": [
+        "textbooks",
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "anatomy-010": [
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "anatomy-011": [
+        "textbooks",
+        "pubmed"
+    ],
+    "anatomy-012": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "anatomy-013": [
+        "pubmed",
+        "statpearls"
+    ],
+    "anatomy-014": [
+        "pubmed"
+    ],
+    "anatomy-015": [
+        "statpearls",
+        "pubmed",
+        "wikipedia"
+    ],
+    "anatomy-016": [
+        "pubmed"
+    ],
+    "anatomy-017": [
+        "textbooks",
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "anatomy-018": [
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "anatomy-019": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "anatomy-020": [
+        "textbooks",
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "anatomy-021": [
+        "textbooks",
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "anatomy-022": [
+        "textbooks",
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "anatomy-023": [
+        "statpearls",
+        "pubmed",
+        "wikipedia"
+    ],
+    "anatomy-024": [
+        "pubmed"
+    ],
+    "anatomy-025": [
+        "pubmed"
+    ],
+    "anatomy-026": [
+        "pubmed"
+    ],
+    "anatomy-027": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "anatomy-028": [
+        "pubmed"
+    ],
+    "anatomy-029": [
+        "pubmed",
+        "statpearls"
+    ],
+    "anatomy-030": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "anatomy-031": [
+        "textbooks",
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "anatomy-032": [
+        "textbooks",
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "anatomy-033": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "anatomy-034": [
+        "pubmed"
+    ],
+    "anatomy-035": [
+        "statpearls",
+        "pubmed",
+        "wikipedia"
+    ],
+    "anatomy-036": [
+        "pubmed",
+        "statpearls"
+    ],
+    "anatomy-037": [
+        "pubmed"
+    ],
+    "anatomy-038": [
+        "textbooks",
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "anatomy-039": [
+        "pubmed"
+    ],
+    "anatomy-040": [
+        "textbooks",
+        "pubmed"
+    ],
+    "anatomy-041": [
+        "textbooks",
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "anatomy-042": [
+        "textbooks",
+        "pubmed",
+        "wikipedia"
+    ],
+    "anatomy-043": [
+        "pubmed"
+    ],
+    "anatomy-044": [
+        "textbooks",
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "anatomy-045": [
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "anatomy-046": [
+        "pubmed",
+        "statpearls"
+    ],
+    "anatomy-047": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "anatomy-048": [
+        "statpearls",
+        "pubmed",
+        "wikipedia"
+    ],
+    "anatomy-049": [
+        "wikipedia"
+    ],
+    "anatomy-050": [
+        "pubmed"
+    ],
+    "anatomy-051": [
+        "textbooks",
+        "statpearls",
+        "pubmed",
+        "wikipedia"
+    ],
+    "anatomy-052": [
+        "pubmed"
+    ],
+    "anatomy-053": [
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "anatomy-054": [
+        "textbooks",
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "anatomy-055": [
+        "textbooks",
+        "pubmed",
+        "wikipedia"
+    ],
+    "anatomy-056": [
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "anatomy-057": [
+        "textbooks",
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "anatomy-058": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "anatomy-059": [
+        "pubmed"
+    ],
+    "anatomy-060": [
+        "pubmed",
+        "statpearls"
+    ],
+    "anatomy-061": [
+        "pubmed"
+    ],
+    "anatomy-062": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "anatomy-063": [
+        "pubmed",
+        "statpearls"
+    ],
+    "anatomy-064": [
+        "pubmed"
+    ],
+    "anatomy-065": [
+        "textbooks",
+        "pubmed",
+        "statpearls"
+    ],
+    "anatomy-066": [
+        "pubmed",
+        "statpearls"
+    ],
+    "anatomy-067": [
+        "textbooks",
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "anatomy-068": [
+        "textbooks",
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "anatomy-069": [
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "anatomy-070": [
+        "pubmed"
+    ],
+    "anatomy-071": [
+        "pubmed"
+    ],
+    "anatomy-072": [
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "anatomy-073": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "anatomy-074": [
+        "pubmed"
+    ],
+    "anatomy-075": [
+        "textbooks",
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "anatomy-076": [
+        "textbooks",
+        "pubmed"
+    ],
+    "anatomy-077": [
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "anatomy-078": [
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "anatomy-079": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "anatomy-080": [
+        "textbooks",
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "anatomy-081": [
+        "textbooks",
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "anatomy-082": [
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "anatomy-083": [
+        "textbooks",
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "anatomy-084": [
+        "pubmed",
+        "statpearls"
+    ],
+    "anatomy-085": [
+        "statpearls",
+        "pubmed"
+    ],
+    "anatomy-086": [
+        "pubmed"
+    ],
+    "anatomy-087": [
+        "textbooks",
+        "statpearls",
+        "pubmed",
+        "wikipedia"
+    ],
+    "anatomy-088": [
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "anatomy-089": [
+        "pubmed"
+    ],
+    "anatomy-090": [
+        "pubmed"
+    ],
+    "anatomy-091": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "anatomy-092": [
+        "statpearls",
+        "pubmed",
+        "wikipedia"
+    ],
+    "anatomy-093": [
+        "statpearls",
+        "pubmed",
+        "wikipedia"
+    ],
+    "anatomy-094": [
+        "pubmed"
+    ],
+    "anatomy-095": [
+        "statpearls",
+        "pubmed",
+        "wikipedia"
+    ],
+    "anatomy-096": [
+        "textbooks",
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "anatomy-097": [
+        "pubmed"
+    ],
+    "anatomy-098": [
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "anatomy-099": [
+        "textbooks",
+        "pubmed",
+        "wikipedia"
+    ],
+    "anatomy-100": [
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "anatomy-101": [
+        "statpearls",
+        "pubmed",
+        "wikipedia"
+    ],
+    "anatomy-102": [
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "anatomy-103": [
+        "statpearls",
+        "pubmed",
+        "wikipedia"
+    ],
+    "anatomy-104": [
+        "textbooks",
+        "statpearls",
+        "pubmed",
+        "wikipedia"
+    ],
+    "anatomy-105": [
+        "textbooks",
+        "statpearls",
+        "pubmed",
+        "wikipedia"
+    ],
+    "anatomy-106": [
+        "textbooks",
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "anatomy-107": [
+        "pubmed",
+        "statpearls"
+    ],
+    "anatomy-108": [
+        "pubmed",
+        "statpearls"
+    ],
+    "anatomy-109": [
+        "pubmed"
+    ],
+    "anatomy-110": [
+        "pubmed",
+        "statpearls"
+    ],
+    "anatomy-111": [
+        "textbooks",
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "anatomy-112": [
+        "textbooks",
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "anatomy-113": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "anatomy-114": [
+        "pubmed"
+    ],
+    "anatomy-115": [
+        "textbooks",
+        "pubmed"
+    ],
+    "anatomy-116": [
+        "statpearls",
+        "pubmed",
+        "wikipedia"
+    ],
+    "anatomy-117": [
+        "textbooks",
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "anatomy-118": [
+        "textbooks",
+        "pubmed",
+        "statpearls"
+    ],
+    "anatomy-119": [
+        "statpearls",
+        "pubmed",
+        "wikipedia"
+    ],
+    "anatomy-120": [
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "anatomy-121": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "anatomy-122": [
+        "pubmed"
+    ],
+    "anatomy-123": [
+        "textbooks",
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "anatomy-124": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "anatomy-125": [
+        "pubmed"
+    ],
+    "anatomy-126": [
+        "textbooks",
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "anatomy-127": [
+        "textbooks",
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "anatomy-128": [
+        "textbooks",
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "anatomy-129": [
+        "statpearls",
+        "pubmed",
+        "wikipedia"
+    ],
+    "anatomy-130": [
+        "textbooks",
+        "statpearls",
+        "pubmed",
+        "wikipedia"
+    ],
+    "anatomy-131": [
+        "textbooks",
+        "pubmed",
+        "wikipedia"
+    ],
+    "anatomy-132": [
+        "pubmed"
+    ],
+    "anatomy-133": [
+        "pubmed"
+    ],
+    "anatomy-134": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "clinical_knowledge-000": [
+        "pubmed",
+        "statpearls"
+    ],
+    "clinical_knowledge-001": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "clinical_knowledge-002": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "clinical_knowledge-003": [
+        "wikipedia"
+    ],
+    "clinical_knowledge-004": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "clinical_knowledge-005": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "clinical_knowledge-006": [
+        "pubmed",
+        "statpearls"
+    ],
+    "clinical_knowledge-007": [
+        "pubmed"
+    ],
+    "clinical_knowledge-008": [
+        "textbooks",
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "clinical_knowledge-009": [
+        "pubmed"
+    ],
+    "clinical_knowledge-010": [
+        "pubmed",
+        "statpearls"
+    ],
+    "clinical_knowledge-011": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "clinical_knowledge-012": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "clinical_knowledge-013": [
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "clinical_knowledge-014": [
+        "pubmed",
+        "statpearls"
+    ],
+    "clinical_knowledge-015": [
+        "textbooks",
+        "pubmed"
+    ],
+    "clinical_knowledge-016": [
+        "textbooks",
+        "pubmed",
+        "statpearls"
+    ],
+    "clinical_knowledge-017": [
+        "textbooks",
+        "pubmed",
+        "wikipedia"
+    ],
+    "clinical_knowledge-018": [
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "clinical_knowledge-019": [
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "clinical_knowledge-020": [
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "clinical_knowledge-021": [
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "clinical_knowledge-022": [
+        "pubmed"
+    ],
+    "clinical_knowledge-023": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "clinical_knowledge-024": [
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "clinical_knowledge-025": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "clinical_knowledge-026": [
+        "pubmed"
+    ],
+    "clinical_knowledge-027": [
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "clinical_knowledge-028": [
+        "pubmed"
+    ],
+    "clinical_knowledge-029": [
+        "pubmed"
+    ],
+    "clinical_knowledge-030": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "clinical_knowledge-031": [
+        "textbooks",
+        "pubmed"
+    ],
+    "clinical_knowledge-032": [
+        "pubmed"
+    ],
+    "clinical_knowledge-033": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "clinical_knowledge-034": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "clinical_knowledge-035": [
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "clinical_knowledge-036": [
+        "textbooks",
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "clinical_knowledge-037": [
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "clinical_knowledge-038": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "clinical_knowledge-039": [
+        "pubmed"
+    ],
+    "clinical_knowledge-040": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "clinical_knowledge-041": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "clinical_knowledge-042": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "clinical_knowledge-043": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "clinical_knowledge-044": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "clinical_knowledge-045": [
+        "pubmed"
+    ],
+    "clinical_knowledge-046": [
+        "pubmed"
+    ],
+    "clinical_knowledge-047": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "clinical_knowledge-048": [
+        "pubmed"
+    ],
+    "clinical_knowledge-049": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "clinical_knowledge-050": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "clinical_knowledge-051": [
+        "statpearls",
+        "pubmed",
+        "wikipedia"
+    ],
+    "clinical_knowledge-052": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "clinical_knowledge-053": [
+        "textbooks",
+        "pubmed",
+        "wikipedia"
+    ],
+    "clinical_knowledge-054": [
+        "pubmed"
+    ],
+    "clinical_knowledge-055": [
+        "textbooks",
+        "statpearls",
+        "pubmed",
+        "wikipedia"
+    ],
+    "clinical_knowledge-056": [
+        "pubmed"
+    ],
+    "clinical_knowledge-057": [
+        "statpearls",
+        "pubmed",
+        "wikipedia"
+    ],
+    "clinical_knowledge-058": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "clinical_knowledge-059": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "clinical_knowledge-060": [
+        "pubmed"
+    ],
+    "clinical_knowledge-061": [
+        "pubmed"
+    ],
+    "clinical_knowledge-062": [
+        "textbooks",
+        "pubmed",
+        "wikipedia"
+    ],
+    "clinical_knowledge-063": [
+        "pubmed"
+    ],
+    "clinical_knowledge-064": [
+        "textbooks",
+        "pubmed",
+        "statpearls"
+    ],
+    "clinical_knowledge-065": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "clinical_knowledge-066": [
+        "textbooks",
+        "pubmed"
+    ],
+    "clinical_knowledge-067": [
+        "textbooks",
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "clinical_knowledge-068": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "clinical_knowledge-069": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "clinical_knowledge-070": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "clinical_knowledge-071": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "clinical_knowledge-072": [
+        "pubmed"
+    ],
+    "clinical_knowledge-073": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "clinical_knowledge-074": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "clinical_knowledge-075": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "clinical_knowledge-076": [
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "clinical_knowledge-077": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "clinical_knowledge-078": [
+        "pubmed"
+    ],
+    "clinical_knowledge-079": [
+        "statpearls",
+        "pubmed",
+        "wikipedia"
+    ],
+    "clinical_knowledge-080": [
+        "wikipedia"
+    ],
+    "clinical_knowledge-081": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "clinical_knowledge-082": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "clinical_knowledge-083": [
+        "textbooks",
+        "pubmed",
+        "statpearls"
+    ],
+    "clinical_knowledge-084": [
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "clinical_knowledge-085": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "clinical_knowledge-086": [
+        "pubmed"
+    ],
+    "clinical_knowledge-087": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "clinical_knowledge-088": [
+        "statpearls",
+        "pubmed",
+        "wikipedia"
+    ],
+    "clinical_knowledge-089": [
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "clinical_knowledge-090": [
+        "pubmed"
+    ],
+    "clinical_knowledge-091": [
+        "pubmed"
+    ],
+    "clinical_knowledge-092": [
+        "pubmed"
+    ],
+    "clinical_knowledge-093": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "clinical_knowledge-094": [
+        "textbooks",
+        "statpearls",
+        "pubmed",
+        "wikipedia"
+    ],
+    "clinical_knowledge-095": [
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "clinical_knowledge-096": [
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "clinical_knowledge-097": [
+        "pubmed"
+    ],
+    "clinical_knowledge-098": [
+        "pubmed"
+    ],
+    "clinical_knowledge-099": [
+        "pubmed"
+    ],
+    "clinical_knowledge-100": [
+        "pubmed"
+    ],
+    "clinical_knowledge-101": [
+        "textbooks",
+        "statpearls",
+        "pubmed",
+        "wikipedia"
+    ],
+    "clinical_knowledge-102": [
+        "pubmed",
+        "statpearls"
+    ],
+    "clinical_knowledge-103": [
+        "statpearls",
+        "pubmed",
+        "wikipedia"
+    ],
+    "clinical_knowledge-104": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "clinical_knowledge-105": [
+        "textbooks",
+        "pubmed",
+        "statpearls"
+    ],
+    "clinical_knowledge-106": [
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "clinical_knowledge-107": [
+        "textbooks",
+        "pubmed",
+        "wikipedia"
+    ],
+    "clinical_knowledge-108": [
+        "textbooks",
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "clinical_knowledge-109": [
+        "pubmed"
+    ],
+    "clinical_knowledge-110": [
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "clinical_knowledge-111": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "clinical_knowledge-112": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "clinical_knowledge-113": [
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "clinical_knowledge-114": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "clinical_knowledge-115": [
+        "textbooks",
+        "statpearls",
+        "pubmed",
+        "wikipedia"
+    ],
+    "clinical_knowledge-116": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "clinical_knowledge-117": [
+        "pubmed"
+    ],
+    "clinical_knowledge-118": [
+        "textbooks",
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "clinical_knowledge-119": [
+        "pubmed"
+    ],
+    "clinical_knowledge-120": [
+        "pubmed",
+        "statpearls"
+    ],
+    "clinical_knowledge-121": [
+        "pubmed"
+    ],
+    "clinical_knowledge-122": [
+        "pubmed"
+    ],
+    "clinical_knowledge-123": [
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "clinical_knowledge-124": [
+        "pubmed"
+    ],
+    "clinical_knowledge-125": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "clinical_knowledge-126": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "clinical_knowledge-127": [
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "clinical_knowledge-128": [
+        "textbooks",
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "clinical_knowledge-129": [
+        "textbooks",
+        "pubmed"
+    ],
+    "clinical_knowledge-130": [
+        "textbooks",
+        "pubmed",
+        "wikipedia"
+    ],
+    "clinical_knowledge-131": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "clinical_knowledge-132": [
+        "textbooks",
+        "statpearls",
+        "pubmed",
+        "wikipedia"
+    ],
+    "clinical_knowledge-133": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "clinical_knowledge-134": [
+        "textbooks",
+        "pubmed",
+        "wikipedia"
+    ],
+    "clinical_knowledge-135": [
+        "textbooks",
+        "pubmed",
+        "wikipedia"
+    ],
+    "clinical_knowledge-136": [
+        "pubmed"
+    ],
+    "clinical_knowledge-137": [
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "clinical_knowledge-138": [
+        "pubmed",
+        "statpearls"
+    ],
+    "clinical_knowledge-139": [
+        "pubmed"
+    ],
+    "clinical_knowledge-140": [
+        "wikipedia"
+    ],
+    "clinical_knowledge-141": [
+        "pubmed"
+    ],
+    "clinical_knowledge-142": [
+        "statpearls",
+        "pubmed",
+        "wikipedia"
+    ],
+    "clinical_knowledge-143": [
+        "wikipedia"
+    ],
+    "clinical_knowledge-144": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "clinical_knowledge-145": [
+        "statpearls",
+        "pubmed",
+        "wikipedia"
+    ],
+    "clinical_knowledge-146": [
+        "pubmed",
+        "statpearls"
+    ],
+    "clinical_knowledge-147": [
+        "pubmed"
+    ],
+    "clinical_knowledge-148": [
+        "pubmed"
+    ],
+    "clinical_knowledge-149": [
+        "statpearls",
+        "pubmed",
+        "wikipedia"
+    ],
+    "clinical_knowledge-150": [
+        "pubmed"
+    ],
+    "clinical_knowledge-151": [
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "clinical_knowledge-152": [
+        "pubmed"
+    ],
+    "clinical_knowledge-153": [
+        "pubmed"
+    ],
+    "clinical_knowledge-154": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "clinical_knowledge-155": [
+        "wikipedia"
+    ],
+    "clinical_knowledge-156": [
+        "textbooks",
+        "pubmed",
+        "wikipedia"
+    ],
+    "clinical_knowledge-157": [
+        "textbooks",
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "clinical_knowledge-158": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "clinical_knowledge-159": [
+        "pubmed"
+    ],
+    "clinical_knowledge-160": [
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "clinical_knowledge-161": [
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "clinical_knowledge-162": [
+        "pubmed",
+        "statpearls"
+    ],
+    "clinical_knowledge-163": [
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "clinical_knowledge-164": [
+        "pubmed",
+        "statpearls"
+    ],
+    "clinical_knowledge-165": [
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "clinical_knowledge-166": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "clinical_knowledge-167": [
+        "textbooks",
+        "pubmed",
+        "wikipedia"
+    ],
+    "clinical_knowledge-168": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "clinical_knowledge-169": [
+        "textbooks",
+        "pubmed",
+        "wikipedia"
+    ],
+    "clinical_knowledge-170": [
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "clinical_knowledge-171": [
+        "textbooks",
+        "pubmed",
+        "statpearls"
+    ],
+    "clinical_knowledge-172": [
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "clinical_knowledge-173": [
+        "textbooks",
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "clinical_knowledge-174": [
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "clinical_knowledge-175": [
+        "wikipedia"
+    ],
+    "clinical_knowledge-176": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "clinical_knowledge-177": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "clinical_knowledge-178": [
+        "textbooks",
+        "pubmed"
+    ],
+    "clinical_knowledge-179": [
+        "pubmed"
+    ],
+    "clinical_knowledge-180": [
+        "pubmed"
+    ],
+    "clinical_knowledge-181": [
+        "pubmed"
+    ],
+    "clinical_knowledge-182": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "clinical_knowledge-183": [
+        "pubmed"
+    ],
+    "clinical_knowledge-184": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "clinical_knowledge-185": [
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "clinical_knowledge-186": [
+        "textbooks",
+        "pubmed",
+        "wikipedia"
+    ],
+    "clinical_knowledge-187": [
+        "textbooks",
+        "pubmed",
+        "statpearls"
+    ],
+    "clinical_knowledge-188": [
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "clinical_knowledge-189": [
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "clinical_knowledge-190": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "clinical_knowledge-191": [
+        "pubmed"
+    ],
+    "clinical_knowledge-192": [
+        "pubmed"
+    ],
+    "clinical_knowledge-193": [
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "clinical_knowledge-194": [
+        "pubmed"
+    ],
+    "clinical_knowledge-195": [
+        "statpearls",
+        "pubmed",
+        "wikipedia"
+    ],
+    "clinical_knowledge-196": [
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "clinical_knowledge-197": [
+        "textbooks",
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "clinical_knowledge-198": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "clinical_knowledge-199": [
+        "textbooks",
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "clinical_knowledge-200": [
+        "pubmed"
+    ],
+    "clinical_knowledge-201": [
+        "pubmed"
+    ],
+    "clinical_knowledge-202": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "clinical_knowledge-203": [
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "clinical_knowledge-204": [
+        "textbooks",
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "clinical_knowledge-205": [
+        "textbooks",
+        "pubmed"
+    ],
+    "clinical_knowledge-206": [
+        "pubmed"
+    ],
+    "clinical_knowledge-207": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "clinical_knowledge-208": [
+        "pubmed"
+    ],
+    "clinical_knowledge-209": [
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "clinical_knowledge-210": [
+        "pubmed"
+    ],
+    "clinical_knowledge-211": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "clinical_knowledge-212": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "clinical_knowledge-213": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "clinical_knowledge-214": [
+        "pubmed"
+    ],
+    "clinical_knowledge-215": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "clinical_knowledge-216": [
+        "pubmed"
+    ],
+    "clinical_knowledge-217": [
+        "pubmed"
+    ],
+    "clinical_knowledge-218": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "clinical_knowledge-219": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "clinical_knowledge-220": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "clinical_knowledge-221": [
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "clinical_knowledge-222": [
+        "pubmed"
+    ],
+    "clinical_knowledge-223": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "clinical_knowledge-224": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "clinical_knowledge-225": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "clinical_knowledge-226": [
+        "textbooks",
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "clinical_knowledge-227": [
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "clinical_knowledge-228": [
+        "pubmed"
+    ],
+    "clinical_knowledge-229": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "clinical_knowledge-230": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "clinical_knowledge-231": [
+        "pubmed"
+    ],
+    "clinical_knowledge-232": [
+        "pubmed"
+    ],
+    "clinical_knowledge-233": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "clinical_knowledge-234": [
+        "pubmed"
+    ],
+    "clinical_knowledge-235": [
+        "pubmed"
+    ],
+    "clinical_knowledge-236": [
+        "pubmed"
+    ],
+    "clinical_knowledge-237": [
+        "textbooks",
+        "pubmed"
+    ],
+    "clinical_knowledge-238": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "clinical_knowledge-239": [
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "clinical_knowledge-240": [
+        "pubmed"
+    ],
+    "clinical_knowledge-241": [
+        "textbooks",
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "clinical_knowledge-242": [
+        "textbooks",
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "clinical_knowledge-243": [
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "clinical_knowledge-244": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "clinical_knowledge-245": [
+        "textbooks",
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "clinical_knowledge-246": [
+        "statpearls",
+        "pubmed",
+        "wikipedia"
+    ],
+    "clinical_knowledge-247": [
+        "pubmed"
+    ],
+    "clinical_knowledge-248": [
+        "textbooks",
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "clinical_knowledge-249": [
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "clinical_knowledge-250": [
+        "pubmed"
+    ],
+    "clinical_knowledge-251": [
+        "textbooks",
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "clinical_knowledge-252": [
+        "pubmed",
+        "statpearls"
+    ],
+    "clinical_knowledge-253": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "clinical_knowledge-254": [
+        "pubmed"
+    ],
+    "clinical_knowledge-255": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "clinical_knowledge-256": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "clinical_knowledge-257": [
+        "textbooks",
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "clinical_knowledge-258": [
+        "pubmed"
+    ],
+    "clinical_knowledge-259": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "clinical_knowledge-260": [
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "clinical_knowledge-261": [
+        "pubmed"
+    ],
+    "clinical_knowledge-262": [
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "clinical_knowledge-263": [
+        "textbooks",
+        "pubmed",
+        "wikipedia"
+    ],
+    "clinical_knowledge-264": [
+        "pubmed"
+    ],
+    "college_biology-000": [
+        "pubmed"
+    ],
+    "college_biology-001": [
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "college_biology-002": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "college_biology-003": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "college_biology-004": [
+        "pubmed"
+    ],
+    "college_biology-005": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "college_biology-006": [
+        "textbooks",
+        "pubmed",
+        "wikipedia"
+    ],
+    "college_biology-007": [
+        "wikipedia"
+    ],
+    "college_biology-008": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "college_biology-009": [
+        "pubmed"
+    ],
+    "college_biology-010": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "college_biology-011": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "college_biology-012": [
+        "pubmed"
+    ],
+    "college_biology-013": [
+        "textbooks",
+        "pubmed"
+    ],
+    "college_biology-014": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "college_biology-015": [
+        "pubmed"
+    ],
+    "college_biology-016": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "college_biology-017": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "college_biology-018": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "college_biology-019": [
+        "pubmed"
+    ],
+    "college_biology-020": [
+        "pubmed"
+    ],
+    "college_biology-021": [
+        "pubmed"
+    ],
+    "college_biology-022": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "college_biology-023": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "college_biology-024": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "college_biology-025": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "college_biology-026": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "college_biology-027": [
+        "pubmed"
+    ],
+    "college_biology-028": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "college_biology-029": [
+        "pubmed"
+    ],
+    "college_biology-030": [
+        "textbooks",
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "college_biology-031": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "college_biology-032": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "college_biology-033": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "college_biology-034": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "college_biology-035": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "college_biology-036": [
+        "pubmed"
+    ],
+    "college_biology-037": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "college_biology-038": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "college_biology-039": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "college_biology-040": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "college_biology-041": [
+        "pubmed"
+    ],
+    "college_biology-042": [
+        "pubmed"
+    ],
+    "college_biology-043": [
+        "pubmed"
+    ],
+    "college_biology-044": [
+        "pubmed"
+    ],
+    "college_biology-045": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "college_biology-046": [
+        "pubmed"
+    ],
+    "college_biology-047": [
+        "pubmed",
+        "statpearls"
+    ],
+    "college_biology-048": [
+        "pubmed"
+    ],
+    "college_biology-049": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "college_biology-050": [
+        "textbooks",
+        "pubmed",
+        "wikipedia"
+    ],
+    "college_biology-051": [
+        "textbooks",
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "college_biology-052": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "college_biology-053": [
+        "pubmed"
+    ],
+    "college_biology-054": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "college_biology-055": [
+        "pubmed"
+    ],
+    "college_biology-056": [
+        "pubmed"
+    ],
+    "college_biology-057": [
+        "pubmed"
+    ],
+    "college_biology-058": [
+        "pubmed"
+    ],
+    "college_biology-059": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "college_biology-060": [
+        "pubmed"
+    ],
+    "college_biology-061": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "college_biology-062": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "college_biology-063": [
+        "pubmed"
+    ],
+    "college_biology-064": [
+        "pubmed"
+    ],
+    "college_biology-065": [
+        "textbooks",
+        "pubmed",
+        "wikipedia"
+    ],
+    "college_biology-066": [
+        "pubmed"
+    ],
+    "college_biology-067": [
+        "pubmed"
+    ],
+    "college_biology-068": [
+        "pubmed"
+    ],
+    "college_biology-069": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "college_biology-070": [
+        "textbooks",
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "college_biology-071": [
+        "pubmed"
+    ],
+    "college_biology-072": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "college_biology-073": [
+        "textbooks",
+        "pubmed",
+        "wikipedia"
+    ],
+    "college_biology-074": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "college_biology-075": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "college_biology-076": [
+        "textbooks",
+        "pubmed"
+    ],
+    "college_biology-077": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "college_biology-078": [
+        "pubmed"
+    ],
+    "college_biology-079": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "college_biology-080": [
+        "pubmed"
+    ],
+    "college_biology-081": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "college_biology-082": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "college_biology-083": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "college_biology-084": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "college_biology-085": [
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "college_biology-086": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "college_biology-087": [
+        "pubmed"
+    ],
+    "college_biology-088": [
+        "pubmed"
+    ],
+    "college_biology-089": [
+        "pubmed"
+    ],
+    "college_biology-090": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "college_biology-091": [
+        "textbooks",
+        "pubmed",
+        "wikipedia"
+    ],
+    "college_biology-092": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "college_biology-093": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "college_biology-094": [
+        "pubmed"
+    ],
+    "college_biology-095": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "college_biology-096": [
+        "textbooks",
+        "pubmed",
+        "wikipedia"
+    ],
+    "college_biology-097": [
+        "pubmed"
+    ],
+    "college_biology-098": [
+        "pubmed"
+    ],
+    "college_biology-099": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "college_biology-100": [
+        "textbooks",
+        "pubmed",
+        "wikipedia"
+    ],
+    "college_biology-101": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "college_biology-102": [
+        "pubmed"
+    ],
+    "college_biology-103": [
+        "pubmed"
+    ],
+    "college_biology-104": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "college_biology-105": [
+        "pubmed"
+    ],
+    "college_biology-106": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "college_biology-107": [
+        "textbooks",
+        "pubmed",
+        "wikipedia"
+    ],
+    "college_biology-108": [
+        "pubmed"
+    ],
+    "college_biology-109": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "college_biology-110": [
+        "pubmed"
+    ],
+    "college_biology-111": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "college_biology-112": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "college_biology-113": [
+        "pubmed"
+    ],
+    "college_biology-114": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "college_biology-115": [
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "college_biology-116": [
+        "pubmed"
+    ],
+    "college_biology-117": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "college_biology-118": [
+        "textbooks",
+        "pubmed"
+    ],
+    "college_biology-119": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "college_biology-120": [
+        "pubmed"
+    ],
+    "college_biology-121": [
+        "pubmed"
+    ],
+    "college_biology-122": [
+        "pubmed"
+    ],
+    "college_biology-123": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "college_biology-124": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "college_biology-125": [
+        "pubmed"
+    ],
+    "college_biology-126": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "college_biology-127": [
+        "pubmed"
+    ],
+    "college_biology-128": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "college_biology-129": [
+        "pubmed"
+    ],
+    "college_biology-130": [
+        "pubmed"
+    ],
+    "college_biology-131": [
+        "textbooks",
+        "pubmed",
+        "wikipedia"
+    ],
+    "college_biology-132": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "college_biology-133": [
+        "pubmed"
+    ],
+    "college_biology-134": [
+        "pubmed"
+    ],
+    "college_biology-135": [
+        "pubmed"
+    ],
+    "college_biology-136": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "college_biology-137": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "college_biology-138": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "college_biology-139": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "college_biology-140": [
+        "pubmed"
+    ],
+    "college_biology-141": [
+        "pubmed"
+    ],
+    "college_biology-142": [
+        "pubmed"
+    ],
+    "college_biology-143": [
+        "pubmed"
+    ],
+    "college_medicine-000": [
+        "wikipedia"
+    ],
+    "college_medicine-001": [
+        "wikipedia"
+    ],
+    "college_medicine-002": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "college_medicine-003": [
+        "pubmed"
+    ],
+    "college_medicine-004": [
+        "wikipedia"
+    ],
+    "college_medicine-005": [
+        "pubmed"
+    ],
+    "college_medicine-006": [
+        "pubmed"
+    ],
+    "college_medicine-007": [
+        "pubmed"
+    ],
+    "college_medicine-008": [
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "college_medicine-009": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "college_medicine-010": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "college_medicine-011": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "college_medicine-012": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "college_medicine-013": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "college_medicine-014": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "college_medicine-015": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "college_medicine-016": [
+        "textbooks",
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "college_medicine-017": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "college_medicine-018": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "college_medicine-019": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "college_medicine-020": [
+        "pubmed"
+    ],
+    "college_medicine-021": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "college_medicine-022": [
+        "textbooks",
+        "pubmed"
+    ],
+    "college_medicine-023": [
+        "pubmed"
+    ],
+    "college_medicine-024": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "college_medicine-025": [
+        "pubmed"
+    ],
+    "college_medicine-026": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "college_medicine-027": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "college_medicine-028": [
+        "wikipedia"
+    ],
+    "college_medicine-029": [
+        "textbooks",
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "college_medicine-030": [
+        "pubmed"
+    ],
+    "college_medicine-031": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "college_medicine-032": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "college_medicine-033": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "college_medicine-034": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "college_medicine-035": [
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "college_medicine-036": [
+        "textbooks",
+        "pubmed"
+    ],
+    "college_medicine-037": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "college_medicine-038": [
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "college_medicine-039": [
+        "statpearls",
+        "pubmed",
+        "wikipedia"
+    ],
+    "college_medicine-040": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "college_medicine-041": [
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "college_medicine-042": [
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "college_medicine-043": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "college_medicine-044": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "college_medicine-045": [
+        "textbooks",
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "college_medicine-046": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "college_medicine-047": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "college_medicine-048": [
+        "pubmed"
+    ],
+    "college_medicine-049": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "college_medicine-050": [
+        "pubmed"
+    ],
+    "college_medicine-051": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "college_medicine-052": [
+        "pubmed"
+    ],
+    "college_medicine-053": [
+        "statpearls",
+        "pubmed",
+        "wikipedia"
+    ],
+    "college_medicine-054": [
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "college_medicine-055": [
+        "pubmed"
+    ],
+    "college_medicine-056": [
+        "pubmed"
+    ],
+    "college_medicine-057": [
+        "pubmed"
+    ],
+    "college_medicine-058": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "college_medicine-059": [
+        "pubmed"
+    ],
+    "college_medicine-060": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "college_medicine-061": [
+        "pubmed"
+    ],
+    "college_medicine-062": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "college_medicine-063": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "college_medicine-064": [
+        "pubmed"
+    ],
+    "college_medicine-065": [
+        "pubmed"
+    ],
+    "college_medicine-066": [
+        "pubmed"
+    ],
+    "college_medicine-067": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "college_medicine-068": [
+        "pubmed"
+    ],
+    "college_medicine-069": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "college_medicine-070": [
+        "textbooks",
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "college_medicine-071": [
+        "pubmed"
+    ],
+    "college_medicine-072": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "college_medicine-073": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "college_medicine-074": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "college_medicine-075": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "college_medicine-076": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "college_medicine-077": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "college_medicine-078": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "college_medicine-079": [
+        "pubmed"
+    ],
+    "college_medicine-080": [
+        "textbooks",
+        "pubmed"
+    ],
+    "college_medicine-081": [
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "college_medicine-082": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "college_medicine-083": [
+        "pubmed"
+    ],
+    "college_medicine-084": [
+        "textbooks",
+        "pubmed",
+        "wikipedia"
+    ],
+    "college_medicine-085": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "college_medicine-086": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "college_medicine-087": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "college_medicine-088": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "college_medicine-089": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "college_medicine-090": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "college_medicine-091": [
+        "pubmed"
+    ],
+    "college_medicine-092": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "college_medicine-093": [
+        "pubmed"
+    ],
+    "college_medicine-094": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "college_medicine-095": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "college_medicine-096": [
+        "statpearls",
+        "pubmed",
+        "wikipedia"
+    ],
+    "college_medicine-097": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "college_medicine-098": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "college_medicine-099": [
+        "statpearls",
+        "pubmed",
+        "wikipedia"
+    ],
+    "college_medicine-100": [
+        "statpearls",
+        "pubmed",
+        "wikipedia"
+    ],
+    "college_medicine-101": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "college_medicine-102": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "college_medicine-103": [
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "college_medicine-104": [
+        "pubmed"
+    ],
+    "college_medicine-105": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "college_medicine-106": [
+        "pubmed"
+    ],
+    "college_medicine-107": [
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "college_medicine-108": [
+        "pubmed"
+    ],
+    "college_medicine-109": [
+        "pubmed"
+    ],
+    "college_medicine-110": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "college_medicine-111": [
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "college_medicine-112": [
+        "pubmed"
+    ],
+    "college_medicine-113": [
+        "pubmed"
+    ],
+    "college_medicine-114": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "college_medicine-115": [
+        "pubmed"
+    ],
+    "college_medicine-116": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "college_medicine-117": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "college_medicine-118": [
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "college_medicine-119": [
+        "textbooks",
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "college_medicine-120": [
+        "pubmed"
+    ],
+    "college_medicine-121": [
+        "textbooks",
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "college_medicine-122": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "college_medicine-123": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "college_medicine-124": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "college_medicine-125": [
+        "pubmed"
+    ],
+    "college_medicine-126": [
+        "textbooks",
+        "pubmed",
+        "wikipedia"
+    ],
+    "college_medicine-127": [
+        "pubmed"
+    ],
+    "college_medicine-128": [
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "college_medicine-129": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "college_medicine-130": [
+        "textbooks",
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "college_medicine-131": [
+        "pubmed"
+    ],
+    "college_medicine-132": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "college_medicine-133": [
+        "textbooks",
+        "statpearls",
+        "pubmed",
+        "wikipedia"
+    ],
+    "college_medicine-134": [
+        "pubmed"
+    ],
+    "college_medicine-135": [
+        "textbooks",
+        "pubmed",
+        "wikipedia"
+    ],
+    "college_medicine-136": [
+        "textbooks",
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "college_medicine-137": [
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "college_medicine-138": [
+        "pubmed"
+    ],
+    "college_medicine-139": [
+        "pubmed"
+    ],
+    "college_medicine-140": [
+        "textbooks",
+        "pubmed",
+        "wikipedia"
+    ],
+    "college_medicine-141": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "college_medicine-142": [
+        "textbooks",
+        "pubmed",
+        "wikipedia"
+    ],
+    "college_medicine-143": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "college_medicine-144": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "college_medicine-145": [
+        "pubmed"
+    ],
+    "college_medicine-146": [
+        "pubmed"
+    ],
+    "college_medicine-147": [
+        "pubmed"
+    ],
+    "college_medicine-148": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "college_medicine-149": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "college_medicine-150": [
+        "pubmed"
+    ],
+    "college_medicine-151": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "college_medicine-152": [
+        "textbooks",
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "college_medicine-153": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "college_medicine-154": [
+        "textbooks",
+        "pubmed",
+        "wikipedia"
+    ],
+    "college_medicine-155": [
+        "pubmed"
+    ],
+    "college_medicine-156": [
+        "textbooks",
+        "pubmed",
+        "wikipedia"
+    ],
+    "college_medicine-157": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "college_medicine-158": [
+        "textbooks",
+        "pubmed",
+        "wikipedia"
+    ],
+    "college_medicine-159": [
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "college_medicine-160": [
+        "textbooks",
+        "pubmed",
+        "wikipedia"
+    ],
+    "college_medicine-161": [
+        "pubmed"
+    ],
+    "college_medicine-162": [
+        "pubmed"
+    ],
+    "college_medicine-163": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "college_medicine-164": [
+        "wikipedia"
+    ],
+    "college_medicine-165": [
+        "textbooks",
+        "pubmed"
+    ],
+    "college_medicine-166": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "college_medicine-167": [
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "college_medicine-168": [
+        "pubmed"
+    ],
+    "college_medicine-169": [
+        "textbooks",
+        "statpearls",
+        "pubmed",
+        "wikipedia"
+    ],
+    "college_medicine-170": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "college_medicine-171": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "college_medicine-172": [
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "medical_genetics-000": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "medical_genetics-001": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "medical_genetics-002": [
+        "pubmed",
+        "statpearls"
+    ],
+    "medical_genetics-003": [
+        "pubmed"
+    ],
+    "medical_genetics-004": [
+        "pubmed",
+        "statpearls"
+    ],
+    "medical_genetics-005": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "medical_genetics-006": [
+        "pubmed"
+    ],
+    "medical_genetics-007": [
+        "pubmed"
+    ],
+    "medical_genetics-008": [
+        "pubmed"
+    ],
+    "medical_genetics-009": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "medical_genetics-010": [
+        "wikipedia"
+    ],
+    "medical_genetics-011": [
+        "pubmed",
+        "statpearls"
+    ],
+    "medical_genetics-012": [
+        "pubmed"
+    ],
+    "medical_genetics-013": [
+        "statpearls",
+        "pubmed",
+        "wikipedia"
+    ],
+    "medical_genetics-014": [
+        "textbooks",
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "medical_genetics-015": [
+        "pubmed"
+    ],
+    "medical_genetics-016": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "medical_genetics-017": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "medical_genetics-018": [
+        "pubmed"
+    ],
+    "medical_genetics-019": [
+        "pubmed"
+    ],
+    "medical_genetics-020": [
+        "textbooks",
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "medical_genetics-021": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "medical_genetics-022": [
+        "pubmed",
+        "statpearls"
+    ],
+    "medical_genetics-023": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "medical_genetics-024": [
+        "pubmed"
+    ],
+    "medical_genetics-025": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "medical_genetics-026": [
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "medical_genetics-027": [
+        "pubmed",
+        "statpearls"
+    ],
+    "medical_genetics-028": [
+        "pubmed"
+    ],
+    "medical_genetics-029": [
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "medical_genetics-030": [
+        "pubmed"
+    ],
+    "medical_genetics-031": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "medical_genetics-032": [
+        "pubmed"
+    ],
+    "medical_genetics-033": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "medical_genetics-034": [
+        "pubmed"
+    ],
+    "medical_genetics-035": [
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "medical_genetics-036": [
+        "pubmed"
+    ],
+    "medical_genetics-037": [
+        "textbooks",
+        "pubmed",
+        "wikipedia"
+    ],
+    "medical_genetics-038": [
+        "wikipedia"
+    ],
+    "medical_genetics-039": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "medical_genetics-040": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "medical_genetics-041": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "medical_genetics-042": [
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "medical_genetics-043": [
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "medical_genetics-044": [
+        "statpearls",
+        "pubmed",
+        "wikipedia"
+    ],
+    "medical_genetics-045": [
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "medical_genetics-046": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "medical_genetics-047": [
+        "pubmed"
+    ],
+    "medical_genetics-048": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "medical_genetics-049": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "medical_genetics-050": [
+        "textbooks",
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "medical_genetics-051": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "medical_genetics-052": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "medical_genetics-053": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "medical_genetics-054": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "medical_genetics-055": [
+        "pubmed"
+    ],
+    "medical_genetics-056": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "medical_genetics-057": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "medical_genetics-058": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "medical_genetics-059": [
+        "textbooks",
+        "pubmed",
+        "wikipedia"
+    ],
+    "medical_genetics-060": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "medical_genetics-061": [
+        "pubmed"
+    ],
+    "medical_genetics-062": [
+        "pubmed"
+    ],
+    "medical_genetics-063": [
+        "pubmed"
+    ],
+    "medical_genetics-064": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "medical_genetics-065": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "medical_genetics-066": [
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "medical_genetics-067": [
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "medical_genetics-068": [
+        "pubmed"
+    ],
+    "medical_genetics-069": [
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "medical_genetics-070": [
+        "pubmed"
+    ],
+    "medical_genetics-071": [
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "medical_genetics-072": [
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "medical_genetics-073": [
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "medical_genetics-074": [
+        "pubmed"
+    ],
+    "medical_genetics-075": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "medical_genetics-076": [
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "medical_genetics-077": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "medical_genetics-078": [
+        "textbooks",
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "medical_genetics-079": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "medical_genetics-080": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "medical_genetics-081": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "medical_genetics-082": [
+        "pubmed"
+    ],
+    "medical_genetics-083": [
+        "pubmed"
+    ],
+    "medical_genetics-084": [
+        "pubmed",
+        "statpearls"
+    ],
+    "medical_genetics-085": [
+        "pubmed"
+    ],
+    "medical_genetics-086": [
+        "pubmed",
+        "statpearls"
+    ],
+    "medical_genetics-087": [
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "medical_genetics-088": [
+        "textbooks",
+        "pubmed",
+        "wikipedia"
+    ],
+    "medical_genetics-089": [
+        "pubmed"
+    ],
+    "medical_genetics-090": [
+        "pubmed"
+    ],
+    "medical_genetics-091": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "medical_genetics-092": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "medical_genetics-093": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "medical_genetics-094": [
+        "textbooks",
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "medical_genetics-095": [
+        "pubmed"
+    ],
+    "medical_genetics-096": [
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "medical_genetics-097": [
+        "pubmed"
+    ],
+    "medical_genetics-098": [
+        "pubmed"
+    ],
+    "medical_genetics-099": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "professional_medicine-000": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "professional_medicine-001": [
+        "textbooks",
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "professional_medicine-002": [
+        "pubmed"
+    ],
+    "professional_medicine-003": [
+        "textbooks",
+        "pubmed",
+        "statpearls"
+    ],
+    "professional_medicine-004": [
+        "textbooks",
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "professional_medicine-005": [
+        "pubmed"
+    ],
+    "professional_medicine-006": [
+        "textbooks",
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "professional_medicine-007": [
+        "pubmed"
+    ],
+    "professional_medicine-008": [
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "professional_medicine-009": [
+        "pubmed"
+    ],
+    "professional_medicine-010": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "professional_medicine-011": [
+        "pubmed"
+    ],
+    "professional_medicine-012": [
+        "textbooks",
+        "pubmed",
+        "wikipedia"
+    ],
+    "professional_medicine-013": [
+        "textbooks",
+        "pubmed",
+        "wikipedia"
+    ],
+    "professional_medicine-014": [
+        "textbooks",
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "professional_medicine-015": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "professional_medicine-016": [
+        "pubmed"
+    ],
+    "professional_medicine-017": [
+        "pubmed"
+    ],
+    "professional_medicine-018": [
+        "textbooks",
+        "pubmed",
+        "wikipedia"
+    ],
+    "professional_medicine-019": [
+        "textbooks",
+        "pubmed",
+        "statpearls"
+    ],
+    "professional_medicine-020": [
+        "textbooks",
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "professional_medicine-021": [
+        "textbooks",
+        "statpearls",
+        "pubmed",
+        "wikipedia"
+    ],
+    "professional_medicine-022": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "professional_medicine-023": [
+        "textbooks",
+        "pubmed"
+    ],
+    "professional_medicine-024": [
+        "textbooks",
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "professional_medicine-025": [
+        "textbooks",
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "professional_medicine-026": [
+        "textbooks",
+        "pubmed",
+        "wikipedia"
+    ],
+    "professional_medicine-027": [
+        "pubmed"
+    ],
+    "professional_medicine-028": [
+        "wikipedia"
+    ],
+    "professional_medicine-029": [
+        "pubmed"
+    ],
+    "professional_medicine-030": [
+        "textbooks",
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "professional_medicine-031": [
+        "textbooks",
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "professional_medicine-032": [
+        "textbooks",
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "professional_medicine-033": [
+        "textbooks",
+        "pubmed"
+    ],
+    "professional_medicine-034": [
+        "textbooks",
+        "pubmed",
+        "statpearls"
+    ],
+    "professional_medicine-035": [
+        "textbooks",
+        "pubmed"
+    ],
+    "professional_medicine-036": [
+        "textbooks",
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "professional_medicine-037": [
+        "textbooks",
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "professional_medicine-038": [
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "professional_medicine-039": [
+        "textbooks",
+        "pubmed"
+    ],
+    "professional_medicine-040": [
+        "textbooks",
+        "pubmed"
+    ],
+    "professional_medicine-041": [
+        "textbooks",
+        "pubmed",
+        "statpearls"
+    ],
+    "professional_medicine-042": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "professional_medicine-043": [
+        "textbooks",
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "professional_medicine-044": [
+        "textbooks",
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "professional_medicine-045": [
+        "textbooks",
+        "pubmed",
+        "wikipedia"
+    ],
+    "professional_medicine-046": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "professional_medicine-047": [
+        "pubmed",
+        "statpearls"
+    ],
+    "professional_medicine-048": [
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "professional_medicine-049": [
+        "textbooks",
+        "pubmed",
+        "wikipedia"
+    ],
+    "professional_medicine-050": [
+        "textbooks",
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "professional_medicine-051": [
+        "textbooks",
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "professional_medicine-052": [
+        "pubmed"
+    ],
+    "professional_medicine-053": [
+        "textbooks",
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "professional_medicine-054": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "professional_medicine-055": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "professional_medicine-056": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "professional_medicine-057": [
+        "pubmed"
+    ],
+    "professional_medicine-058": [
+        "textbooks",
+        "pubmed",
+        "wikipedia"
+    ],
+    "professional_medicine-059": [
+        "textbooks",
+        "statpearls",
+        "pubmed",
+        "wikipedia"
+    ],
+    "professional_medicine-060": [
+        "textbooks",
+        "pubmed"
+    ],
+    "professional_medicine-061": [
+        "textbooks",
+        "pubmed",
+        "wikipedia"
+    ],
+    "professional_medicine-062": [
+        "pubmed"
+    ],
+    "professional_medicine-063": [
+        "pubmed"
+    ],
+    "professional_medicine-064": [
+        "pubmed",
+        "statpearls"
+    ],
+    "professional_medicine-065": [
+        "textbooks",
+        "pubmed"
+    ],
+    "professional_medicine-066": [
+        "pubmed",
+        "statpearls"
+    ],
+    "professional_medicine-067": [
+        "textbooks",
+        "pubmed",
+        "statpearls"
+    ],
+    "professional_medicine-068": [
+        "pubmed"
+    ],
+    "professional_medicine-069": [
+        "textbooks",
+        "pubmed",
+        "wikipedia"
+    ],
+    "professional_medicine-070": [
+        "textbooks",
+        "pubmed"
+    ],
+    "professional_medicine-071": [
+        "textbooks",
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "professional_medicine-072": [
+        "textbooks",
+        "pubmed"
+    ],
+    "professional_medicine-073": [
+        "textbooks",
+        "pubmed"
+    ],
+    "professional_medicine-074": [
+        "textbooks",
+        "pubmed",
+        "statpearls"
+    ],
+    "professional_medicine-075": [
+        "pubmed",
+        "statpearls"
+    ],
+    "professional_medicine-076": [
+        "pubmed"
+    ],
+    "professional_medicine-077": [
+        "textbooks",
+        "pubmed",
+        "wikipedia"
+    ],
+    "professional_medicine-078": [
+        "pubmed"
+    ],
+    "professional_medicine-079": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "professional_medicine-080": [
+        "pubmed",
+        "statpearls"
+    ],
+    "professional_medicine-081": [
+        "pubmed"
+    ],
+    "professional_medicine-082": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "professional_medicine-083": [
+        "textbooks",
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "professional_medicine-084": [
+        "textbooks",
+        "pubmed",
+        "statpearls"
+    ],
+    "professional_medicine-085": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "professional_medicine-086": [
+        "textbooks",
+        "statpearls",
+        "pubmed",
+        "wikipedia"
+    ],
+    "professional_medicine-087": [
+        "textbooks",
+        "pubmed"
+    ],
+    "professional_medicine-088": [
+        "textbooks",
+        "statpearls",
+        "pubmed",
+        "wikipedia"
+    ],
+    "professional_medicine-089": [
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "professional_medicine-090": [
+        "textbooks",
+        "statpearls",
+        "pubmed",
+        "wikipedia"
+    ],
+    "professional_medicine-091": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "professional_medicine-092": [
+        "textbooks",
+        "pubmed"
+    ],
+    "professional_medicine-093": [
+        "textbooks",
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "professional_medicine-094": [
+        "wikipedia"
+    ],
+    "professional_medicine-095": [
+        "textbooks",
+        "pubmed",
+        "wikipedia"
+    ],
+    "professional_medicine-096": [
+        "textbooks",
+        "statpearls",
+        "pubmed",
+        "wikipedia"
+    ],
+    "professional_medicine-097": [
+        "textbooks",
+        "pubmed",
+        "statpearls"
+    ],
+    "professional_medicine-098": [
+        "textbooks",
+        "pubmed",
+        "wikipedia"
+    ],
+    "professional_medicine-099": [
+        "wikipedia"
+    ],
+    "professional_medicine-100": [
+        "textbooks",
+        "pubmed",
+        "statpearls"
+    ],
+    "professional_medicine-101": [
+        "textbooks",
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "professional_medicine-102": [
+        "textbooks",
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "professional_medicine-103": [
+        "textbooks",
+        "pubmed",
+        "statpearls"
+    ],
+    "professional_medicine-104": [
+        "pubmed"
+    ],
+    "professional_medicine-105": [
+        "textbooks",
+        "pubmed",
+        "wikipedia"
+    ],
+    "professional_medicine-106": [
+        "textbooks",
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "professional_medicine-107": [
+        "textbooks",
+        "statpearls",
+        "pubmed",
+        "wikipedia"
+    ],
+    "professional_medicine-108": [
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "professional_medicine-109": [
+        "textbooks",
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "professional_medicine-110": [
+        "textbooks",
+        "pubmed",
+        "wikipedia"
+    ],
+    "professional_medicine-111": [
+        "textbooks",
+        "pubmed",
+        "statpearls"
+    ],
+    "professional_medicine-112": [
+        "textbooks",
+        "statpearls",
+        "pubmed",
+        "wikipedia"
+    ],
+    "professional_medicine-113": [
+        "textbooks",
+        "pubmed"
+    ],
+    "professional_medicine-114": [
+        "pubmed"
+    ],
+    "professional_medicine-115": [
+        "textbooks",
+        "statpearls",
+        "pubmed",
+        "wikipedia"
+    ],
+    "professional_medicine-116": [
+        "textbooks",
+        "pubmed"
+    ],
+    "professional_medicine-117": [
+        "pubmed"
+    ],
+    "professional_medicine-118": [
+        "pubmed"
+    ],
+    "professional_medicine-119": [
+        "textbooks",
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "professional_medicine-120": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "professional_medicine-121": [
+        "textbooks",
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "professional_medicine-122": [
+        "textbooks",
+        "pubmed",
+        "wikipedia"
+    ],
+    "professional_medicine-123": [
+        "textbooks",
+        "pubmed",
+        "statpearls"
+    ],
+    "professional_medicine-124": [
+        "textbooks",
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "professional_medicine-125": [
+        "textbooks",
+        "pubmed",
+        "statpearls"
+    ],
+    "professional_medicine-126": [
+        "textbooks",
+        "pubmed"
+    ],
+    "professional_medicine-127": [
+        "wikipedia"
+    ],
+    "professional_medicine-128": [
+        "textbooks",
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "professional_medicine-129": [
+        "textbooks",
+        "pubmed",
+        "statpearls"
+    ],
+    "professional_medicine-130": [
+        "textbooks",
+        "pubmed",
+        "wikipedia"
+    ],
+    "professional_medicine-131": [
+        "textbooks",
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "professional_medicine-132": [
+        "textbooks",
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "professional_medicine-133": [
+        "textbooks",
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "professional_medicine-134": [
+        "wikipedia"
+    ],
+    "professional_medicine-135": [
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "professional_medicine-136": [
+        "textbooks",
+        "statpearls",
+        "pubmed",
+        "wikipedia"
+    ],
+    "professional_medicine-137": [
+        "wikipedia"
+    ],
+    "professional_medicine-138": [
+        "textbooks",
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "professional_medicine-139": [
+        "textbooks",
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "professional_medicine-140": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "professional_medicine-141": [
+        "textbooks",
+        "pubmed"
+    ],
+    "professional_medicine-142": [
+        "pubmed",
+        "statpearls"
+    ],
+    "professional_medicine-143": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "professional_medicine-144": [
+        "textbooks",
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "professional_medicine-145": [
+        "textbooks",
+        "pubmed"
+    ],
+    "professional_medicine-146": [
+        "textbooks",
+        "pubmed"
+    ],
+    "professional_medicine-147": [
+        "pubmed"
+    ],
+    "professional_medicine-148": [
+        "pubmed"
+    ],
+    "professional_medicine-149": [
+        "wikipedia"
+    ],
+    "professional_medicine-150": [
+        "textbooks",
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "professional_medicine-151": [
+        "textbooks",
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "professional_medicine-152": [
+        "textbooks",
+        "pubmed",
+        "statpearls"
+    ],
+    "professional_medicine-153": [
+        "textbooks",
+        "statpearls",
+        "pubmed",
+        "wikipedia"
+    ],
+    "professional_medicine-154": [
+        "textbooks",
+        "pubmed"
+    ],
+    "professional_medicine-155": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "professional_medicine-156": [
+        "textbooks",
+        "pubmed"
+    ],
+    "professional_medicine-157": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "professional_medicine-158": [
+        "textbooks",
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "professional_medicine-159": [
+        "pubmed"
+    ],
+    "professional_medicine-160": [
+        "textbooks",
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "professional_medicine-161": [
+        "pubmed"
+    ],
+    "professional_medicine-162": [
+        "textbooks",
+        "pubmed",
+        "wikipedia"
+    ],
+    "professional_medicine-163": [
+        "textbooks",
+        "statpearls",
+        "wikipedia"
+    ],
+    "professional_medicine-164": [
+        "textbooks",
+        "pubmed",
+        "statpearls"
+    ],
+    "professional_medicine-165": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "professional_medicine-166": [
+        "textbooks",
+        "pubmed"
+    ],
+    "professional_medicine-167": [
+        "textbooks",
+        "statpearls",
+        "pubmed",
+        "wikipedia"
+    ],
+    "professional_medicine-168": [
+        "textbooks",
+        "pubmed",
+        "wikipedia"
+    ],
+    "professional_medicine-169": [
+        "pubmed"
+    ],
+    "professional_medicine-170": [
+        "textbooks",
+        "pubmed",
+        "statpearls"
+    ],
+    "professional_medicine-171": [
+        "pubmed"
+    ],
+    "professional_medicine-172": [
+        "pubmed"
+    ],
+    "professional_medicine-173": [
+        "textbooks",
+        "pubmed"
+    ],
+    "professional_medicine-174": [
+        "wikipedia"
+    ],
+    "professional_medicine-175": [
+        "textbooks",
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "professional_medicine-176": [
+        "pubmed",
+        "statpearls"
+    ],
+    "professional_medicine-177": [
+        "textbooks",
+        "statpearls",
+        "pubmed",
+        "wikipedia"
+    ],
+    "professional_medicine-178": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "professional_medicine-179": [
+        "textbooks",
+        "pubmed",
+        "statpearls"
+    ],
+    "professional_medicine-180": [
+        "textbooks",
+        "pubmed"
+    ],
+    "professional_medicine-181": [
+        "textbooks",
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "professional_medicine-182": [
+        "textbooks",
+        "statpearls",
+        "pubmed",
+        "wikipedia"
+    ],
+    "professional_medicine-183": [
+        "pubmed"
+    ],
+    "professional_medicine-184": [
+        "textbooks",
+        "pubmed"
+    ],
+    "professional_medicine-185": [
+        "pubmed"
+    ],
+    "professional_medicine-186": [
+        "textbooks",
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "professional_medicine-187": [
+        "textbooks",
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "professional_medicine-188": [
+        "textbooks",
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "professional_medicine-189": [
+        "textbooks",
+        "statpearls",
+        "pubmed",
+        "wikipedia"
+    ],
+    "professional_medicine-190": [
+        "textbooks",
+        "pubmed"
+    ],
+    "professional_medicine-191": [
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "professional_medicine-192": [
+        "textbooks",
+        "pubmed",
+        "statpearls"
+    ],
+    "professional_medicine-193": [
+        "textbooks",
+        "pubmed",
+        "statpearls"
+    ],
+    "professional_medicine-194": [
+        "textbooks",
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "professional_medicine-195": [
+        "pubmed",
+        "statpearls"
+    ],
+    "professional_medicine-196": [
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "professional_medicine-197": [
+        "textbooks",
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "professional_medicine-198": [
+        "textbooks",
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "professional_medicine-199": [
+        "textbooks",
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "professional_medicine-200": [
+        "textbooks",
+        "pubmed",
+        "statpearls"
+    ],
+    "professional_medicine-201": [
+        "textbooks",
+        "pubmed",
+        "wikipedia"
+    ],
+    "professional_medicine-202": [
+        "pubmed",
+        "statpearls"
+    ],
+    "professional_medicine-203": [
+        "textbooks",
+        "statpearls",
+        "wikipedia"
+    ],
+    "professional_medicine-204": [
+        "textbooks",
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "professional_medicine-205": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "professional_medicine-206": [
+        "pubmed"
+    ],
+    "professional_medicine-207": [
+        "pubmed"
+    ],
+    "professional_medicine-208": [
+        "textbooks",
+        "pubmed",
+        "wikipedia"
+    ],
+    "professional_medicine-209": [
+        "textbooks",
+        "pubmed",
+        "statpearls"
+    ],
+    "professional_medicine-210": [
+        "textbooks",
+        "pubmed",
+        "statpearls"
+    ],
+    "professional_medicine-211": [
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "professional_medicine-212": [
+        "textbooks",
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "professional_medicine-213": [
+        "wikipedia"
+    ],
+    "professional_medicine-214": [
+        "textbooks",
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "professional_medicine-215": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "professional_medicine-216": [
+        "textbooks",
+        "pubmed",
+        "wikipedia"
+    ],
+    "professional_medicine-217": [
+        "pubmed"
+    ],
+    "professional_medicine-218": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "professional_medicine-219": [
+        "pubmed"
+    ],
+    "professional_medicine-220": [
+        "pubmed"
+    ],
+    "professional_medicine-221": [
+        "textbooks",
+        "statpearls",
+        "pubmed",
+        "wikipedia"
+    ],
+    "professional_medicine-222": [
+        "textbooks",
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "professional_medicine-223": [
+        "textbooks",
+        "statpearls",
+        "pubmed"
+    ],
+    "professional_medicine-224": [
+        "textbooks",
+        "pubmed",
+        "statpearls"
+    ],
+    "professional_medicine-225": [
+        "pubmed"
+    ],
+    "professional_medicine-226": [
+        "textbooks",
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "professional_medicine-227": [
+        "textbooks",
+        "pubmed",
+        "wikipedia"
+    ],
+    "professional_medicine-228": [
+        "textbooks",
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "professional_medicine-229": [
+        "pubmed"
+    ],
+    "professional_medicine-230": [
+        "textbooks",
+        "statpearls",
+        "pubmed",
+        "wikipedia"
+    ],
+    "professional_medicine-231": [
+        "pubmed",
+        "statpearls"
+    ],
+    "professional_medicine-232": [
+        "textbooks",
+        "statpearls",
+        "pubmed",
+        "wikipedia"
+    ],
+    "professional_medicine-233": [
+        "textbooks",
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "professional_medicine-234": [
+        "pubmed"
+    ],
+    "professional_medicine-235": [
+        "textbooks",
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "professional_medicine-236": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "professional_medicine-237": [
+        "textbooks",
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "professional_medicine-238": [
+        "pubmed",
+        "statpearls"
+    ],
+    "professional_medicine-239": [
+        "textbooks",
+        "pubmed",
+        "wikipedia"
+    ],
+    "professional_medicine-240": [
+        "textbooks",
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "professional_medicine-241": [
+        "textbooks",
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "professional_medicine-242": [
+        "pubmed"
+    ],
+    "professional_medicine-243": [
+        "textbooks",
+        "pubmed",
+        "wikipedia"
+    ],
+    "professional_medicine-244": [
+        "textbooks",
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "professional_medicine-245": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "professional_medicine-246": [
+        "textbooks",
+        "statpearls",
+        "pubmed"
+    ],
+    "professional_medicine-247": [
+        "pubmed"
+    ],
+    "professional_medicine-248": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "professional_medicine-249": [
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "professional_medicine-250": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "professional_medicine-251": [
+        "textbooks",
+        "pubmed"
+    ],
+    "professional_medicine-252": [
+        "textbooks",
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "professional_medicine-253": [
+        "textbooks",
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "professional_medicine-254": [
+        "textbooks",
+        "statpearls",
+        "pubmed",
+        "wikipedia"
+    ],
+    "professional_medicine-255": [
+        "textbooks",
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "professional_medicine-256": [
+        "pubmed",
+        "statpearls"
+    ],
+    "professional_medicine-257": [
+        "pubmed",
+        "statpearls"
+    ],
+    "professional_medicine-258": [
+        "pubmed",
+        "statpearls"
+    ],
+    "professional_medicine-259": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "professional_medicine-260": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "professional_medicine-261": [
+        "textbooks",
+        "pubmed",
+        "wikipedia"
+    ],
+    "professional_medicine-262": [
+        "textbooks",
+        "statpearls",
+        "pubmed",
+        "wikipedia"
+    ],
+    "professional_medicine-263": [
+        "pubmed",
+        "wikipedia"
+    ],
+    "professional_medicine-264": [
+        "textbooks",
+        "pubmed",
+        "wikipedia"
+    ],
+    "professional_medicine-265": [
+        "textbooks",
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "professional_medicine-266": [
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "professional_medicine-267": [
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "professional_medicine-268": [
+        "textbooks",
+        "pubmed",
+        "statpearls",
+        "wikipedia"
+    ],
+    "professional_medicine-269": [
+        "textbooks",
+        "pubmed",
+        "wikipedia"
+    ],
+    "professional_medicine-270": [
+        "pubmed"
+    ],
+    "professional_medicine-271": [
+        "pubmed",
+        "statpearls"
+    ]
+}
