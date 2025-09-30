@@ -48,7 +48,7 @@ async def main():
 
     if not os.path.exists(benchmark_file):
         with open(benchmark_file, "w") as f:
-            f.write("benchmark,dataset,model,question_id,correct,data_sources,num_data_sources,selection_time,embedding_time,doc_select_time,generate_time,e2e_time,docs_tokens\n")
+            f.write("benchmark,dataset,model,question_id,correct,data_sources,num_data_sources,selection_time,embedding_time,doc_select_time,rerank_time,generate_time,e2e_time,docs_tokens\n")
 
     if not os.path.exists(ds_stats_file):
         with open(ds_stats_file, "w") as f:
@@ -163,7 +163,7 @@ async def main():
                     with open(benchmark_file, "a") as f:
                         f.write(f"{args.benchmark},{question_bank},{metadata['llm']},{question_id},{int(is_correct)},{data_sources},{len(metadata['data_sources'])},"
                                 f"{metadata['selection_time']},{metadata['embedding_time']},{metadata['doc_select_time']},"
-                                f"{metadata['generate_time']},{metadata['e2e_time']},{metadata['docs_tokens']}\n")
+                                f"{metadata['rerank_time']}, {metadata['generate_time']},{metadata['e2e_time']},{metadata['docs_tokens']}\n")
                         
                     with open(ds_stats_file, "a") as f:
                         for data_source, stats in metadata["data_sources_stats"].items():

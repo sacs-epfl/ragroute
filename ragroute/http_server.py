@@ -10,6 +10,8 @@ import os
 import time
 from typing import List
 import uuid
+import numpy as np
+import torch
 from aiohttp import web
 
 from ollama import AsyncClient, ChatResponse
@@ -17,7 +19,7 @@ import zmq
 import zmq.asyncio
 
 from ragroute.config import (
-    EMBEDDING_MODELS_PER_DATA_SOURCE, FEB4RAG_DIR, K, LLM_DELAY, SERVER_ROUTER_PORT, ROUTER_SERVER_PORT,
+    EMBEDDING_MODELS_PER_DATA_SOURCE, FEB4RAG_DIR, K_RERANK, LLM_DELAY, SERVER_ROUTER_PORT, ROUTER_SERVER_PORT,
     SERVER_CLIENT_BASE_PORT, CLIENT_SERVER_BASE_PORT,
     HTTP_HOST, HTTP_PORT, MODELS
 )
@@ -29,14 +31,15 @@ logger = logging.getLogger("server")
 
 class HTTPServer:
     """HTTP server that coordinates the federated search system."""
-    
-    def __init__(self, dataset: str, data_sources: List[str], routing_strategy: str, model: str, disable_llm: bool = False, simulate: bool = False):
+
+    def __init__(self, dataset: str, data_sources: List[str], routing_strategy: str, model: str, disable_llm: bool = False, simulate: bool = False, disable_rerank: bool = False):
         self.dataset: str = dataset
         self.data_sources: List[str] = data_sources
         self.routing_strategy: str = routing_strategy
         self.model: str = model
         self.model_info = MODELS[model]
         self.disable_llm: bool = disable_llm
+        self.disable_rerank: bool = disable_rerank
         self.simulate: bool = simulate
         self.num_clients = len(data_sources)
         self.app = web.Application()
@@ -94,7 +97,15 @@ class HTTPServer:
                 for line in f:
                     qid, _, docid, rel = line.strip().split()
                     self.relevance_data[qid].append((docid, rel))
-
+        
+        # Initialize reranker if needed
+        if not self.disable_rerank:            
+            from sentence_transformers import CrossEncoder
+            device = "cuda" if torch.cuda.is_available() else "cpu"
+            self.reranker = CrossEncoder("BAAI/bge-reranker-v2-m3", device=device)
+        else:
+            self.reranker = None
+        
         # Start the HTTP server
         runner = web.AppRunner(self.app)
         await runner.setup()
@@ -132,18 +143,6 @@ class HTTPServer:
         query_id = str(uuid.uuid4())
         logger.debug(f"Received search query: {query} (ID: {query_id})")
         
-        # Create a new future to track this query
-        future = asyncio.Future()
-        self.active_queries[query_id] = {
-            "future": future,
-            "query": query,
-            "choices": choices,
-            "question_id": question_id,
-            "client_results": {},
-            "pending_data_sources": set(),
-            "metadata": {},
-            "query_start_time": time.time(),
-        }
         if self.dataset == "wikipedia":
             formatted_query = "\n".join([query, " | ".join(choices)])
         else:
@@ -154,6 +153,20 @@ class HTTPServer:
             "id": query_id,
             "query": formatted_query
         })
+
+        # Create a new future to track this query
+        future = asyncio.Future()
+        self.active_queries[query_id] = {
+            "future": future,
+            "query": query,
+            "query_for_rerank": formatted_query,
+            "choices": choices,
+            "question_id": question_id,
+            "client_results": {},
+            "pending_data_sources": set(),
+            "metadata": {},
+            "query_start_time": time.time(),
+        }
         
         # Wait for all results
         try:
@@ -284,13 +297,20 @@ class HTTPServer:
             all_indices.extend(results[0])
             all_docs.extend(results[1])
             all_scores.extend(results[2])
+            #print("CLIENT ", client_id, " DOCS LENGTH ", len(results[1])) 
 
+        q_rerank = query_data.get("query_for_rerank", query_data["query"])
+        rerank_start = time.time()
+        
         if self.dataset == "medrag":
-            filtered_docs, _ = rerank_medrag(all_docs, all_scores, K[self.dataset])
+            filtered_docs, _ = rerank_medrag(all_docs, all_scores, K_RERANK[self.dataset], self.reranker, q_rerank)
         elif self.dataset == "feb4rag":
-            filtered_docs, _ = rerank_feb4rag(all_indices, all_docs, query_data["question_id"], K[self.dataset], self.relevance_data)
+            filtered_docs, _ = rerank_feb4rag(all_indices, all_docs, query_data["question_id"], K_RERANK[self.dataset], self.relevance_data, self.reranker, q_rerank)
         elif self.dataset == "wikipedia":
-            filtered_docs, _ = rerank_wikipedia(all_docs, all_scores, K[self.dataset])
+            filtered_docs, _ = rerank_wikipedia(all_docs, all_scores, K_RERANK[self.dataset], self.reranker, q_rerank)
+
+        rerank_time = time.time() - rerank_start
+        self.active_queries[query_id]["metadata"]["rerank_time"] = rerank_time
 
         if self.disable_llm:
             self.active_queries[query_id]["metadata"]["generate_time"] = 0
@@ -301,11 +321,11 @@ class HTTPServer:
         else:
             try:
                 start_time = time.time()
-                if self.dataset == "wikipedia":
-                    llm_message, docs_tokens = generate_llm_message_wikipedia(query_data["query"], filtered_docs, query_data["choices"], self.model)
-                else:
-                    llm_message, docs_tokens = generate_llm_message(self.dataset, query_data["query"], filtered_docs, query_data["choices"], self.model)
-                #llm_message, docs_tokens = generate_llm_message(self.dataset, query_data["query"], filtered_docs, query_data["choices"], self.model)
+#                if self.dataset == "wikipedia":
+#                    llm_message, docs_tokens = generate_llm_message_wikipedia(query_data["query"], filtered_docs, query_data["choices"], self.model)
+#                else:
+#                    llm_message, docs_tokens = generate_llm_message(self.dataset, query_data["query"], filtered_docs, query_data["choices"], self.model)
+                llm_message, docs_tokens = generate_llm_message(self.dataset, query_data["query"], filtered_docs, query_data["choices"], self.model)
                 #response_: ChatResponse = await AsyncClient().chat(model=self.model_info["ollama_name"], messages=llm_message, options={"num_predict": self.model_info["max_tokens"]})
                 try:
                     response_: ChatResponse = await asyncio.wait_for(
@@ -395,7 +415,8 @@ class HTTPServer:
         
         logger.info("Server stopped")
         
-async def run_server(dataset: str, data_sources: List[str], routing_strategy: str, model: str, disable_llm: bool = False, simulate: bool = False) -> HTTPServer:
-    server = HTTPServer(dataset, data_sources, routing_strategy, model, disable_llm=disable_llm, simulate=simulate)
+async def run_server(dataset: str, data_sources: List[str], routing_strategy: str, model: str, disable_llm: bool = False, simulate: bool = False, disable_rerank: bool = False) -> HTTPServer:
+    server = HTTPServer(dataset, data_sources, routing_strategy, model, disable_llm=disable_llm, simulate=simulate, disable_rerank=disable_rerank)
     await server.start()
     return server
+

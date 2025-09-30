@@ -34,31 +34,45 @@ FEDRAG_INPUT_DIMENSION =    8205
 WIKIPEDIA_INPUT_DIMENSION = 1546
 
 
+#class CorpusRoutingNN(nn.Module):
+#    def __init__(self, input_dim):
+#        super(CorpusRoutingNN, self).__init__()
+#        self.fc1 = nn.Linear(input_dim, 256)
+#        self.ln1 = nn.LayerNorm(256)
+#        self.dropout1 = nn.Dropout(0.4)
+#
+#        self.fc2 = nn.Linear(256, 128)
+#        self.ln2 = nn.LayerNorm(128)
+#        self.dropout2 = nn.Dropout(0.4)
+#
+#        self.fc3 = nn.Linear(128, 1)
+#
+#    def forward(self, x):
+#        x = F.relu(self.ln1(self.fc1(x)))
+#        x = self.dropout1(x)
+#        x = F.relu(self.ln2(self.fc2(x)))
+#        x = self.dropout2(x)
+#        return self.fc3(x)
+
+
 class CorpusRoutingNN(nn.Module):
-    def __init__(self, input_dim):
-        super(CorpusRoutingNN, self).__init__()
-        self.fc1 = nn.Linear(input_dim, 256)
-        self.ln1 = nn.LayerNorm(256)
-        self.dropout1 = nn.Dropout(0.4)
-
-        self.fc2 = nn.Linear(256, 128)
-        self.ln2 = nn.LayerNorm(128)
-        self.dropout2 = nn.Dropout(0.4)
-
-        self.fc3 = nn.Linear(128, 1)
+    def __init__(self, input_dim, dropout=0.5):
+        super().__init__()
+        self.fc1   = nn.Linear(input_dim, 512)
+        self.ln1   = nn.LayerNorm(512)
+        self.drop1 = nn.Dropout(dropout)
+        self.out   = nn.Linear(512, 1)
 
     def forward(self, x):
         x = F.relu(self.ln1(self.fc1(x)))
-        x = self.dropout1(x)
-        x = F.relu(self.ln2(self.fc2(x)))
-        x = self.dropout2(x)
-        return self.fc3(x)
+        x = self.drop1(x)
+        return self.out(x)  # logits
 
 
 class Router:
     """Router that processes queries and determines which clients should handle them."""
-    
-    def __init__(self, dataset: str, data_sources: List[str], routing_strategy: str, simulate: bool = False):
+
+    def __init__(self, dataset: str, data_sources: List[str], routing_strategy: str, simulate: bool = False, reranker: bool = False):
         self.dataset: str = dataset
         self.data_sources: List[str] = data_sources
         self.routing_strategy: str = routing_strategy
@@ -67,6 +81,7 @@ class Router:
         self.context = zmq.asyncio.Context()
         self.queue = QueryQueue(MAX_QUEUE_SIZE)
         self.tokenizer = None  # For MMLU
+        self.reranker = reranker
 
         self.device="cuda" if torch.cuda.is_available() else "cpu"
 
@@ -111,7 +126,10 @@ class Router:
             model_path = os.path.join(MODELS_USR_DIR, "FeB4RAG/dataset_creation/2_search/router_best_model.pt")
             input_dim = FEDRAG_INPUT_DIMENSION
         elif self.dataset == "wikipedia":
-            model_path = os.path.join(MODELS_USR_DIR, "Retrieval-QA-Benchmark_backup", "euromlsys", "new_submission", "cluster_router_output", "best_model.pth")
+            if not self.reranker:
+                model_path = os.path.join(MODELS_USR_DIR, "Retrieval-QA-Benchmark", "routing", "cluster_router_output", "best_model.pth")
+            else:
+                model_path = os.path.join(MODELS_USR_DIR, "Retrieval-QA-Benchmark", "routing", "cluster_router_output_rerank", "best_model.pth")
             input_dim = WIKIPEDIA_INPUT_DIMENSION
 
         self.router = CorpusRoutingNN(input_dim).to(self.device)
@@ -120,12 +138,12 @@ class Router:
 
         # Load scalar
         if self.dataset == "medrag":
-            scaler_path = os.path.join(MODELS_USR_DIR, "MedRAG/routing/preprocessed_data.pkl")
+            scaler_path = os.path.join(MODELS_USR_DIR, "MedRAG/routing/data/preprocessed_data.pkl")
             with open(scaler_path, "rb") as f:
                 _, _, _, self.scaler, _ = pickle.load(f)
 
         if self.dataset == "wikipedia":
-            scaler_path = os.path.join(MODELS_USR_DIR, "Retrieval-QA-Benchmark_backup", "euromlsys", "new_submission", "cluster_router_output", "scaler.pkl")
+            scaler_path = os.path.join(MODELS_USR_DIR, "Retrieval-QA-Benchmark", "routing", "cluster_router_output", "scaler.pkl")
             with open(scaler_path, "rb") as f:
                 self.scaler = pickle.load(f)
 
@@ -275,7 +293,8 @@ class Router:
             outputs = outputs.view(-1)
             probabilities = torch.sigmoid(outputs)
             if self.dataset == "medrag":	
-                predictions = (probabilities > 0.4924).cpu().numpy()
+                #predictions = (probabilities > 0.4924).cpu().numpy()
+                predictions = (probabilities > 0.4872).cpu().numpy()
             else:
                 predictions = (probabilities > 0.5).cpu().numpy()
         
@@ -340,9 +359,9 @@ class Router:
         self.sender.close()
         self.context.term()
 
-async def run_router(dataset: str, data_sources: List[str], routing_strategy: str, simulate: bool = False):
+async def run_router(dataset: str, data_sources: List[str], routing_strategy: str, simulate: bool = False, reranker: bool = False):
     """Run the router process."""
-    router = Router(dataset, data_sources, routing_strategy, simulate=simulate)
+    router = Router(dataset, data_sources, routing_strategy, simulate=simulate, reranker=reranker)
     await router.start()
 
 

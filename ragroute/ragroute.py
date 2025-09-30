@@ -7,9 +7,9 @@ from multiprocessing import Process
 from ragroute.config import DATA_SOURCES
 
 
-def start_router(dataset: str, data_sources: List[str], routing_strategy: str, simulate: bool = False):
+def start_router(dataset: str, data_sources: List[str], routing_strategy: str, simulate: bool = False, reranker: bool = False):
     from ragroute.router import run_router
-    asyncio.run(run_router(dataset, data_sources, routing_strategy, simulate))
+    asyncio.run(run_router(dataset, data_sources, routing_strategy, simulate, reranker))
 
 def start_data_source(index: int, dataset: str, data_source: str, simulate: bool = False):
     from ragroute.data_source import run_data_source
@@ -23,6 +23,7 @@ class RAGRoute:
         self.dataset: str = args.dataset
         self.routing_strategy: str = args.routing
         self.disable_llm: bool = args.disable_llm
+        self.disable_rerank: bool = args.disable_rerank
         self.model: str = args.model
         self.simulate: bool = args.simulate
         self.processes = []
@@ -40,7 +41,7 @@ class RAGRoute:
         self.main_task = asyncio.current_task()
         
         # Start router process
-        router_process = Process(target=start_router, args=(self.dataset, self.data_sources, self.routing_strategy, self.simulate))
+        router_process = Process(target=start_router, args=(self.dataset, self.data_sources, self.routing_strategy, self.simulate, not self.disable_rerank))
         router_process.start()
         self.processes.append(router_process)
         self.logger.info("Router process started")
@@ -58,7 +59,7 @@ class RAGRoute:
         
         # Start the server
         from ragroute.http_server import run_server
-        self.server = await run_server(self.dataset, self.data_sources, self.routing_strategy, self.model, self.disable_llm, self.simulate)
+        self.server = await run_server(self.dataset, self.data_sources, self.routing_strategy, self.model, self.disable_llm, self.simulate, self.disable_rerank)
         self.logger.info("Server started")
         
         # Setup signal handler for graceful shutdown
