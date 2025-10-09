@@ -1,6 +1,6 @@
 # RAGRoute
 
-This repository contains the code for the paper **"Efficient Federated Search for Retrieval-Augmented Generation"**. RAGRoute enables intelligent routing across federated data sources to improve retrieval-augmented generation (RAG) performance.
+This repository contains the code for the paper **"Efficient Federated Search for Retrieval-Augmented Generation using Lightweight Routing"**. RAGRoute enables intelligent routing across federated data sources to improve retrieval-augmented generation (RAG) performance.
 
 ---
 
