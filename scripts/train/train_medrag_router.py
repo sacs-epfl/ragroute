@@ -13,14 +13,10 @@ from sklearn.metrics import roc_auc_score
 from torch.utils.data import random_split
 import argparse
 
-# Parse command line arguments to track router experiments
-parser = argparse.ArgumentParser()
-parser.add_argument("--experiment_id", type=int, default=0, help="ID of the experiment (e.g., 0, 1, 2...)")
-args = parser.parse_args()
-
-
+# Started from routing_backup/routing/
+# data in routing_backup/routing/experiment_0
 # Set random seeds for reproducibility
-def set_seed(seed=42):
+def set_seed(seed=12):
     random.seed(seed)
     np.random.seed(seed)
     torch.manual_seed(seed)
@@ -30,21 +26,20 @@ def set_seed(seed=42):
     torch.backends.cudnn.deterministic = True
     torch.backends.cudnn.benchmark = False
 
-SEED=42
+SEED=12
 set_seed(SEED)
 
 # **Paths and Configuration**
 BASE_DIR = "/mnt/nfs/home/dpetresc/MedRAG/retrieval_cache/"
 ROUTING_DIR = "/mnt/nfs/home/dpetresc/MedRAG/routing/"
 RELEVANT_DIR = "./relevant/"
-EXPERIMENT_ID = args.experiment_id
-EXPERIMENT_DIR = os.path.join(ROUTING_DIR, f"experiment_{EXPERIMENT_ID}")
-os.makedirs(EXPERIMENT_DIR, exist_ok=True)
 
 CORPORA = ["pubmed", "statpearls", "textbooks", "wikipedia"]
 TRAIN_TEST_SPLIT_RATIO = 0.4
+K = 15
 
 source_to_id = {src: i for i, src in enumerate(CORPORA)}
+print(source_to_id)
 num_sources = len(source_to_id)
 
 # **Define Device**
@@ -66,22 +61,28 @@ class RoutingDataset(Dataset):
 class CorpusRoutingNN(nn.Module):
     def __init__(self, input_dim):
         super(CorpusRoutingNN, self).__init__()
-        self.fc1 = nn.Linear(input_dim, 256)
-        self.ln1 = nn.LayerNorm(256)
+        self.fc1 = nn.Linear(input_dim, 128)
+        self.ln1 = nn.LayerNorm(128)
         self.dropout1 = nn.Dropout(0.4)
 
-        self.fc2 = nn.Linear(256, 128)
-        self.ln2 = nn.LayerNorm(128)
+        self.fc2 = nn.Linear(128, 64)
+        self.ln2 = nn.LayerNorm(64)
         self.dropout2 = nn.Dropout(0.4)
 
-        self.fc3 = nn.Linear(128, 1)
+        self.fc3 = nn.Linear(64, 32)
+        self.ln3 = nn.LayerNorm(32)
+        self.dropout3 = nn.Dropout(0.4)
+
+        self.fc_out = nn.Linear(32, 1)
 
     def forward(self, x):
         x = F.relu(self.ln1(self.fc1(x)))
         x = self.dropout1(x)
         x = F.relu(self.ln2(self.fc2(x)))
         x = self.dropout2(x)
-        return self.fc3(x)
+        x = F.relu(self.ln3(self.fc3(x)))
+        x = self.dropout3(x)
+        return self.fc_out(x)
 
 # **Load Corpus Statistics**
 def load_corpus_stats():
@@ -105,7 +106,7 @@ def load_data():
     for benchmark in os.listdir(BASE_DIR):
         benchmark_path = os.path.join(BASE_DIR, benchmark)
         emb_queries_path = os.path.join(benchmark_path, "emb_queries")
-        relevant_file = os.path.join(RELEVANT_DIR, f"{benchmark}_relevant_top_32.json")
+        relevant_file = os.path.join(RELEVANT_DIR, f"{benchmark}_relevant_top_"+str(K)+".json")
 
         if not os.path.exists(emb_queries_path) or not os.path.exists(relevant_file):
             print(f"Skipping {benchmark}: Missing embeddings or relevance data.")
@@ -133,17 +134,13 @@ def load_data():
                     continue
 
                 centroid = np.array(corpus_stats[corpus]["centroid"], dtype=np.float32)
-                num_documents = corpus_stats[corpus]["num_documents"]
-                density = corpus_stats[corpus]["density"]
-                centroid_similarity = np.dot(query_embedding, centroid)
+                #num_documents = corpus_stats[corpus]["num_documents"]
+                #density = corpus_stats[corpus]["density"]
+                #centroid_similarity = np.dot(query_embedding, centroid)
                 source_id = source_to_id[corpus]
                 source_id_vec = np.eye(num_sources)[source_id]  # one-hot
                 
-                # To experiment
-                #features = np.concatenate([query_embedding, centroid, [centroid_similarity, num_documents, density]])
-                #features = np.array([centroid_similarity], dtype=np.float32)  # Ensure it's a NumPy array
-                features = np.concatenate([query_embedding, centroid])
-                #features = np.concatenate([query_embedding, centroid, [num_documents, density]])
+                features = np.concatenate([query_embedding, centroid, source_id_vec])
                 label = 1 if corpus in relevant_corpora[question_id] else 0
                 query_data.append((features, label))
 
@@ -203,6 +200,7 @@ def evaluate_model_with_metrics(model, loader, threshold=0.5):
             probabilities = torch.sigmoid(output)
 
             predictions = (probabilities > threshold).float()
+            #print(predictions)
 
             all_labels.extend(label.cpu().numpy())
             all_outputs.extend(probabilities.cpu().numpy())  # Save probabilities for AUC
@@ -239,7 +237,7 @@ import pickle
 
 def save_preprocessed_data(train_data, val_data, test_datasets, scaler, val_qs):
     """ Save train/val/test data and scaler to disk to avoid recomputation. """
-    save_path = os.path.join(EXPERIMENT_DIR, "preprocessed_data.pkl")
+    save_path = os.path.join(ROUTING_DIR, "data/preprocessed_data.pkl")
     with open(save_path, "wb") as f:
         pickle.dump((train_data, val_data, test_datasets, scaler, val_qs), f)
     print(f"Preprocessed data saved to {save_path}")
@@ -247,13 +245,19 @@ def save_preprocessed_data(train_data, val_data, test_datasets, scaler, val_qs):
 
 def load_preprocessed_data():
     """ Load saved preprocessed train/val/test data if available. """
-    load_path = os.path.join(EXPERIMENT_DIR, "preprocessed_data.pkl")
-    if os.path.exists(load_path):
-        with open(load_path, "rb") as f:
-            train_data, val_data, test_datasets, scaler, val_qs = pickle.load(f)
-        print(f"Loaded preprocessed data from {load_path}")
-        return train_data, val_data, test_datasets, scaler, val_qs
-    return None, None, None, None, None
+    path_seed = os.path.join(ROUTING_DIR, f"data/preprocessed_data_seed{SEED}.pkl")
+    path_fallback = os.path.join(ROUTING_DIR, "data/preprocessed_data.pkl")
+    if os.path.exists(path_seed):
+        path = path_seed
+    elif os.path.exists(path_fallback):
+        print(f"[WARN] Missing {path_seed}; falling back to {path_fallback}")
+        path = path_fallback
+    else:
+        return None, None, None, None, None
+    with open(path, "rb") as f:
+        train_data, val_data, test_datasets, scaler, val_qs = pickle.load(f)
+    return train_data, val_data, test_datasets, scaler, val_qs
+
 
 def evaluate_model(model, loader, criterion):
     model.eval()
@@ -287,13 +291,13 @@ def train_and_evaluate():
     train_data, val_data, test_datasets, scaler, val_qs = load_preprocessed_data()
 
     # For feature experiment
-    train_data = None
+    #train_data = None
 
     if train_data is None or test_datasets is None:
         query_to_data, benchmark_to_questions = load_data()
 
         # Load saved train-test split - same for all experiments
-        split_file = os.path.join(ROUTING_DIR, "train_test_split_per_benchmark.json")
+        split_file = os.path.join(ROUTING_DIR, "data/train_test_split_per_benchmark.json")
         if os.path.exists(split_file):
             with open(split_file, "r") as f:
                 benchmark_splits = json.load(f)
@@ -349,12 +353,10 @@ def train_and_evaluate():
         # Scale features or not
         scaler = StandardScaler()
         train_features = scaler.fit_transform([features for features, _ in train_data])
-#        train_features = [features for features, _ in train_data]
         train_labels = [label for _, label in train_data]
         train_data = list(zip(train_features, train_labels))
 
         val_features = scaler.transform([features for features, _ in val_data])
-#        val_features = [features for features, _ in val_data]
         val_labels = [label for _, label in val_data]
         val_data = list(zip(val_features, val_labels))
 
@@ -365,14 +367,6 @@ def train_and_evaluate():
             ))
             for benchmark, data in test_datasets.items()
         }
-#        test_datasets = {
-#	    benchmark: list(zip(
-#		[features for features, _ in data],
-#		[label for _, label in data]
-#	    ))
-#	    for benchmark, data in test_datasets.items()
-#	}
-
 
         # Save processed data for future runs
         save_preprocessed_data(train_data, val_data, test_datasets, scaler, val_qs)
@@ -395,30 +389,23 @@ def train_and_evaluate():
     fn_weight = 1
     pos_weight = torch.tensor([len(train_data) / sum([label for _, label in train_data])* fn_weight]).to(device)
 
-    #criterion = nn.BCEWithLogitsLoss(pos_weight=pos_weight)
     criterion = nn.BCEWithLogitsLoss()
-    optimizer = torch.optim.Adam(model.parameters(), lr=0.001, weight_decay=1e-5)
-    #optimizer = torch.optim.Adam(model.parameters(), lr=0.0001)
-    
+    optimizer = torch.optim.Adam(model.parameters(), lr=1e-3, weight_decay=3e-5)
+
     num_epochs = 150
 
     scheduler = torch.optim.lr_scheduler.CyclicLR(
-        optimizer,
-        base_lr=1e-3,   # Minimum learning rate
-        max_lr=5e-3,    # Maximum learning rate
-        step_size_up=10,  # Number of batches before reaching max_lr
-        mode="triangular2",  # Learning rate follows a triangular pattern
-        cycle_momentum=False  # Adam does not use momentum
+    optimizer, base_lr=1e-3, max_lr=5e-3, step_size_up=10,
+    mode="triangular2", cycle_momentum=False
     )
-
+    
     scheduler_fixed = torch.optim.lr_scheduler.StepLR(optimizer, step_size=50, gamma=0.05)
-    
-    #scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min', factor=0.5, patience=3, verbose=True)
-    
-    best_val_loss = float("inf")
-    best_val_acc = 0
+
+    best_val_auc = -float("inf")
+    no_improve = 0
+
     best_model_state = None
-    MODEL_PATH = os.path.join(EXPERIMENT_DIR, "best_model.pth")
+    MODEL_PATH = os.path.join(ROUTING_DIR, "best_model.pth")
 
     # Train the model
     for epoch in range(num_epochs):
@@ -442,7 +429,9 @@ def train_and_evaluate():
             total_loss += loss.item()
 
             # Track training accuracy
-            predictions = (output > 0.5).float()
+            # predictions = (output > 0.5).float()
+            probs = torch.sigmoid(output)
+            predictions = (probs > 0.5).float()
             correct += (predictions == label).sum().item()
             total += label.size(0)
             tp += ((predictions == 1) & (label == 1)).sum().item()
@@ -455,17 +444,28 @@ def train_and_evaluate():
         train_accuracy = correct / total if total > 0 else 0
         
         # Evaluate on Validation Set
-        val_loss, val_acc = evaluate_model(model, val_loader, criterion)
+        model.eval()
+        val_logits, val_labels = [], []
+        with torch.no_grad():
+            for vf, vl in val_loader:
+                vf, vl = vf.to(device), vl.to(device)
+                val_logits.append(model(vf).squeeze())
+                val_labels.append(vl)
 
-        print(f"Epoch {epoch+1}, Train Loss: {avg_loss:.4f}, Train Acc: {train_accuracy:.2%}, Val Loss: {val_loss:.4f}, Val Acc: {val_acc:.2%}")
+        val_logits = torch.cat(val_logits, dim=0)
+        val_probs  = torch.sigmoid(val_logits).detach().cpu().numpy()
+        val_labels = torch.cat(val_labels, dim=0).detach().cpu().numpy()
+        val_auc = roc_auc_score(val_labels, val_probs) if len(set(val_labels.tolist())) > 1 else 0.0
 
-        # Save Best Model
-        if val_acc > best_val_acc:
-            best_val_loss = val_loss
-            best_val_acc = val_acc
+        print(f"Epoch {epoch+1}, Train Loss: {avg_loss:.4f}, Train Acc: {train_accuracy:.2%}, Val AUC: {val_auc:.4f}")
+
+        # Save Best Model by Val AUC + early stopping
+        if val_auc > best_val_auc + 1e-6:
+            best_val_auc = val_auc
             best_model_state = model.state_dict()
             torch.save(best_model_state, MODEL_PATH)
-            print(f"Best model saved with Val Loss: {val_loss:.4f}, Val Acc: {val_acc:.2%}")
+            no_improve = 0
+            print(f"Best model saved with Val AUC: {val_auc:.4f}")
 
     # Ensure we use the best saved model
     model.load_state_dict(torch.load(MODEL_PATH, weights_only=True))
@@ -474,6 +474,7 @@ def train_and_evaluate():
     # Find optimal threshold using validation set
     optimal_threshold = find_optimal_threshold(model, val_loader)
 
+    model.eval()
     # Evaluate on test sets with optimal threshold
     for benchmark, test_data in test_datasets.items():
         test_loader = DataLoader(RoutingDataset(test_data), batch_size=128, shuffle=False)
@@ -482,28 +483,7 @@ def train_and_evaluate():
         print(f"\n**Test Results for {benchmark}**")
         print(f"Accuracy: {accuracy:.2%}, Precision: {precision:.2%}, Recall: {recall:.2%}, F1-Score: {f1:.2%}, AUC: {auc:.2%}")
         print(f"TP: {tp}, TN: {tn}, FP: {fp}, FN: {fn}")
-    
-    model.eval()
-    results = {}
-    with torch.no_grad():
-        for benchmark, question_ids in test_questions.items():
-            for question_id in tqdm(question_ids, desc=f"Predicting for {benchmark}"):
-                if question_id not in query_to_data:
-                    continue
-                predicted_relevant = []
-                for idx, (features, _) in enumerate(query_to_data[question_id]):
-                    features_tensor = torch.tensor(scaler.transform([features]), dtype=torch.float32).to(device)
-                    output = model(features_tensor).squeeze().item()
-                    prob = torch.sigmoid(torch.tensor(output)).item()
-                    if prob > optimal_threshold:
-                        predicted_relevant.append(CORPORA[idx])
 
-                results[question_id] = predicted_relevant
-
-    # Save predictions for this benchmark
-    output_path = os.path.join(EXPERIMENT_DIR, f"question_predictions.json")
-    with open(output_path, "w") as f:
-        json.dump(results, f, indent=2)
 
 if __name__ == "__main__":
     train_and_evaluate()

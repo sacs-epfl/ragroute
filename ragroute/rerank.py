@@ -16,10 +16,6 @@ def _as_text(doc):
     return str(doc).strip()
 
 def rerank_medrag(docs, scores, k, reranker, q_rerank):
-    # Just rerank based on scores for the moment
-#    print(docs)
-#    print(len(docs))
-#    print(len(docs[0]))
     if reranker is None:
         sorted_indices = np.argsort(scores)[::-1]  # Sort scores descending
         merged_docs = [docs[i] for i in sorted_indices][:k]
@@ -34,8 +30,8 @@ def rerank_medrag(docs, scores, k, reranker, q_rerank):
         pairs = [(q_rerank, _as_text(doc)) for doc in docs]
 
         ce_scores = []
-        for i in range(0, n, 32): # bs = 32
-            batch = pairs[i:i+32]
+        for i in range(0, n, 4):
+            batch = pairs[i:i+4]
             s = reranker.predict(batch, convert_to_numpy=True).tolist()
             ce_scores.extend(s)
 
@@ -68,8 +64,8 @@ def rerank_feb4rag(ids, docs, query_id, k, relevance_data, reranker, q_rerank):
         pairs = [(q_rerank, _as_text(doc))  for doc in docs]
 
         ce_scores = []
-        for i in range(0, n, 32): # bs = 32
-            batch = pairs[i:i+32]
+        for i in range(0, n, 4):
+            batch = pairs[i:i+4]
             s = reranker.predict(batch, convert_to_numpy=True).tolist()
             ce_scores.extend(s)
 
@@ -80,9 +76,6 @@ def rerank_feb4rag(ids, docs, query_id, k, relevance_data, reranker, q_rerank):
 
 
 def rerank_wikipedia(docs, scores, k, reranker, q_rerank):
-#    print(docs)
-#    print(len(docs))
-#    print(len(docs[0]))
     if reranker is None:
         sorted_indices = np.argsort(scores)[::-1] # TODO check...
         merged_docs = [docs[i] for i in sorted_indices][:k]
@@ -97,8 +90,8 @@ def rerank_wikipedia(docs, scores, k, reranker, q_rerank):
         pairs = [(q_rerank, _as_text(doc)) for doc in docs]
 
         ce_scores = []
-        for i in range(0, n, 32): # bs = 32
-            batch = pairs[i:i+32]
+        for i in range(0, n, 4):
+            batch = pairs[i:i+4]
             s = reranker.predict(batch, convert_to_numpy=True).tolist()
             ce_scores.extend(s)
 

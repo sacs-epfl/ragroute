@@ -75,7 +75,7 @@ class DataSource:
             with open(self.doc_ids_path, "r") as f:
                 metadatas = json.load(f)
         elif self.dataset == "wikipedia":
-            metadatas = []  # TODO not sure what to do here
+            metadatas = []
         self.faiss_indexes = index, metadatas
         logger.info(f"FAISS index for {self.name} loaded successfully")
         

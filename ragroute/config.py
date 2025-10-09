@@ -103,17 +103,10 @@ K = {
 }
 
 K_RERANK = {
-    "medrag": 32,
-    "feb4rag": 16,
-    "wikipedia": 10,
+    "medrag": 15,
+    "feb4rag": 15,
+    "wikipedia": 15,
 }
-
-# CHANGE THIS TO TEST WITH NO RERANKER
-#K_RERANK = {
-#    "medrag": 100000,
-#    "feb4rag": 100000,
-#    "wikipedia": 100000,
-#}
 
 SYSTEM_PROMPTS = {
     "medrag": """You are a helpful medical expert, and your task is to answer a multi-choice medical question using the relevant documents.
@@ -167,6 +160,12 @@ MODELS = {
         "max_tokens": 131072,
         "hf_name": "meta-llama/Meta-Llama-3.1-8B-Instruct",
         "ollama_name": "llama3.1_extended",
+    },
+    "llama3.1-8B-instruct_bis": {
+        "docs_context_length": 20000,
+        "max_tokens": 50000,
+        "hf_name": "meta-llama/Meta-Llama-3.1-8B-Instruct",
+        "ollama_name": "llama3.1_small",
     },
     "qwen3-8B": {
         "docs_context_length": 38000,

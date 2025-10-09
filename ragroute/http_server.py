@@ -214,7 +214,6 @@ class HTTPServer:
                             data_source_name: str = self.data_sources[client_id]
                             model_for_data_source = EMBEDDING_MODELS_PER_DATA_SOURCE[self.dataset][data_source_name][0]
 
-                            # TODO this should be done in parallel
                             await self.client_senders[client_id].send_json({
                                 "id": query_id,
                                 "query": query,
@@ -321,12 +320,7 @@ class HTTPServer:
         else:
             try:
                 start_time = time.time()
-#                if self.dataset == "wikipedia":
-#                    llm_message, docs_tokens = generate_llm_message_wikipedia(query_data["query"], filtered_docs, query_data["choices"], self.model)
-#                else:
-#                    llm_message, docs_tokens = generate_llm_message(self.dataset, query_data["query"], filtered_docs, query_data["choices"], self.model)
                 llm_message, docs_tokens = generate_llm_message(self.dataset, query_data["query"], filtered_docs, query_data["choices"], self.model)
-                #response_: ChatResponse = await AsyncClient().chat(model=self.model_info["ollama_name"], messages=llm_message, options={"num_predict": self.model_info["max_tokens"]})
                 try:
                     response_: ChatResponse = await asyncio.wait_for(
                             AsyncClient().chat(

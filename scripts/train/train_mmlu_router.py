@@ -1,4 +1,3 @@
-# === top of the file ===
 import os
 import json
 import numpy as np
@@ -25,20 +24,19 @@ import csv
 WIKI_DIR = "/mnt/nfs/home/dpetresc/wiki_dataset/dpr_wiki_index"
 CLUSTER_DIR = os.path.join(WIKI_DIR, "faiss_clusters")
 CLUSTER_STATS_FILE = os.path.join(CLUSTER_DIR, "cluster_stats.json")
-RETRIEVAL_DIR = "/mnt/nfs/home/dpetresc/Retrieval-QA-Benchmark_backup/euromlsys/new_submission/top_10_results_dpr"
-QUESTIONS_FILE = os.path.join(RETRIEVAL_DIR, "questions.json")
+RETRIEVAL_DIR = "/mnt/nfs/home/dpetresc/Retrieval-QA-Benchmark/routing/top_15_rerank_overfetch225"
 NUM_CLUSTERS = 10
 SEED = 42
 BATCH_SIZE = 128
 EPOCHS = 150
 DEFAULT_THRESHOLD = 0.5
-OUTPUT_DIR = "./cluster_router_output"
+OUTPUT_DIR = "./cluster_router_output_rerank"
 os.makedirs(OUTPUT_DIR, exist_ok=True)
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 TARGET_SUBJECTS = {
-"high_school_microeconomics", "international_law", "college_biology", "college_physics", "miscellaneous", "prehistory", "philosophy", "professional_psychology", "high_school_mathematics"
+"high_school_microeconomics", "international_law", "college_biology", "miscellaneous", "prehistory", "philosophy", "professional_psychology", "high_school_mathematics"
 }
 
 def set_seed(seed):
@@ -63,6 +61,32 @@ def encode_query_dpr(question: str) -> np.ndarray:
 
 # === Load MMLU and questions.json ===
 dataset = load_dataset("cais/mmlu", "all", split="test")
+
+from pathlib import Path, PurePath
+import re
+p = Path(RETRIEVAL_DIR)
+assert p.exists(), f"RETRIEVAL_DIR not found: {RETRIEVAL_DIR}"
+
+# What files are actually there?
+files = sorted(p.glob("question_*_cluster_ids.txt"))
+print(f"Found {len(files)} retrieval files, example: {files[:3]}")
+
+# Extract the integer ids these files expect
+file_ids = []
+for f in files:
+    m = re.search(r"question_(\d+)_cluster_ids\.txt$", f.name)
+    if m:
+        file_ids.append(int(m.group(1)))
+file_ids = set(file_ids)
+print(f"Unique question ids from files: {len(file_ids)} (min={min(file_ids) if file_ids else 'NA'}, max={max(file_ids) if file_ids else 'NA'})")
+
+# Peek at subjects present in this run
+from collections import Counter
+subjects = Counter()
+for ex in dataset:
+    subjects[ex["subject"]] += 1
+print("Top subjects:", subjects.most_common(10))
+print("TARGET_SUBJECTS ∩ dataset:", TARGET_SUBJECTS.intersection(subjects.keys()))
 
 # === Load Cluster Stats ===
 with open(CLUSTER_STATS_FILE) as f:
@@ -112,19 +136,28 @@ class ClusterDataset(Dataset):
 class CorpusRoutingNN(nn.Module):
     def __init__(self, input_dim):
         super(CorpusRoutingNN, self).__init__()
-        self.fc1 = nn.Linear(input_dim, 256)
-        self.ln1 = nn.LayerNorm(256)
+        self.fc1 = nn.Linear(input_dim, 128)
+        self.ln1 = nn.LayerNorm(128)
         self.dropout1 = nn.Dropout(0.4)
-        self.fc2 = nn.Linear(256, 128)
-        self.ln2 = nn.LayerNorm(128)
+
+        self.fc2 = nn.Linear(128, 64)
+        self.ln2 = nn.LayerNorm(64)
         self.dropout2 = nn.Dropout(0.4)
-        self.fc3 = nn.Linear(128, 1)
+
+        self.fc3 = nn.Linear(64, 32)
+        self.ln3 = nn.LayerNorm(32)
+        self.dropout3 = nn.Dropout(0.4)
+
+        self.fc_out = nn.Linear(32, 1)
+
     def forward(self, x):
         x = F.relu(self.ln1(self.fc1(x)))
         x = self.dropout1(x)
         x = F.relu(self.ln2(self.fc2(x)))
         x = self.dropout2(x)
-        return self.fc3(x)
+        x = F.relu(self.ln3(self.fc3(x)))
+        x = self.dropout3(x)
+        return self.fc_out(x).squeeze(-1)
 
 # === Split per query ===
 query_to_samples = defaultdict(list)
@@ -180,7 +213,6 @@ pos_weight = torch.tensor([num_neg / (num_pos + 1e-6)], dtype=torch.float32).to(
 print(f"Using pos_weight = {pos_weight.item():.4f} (Pos: {num_pos}, Neg: {num_neg})")
 
 criterion = nn.BCEWithLogitsLoss(pos_weight=5*pos_weight)
-#criterion = nn.BCEWithLogitsLoss()
 
 scheduler_cyclic = torch.optim.lr_scheduler.CyclicLR(
     optimizer, base_lr=1e-3, max_lr=5e-3, step_size_up=10,
