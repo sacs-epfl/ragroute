@@ -94,10 +94,18 @@ EMBEDDING_MAX_LENGTH = {
     "feb4rag": 4096,
     "wikipedia": 768,
 }
+
+
 K = {
-    "medrag": 32,
-    "feb4rag": 10,
-    "wikipedia": 10,
+    "medrag": 50,
+    "feb4rag": 50,
+    "wikipedia": 50,
+}
+
+K_RERANK = {
+    "medrag": 15,
+    "feb4rag": 15,
+    "wikipedia": 15,
 }
 
 SYSTEM_PROMPTS = {
@@ -109,9 +117,9 @@ Your responses will be used for research purposes only, so please have a definit
 Your responses should directly address the user's request and must be based on the information obtained from the provided search results.
 You are forbidden to create new information that is not supported by these results.
 You must attribute your response to the source from the search results by including citations, for example, [1].""",
-    "wikipedia": """You are an assistant for answering multiple-choice questions. Below are relevant parts of documents retrieved for the question. 
-Use the provided context to choose the correct answer. If the context does not help, use the question and options alone. 
-Your response should be a single letter: A, B, C, or D. Only output one letter."""
+    "wikipedia": """You are an assistant for answering multiple-choice questions using the relevant documents.
+Please first think step-by-step and then choose the answer from the provided options.
+Organize your output in a json formatted as Dict{"step_by_step_thinking": Str(explanation), "answer_choice": Str{A/B/C/...}}."""
 }
 USER_PROMPT_TEMPLATES = {
     "medrag": """Here are the relevant documents:
@@ -124,11 +132,13 @@ Here are the potential choices:
 {{options}}
 
 Please think step-by-step and generate your output in json formatted as Dict{"step_by_step_thinking": Str(explanation), "answer_choice": Str{A/B/C/...}}:""",
+
     "feb4rag": """Here are the search results:
 {{context}}
 
 Here is the question:
 {{question}}""",
+
     "wikipedia": """Given the following context, question, and four candidate answers (A, B, C, and D), choose the best answer.
 
 Context:
@@ -140,11 +150,7 @@ B. {{options[1]}}
 C. {{options[2]}}
 D. {{options[3]}}
 
-Your response should be in the format: "The best answer is [letter]".
-Do not include any additional explanation or justification.
-Only output one letter: A, B, C, or D.
-
-The best answer is"""
+Please think step-by-step and generate your output in json formatted as Dict{"step_by_step_thinking": Str(explanation), "answer_choice": Str{A/B/C/D}}:"""
 }
 
 SUPPORTED_MODELS = ["llama3.1-8B-instruct", "qwen3-8B", "qwen3-0.6B"]
@@ -153,9 +159,13 @@ MODELS = {
         "docs_context_length": 128000,
         "max_tokens": 131072,
         "hf_name": "meta-llama/Meta-Llama-3.1-8B-Instruct",
-        #"ollama_name": "llama3.1:8b-instruct-q4_K_M",
         "ollama_name": "llama3.1_extended",
-        #"ollama_name": "llama3.1:8b-instruct-q8_0",
+    },
+    "llama3.1-8B-instruct_bis": {
+        "docs_context_length": 20000,
+        "max_tokens": 50000,
+        "hf_name": "meta-llama/Meta-Llama-3.1-8B-Instruct",
+        "ollama_name": "llama3.1_small",
     },
     "qwen3-8B": {
         "docs_context_length": 38000,

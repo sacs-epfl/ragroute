@@ -4,6 +4,58 @@ This repository contains the code for the paper **"Efficient Federated Search fo
 
 ---
 
+## System Architecture
+
+<p align="center">
+  <img src="./image/ragroute_architecture.png" width="800"/>
+  <br/>
+  <em>RAGRoute system architecture.</em>
+</p>
+
+The system processes a query by routing it to relevant data sources, retrieving documents in parallel, and using them to generate an answer with an LLM.
+
+RAGRoute consists of the following components, each implemented as a separate process.
+
+#### **Coordinator and HTTP Server**
+
+At the core of RAGRoute is a main process containing a coordinator and an HTTP server.
+
+- The HTTP server receives incoming requests from users and returns responses once the query is processed.
+- When a request is received, the query is forwarded to the coordinator.
+- The coordinator manages communication between the different components.
+
+#### **Router**
+
+The coordinator first forwards the query to the routing process (step 3).
+
+- This process has the relevant embedding models loaded in memory and hosts the RAGRoute router model.
+- After embedding generation, these embeddings are forwarded to the router model (step 4).
+- The router outputs a list of relevant data sources.
+- The identifiers of these data sources and the embeddings are returned to the coordinator (step 5).
+
+#### **Data Sources**
+
+Next, the coordinator sends the compatible embedding to each of the selected data sources in parallel.
+
+- Each data source retrieves the top-*k*<sub>ret</sub> relevant documents.
+- These documents are returned to the coordinator.
+
+After receiving all responses:
+
+- The coordinator reranks and filters the documents resulting in a final top-*k* list of relevant document chunks.
+
+#### **LLM Engine**
+
+Finally, the coordinator constructs the prompt sent to the LLM engine.
+
+- The prompt contains:
+  - The user query.
+  - The retrieved documents.
+- The LLM returns a response to the coordinator (step 9).
+- The coordinator sends the final reply back to the user (step 10 and 11).
+
+---
+
 ## Project Structure
 
 - `main.py`: Launches the RAGRoute server and router logic.

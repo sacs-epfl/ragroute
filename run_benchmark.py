@@ -25,7 +25,7 @@ async def main():
     parser.add_argument("--save-logs-dir", dest="save_logs_dir", type=str, default="data", help="Path to the benchmark data")
     parser.add_argument("--parallel", type=int, default=1, help="Number of parallel requests to send")
     parser.add_argument("--routing", type=str, required=True, choices=["ragroute", "all", "random", "none"], help="Routing method to use")
-    parser.add_argument("--questions", type=str, default=None, choices=['medqa', 'medmcqa', 'pubmedqa', 'bioasq', 'mmlu', "high_school_microeconomics", "international_law", "college_biology", "college_physics", "miscellaneous", "prehistory", "philosophy", "professional_psychology", "high_school_mathematics"], help="The questions to use for the benchmark")
+    parser.add_argument("--questions", type=str, default=None, choices=['medqa', 'medmcqa', 'pubmedqa', 'bioasq', 'mmlu', "high_school_microeconomics", "international_law", "college_biology", "miscellaneous", "prehistory", "philosophy", "professional_psychology", "high_school_mathematics"], help="The questions to use for the benchmark")
     args = parser.parse_args()
 
     os.makedirs(args.save_logs_dir, exist_ok=True)
@@ -42,7 +42,7 @@ async def main():
 
     if not os.path.exists(benchmark_file):
         with open(benchmark_file, "w") as f:
-            f.write("benchmark,dataset,model,question_id,correct,data_sources,num_data_sources,selection_time,embedding_time,doc_select_time,generate_time,e2e_time,docs_tokens\n")
+            f.write("benchmark,dataset,model,question_id,correct,data_sources,num_data_sources,selection_time,embedding_time,doc_select_time,rerank_time,generate_time,e2e_time,docs_tokens\n")
 
     if not os.path.exists(ds_stats_file):
         with open(ds_stats_file, "w") as f:
@@ -119,7 +119,7 @@ async def main():
                         continue
 
                     # Process the question result
-                    if args.benchmark == "MIRAGE":
+                    if args.benchmark == "MIRAGE": #or args.benchmark == "MMLU":
                         is_correct = benchmark.check_mirage_answer(question_data, result["answer"])
                     elif args.benchmark == "MMLU":
                         is_correct = benchmark.check_mmlu_answer(question_data, result["answer"])
@@ -146,7 +146,7 @@ async def main():
                     with open(benchmark_file, "a") as f:
                         f.write(f"{args.benchmark},{question_bank},{metadata['llm']},{question_id},{int(is_correct)},{data_sources},{len(metadata['data_sources'])},"
                                 f"{metadata['selection_time']},{metadata['embedding_time']},{metadata['doc_select_time']},"
-                                f"{metadata['generate_time']},{metadata['e2e_time']},{metadata['docs_tokens']}\n")
+                                f"{metadata['rerank_time']}, {metadata['generate_time']},{metadata['e2e_time']},{metadata['docs_tokens']}\n")
                         
                     with open(ds_stats_file, "a") as f:
                         for data_source, stats in metadata["data_sources_stats"].items():
