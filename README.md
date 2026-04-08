@@ -24,8 +24,6 @@ At the core of RAGRoute is a main process containing a coordinator and an HTTP s
 - When a request is received, the query is forwarded to the coordinator.
 - The coordinator manages communication between the different components.
 
----
-
 #### **Router**
 
 The coordinator first forwards the query to the routing process (step 3).
@@ -34,8 +32,6 @@ The coordinator first forwards the query to the routing process (step 3).
 - After embedding generation, these embeddings are forwarded to the router model (step 4).
 - The router outputs a list of relevant data sources.
 - The identifiers of these data sources and the embeddings are returned to the coordinator (step 5).
-
----
 
 #### **Data Sources**
 
@@ -47,8 +43,6 @@ Next, the coordinator sends the compatible embedding to each of the selected dat
 After receiving all responses:
 
 - The coordinator reranks and filters the documents resulting in a final top-*k* list of relevant document chunks.
-
----
 
 #### **LLM Engine**
 
